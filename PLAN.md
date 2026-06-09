@@ -106,7 +106,7 @@ Canonical apply command:
 
 ```sh
 nix flake check
-sudo darwin-rebuild switch --flake ~/nix#gamma
+sudo darwin-rebuild switch --flake .#gamma
 ```
 
 Expected repository shape:

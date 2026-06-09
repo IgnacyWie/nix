@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
+
+. "${SCRIPT_DIR}/nix-env.sh"
+
+cd "${REPO_ROOT}"
+if ! "${NIX_BIN}" ${NIX_FLAKE_FLAGS} fmt; then
+  cat >&2 <<'EOF'
+
+note: nix fmt is wired through the flake formatter, but this pre-apply system
+may fail while downloading formatter dependencies because the current Nix daemon
+uses /etc/ssl/certs/ca-certificates.crt instead of the macOS bundle at
+/etc/ssl/cert.pem. The Darwin baseline sets nix.settings.ssl-cert-file to fix
+future daemon runs after applying .#gamma.
+EOF
+  exit 1
+fi

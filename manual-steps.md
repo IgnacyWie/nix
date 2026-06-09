@@ -14,7 +14,9 @@ not be hidden until they are proven reliable.
 5. When the flake exists, apply the host configuration:
 
 ```sh
-sudo darwin-rebuild switch --flake ~/nix#gamma
+cd ~/nix
+nix flake check
+sudo darwin-rebuild switch --flake .#gamma
 ```
 
 Review build output before switching system-changing configuration.
