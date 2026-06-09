@@ -68,3 +68,17 @@ Pull requests should describe the intent, list important commands run, mention a
 ## Security & Configuration Tips
 
 Never commit secrets, private SSH keys, API tokens, or unencrypted backup credentials. Prefer 1Password, macOS Keychain, `sops-nix`, or `agenix` once secret management is introduced.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and PRDs are tracked in GitHub Issues for `IgnacyWie/nix`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Triage uses the default five-label vocabulary. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repo using root `CONTEXT.md` and root `docs/adr/`. See `docs/agents/domain.md`.
