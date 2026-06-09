@@ -24,6 +24,7 @@
     }:
     let
       system = "aarch64-darwin";
+      pkgs = nixpkgs.legacyPackages.${system};
     in
     {
       darwinConfigurations.gamma = nix-darwin.lib.darwinSystem {
@@ -43,6 +44,15 @@
         ];
       };
 
-      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
+      formatter.${system} = pkgs.writeShellApplication {
+        name = "nixfmt";
+        runtimeInputs = [
+          pkgs.findutils
+          pkgs.nixfmt-rfc-style
+        ];
+        text = ''
+          find . -name '*.nix' -not -path './.git/*' -print0 | xargs -0 nixfmt
+        '';
+      };
     };
 }

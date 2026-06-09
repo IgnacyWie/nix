@@ -41,6 +41,7 @@ flake bootstrap:
 ./scripts/check
 ./scripts/eval-gamma
 ./scripts/fmt
+./scripts/apply-gamma
 ```
 
 They fall back to `/nix/var/nix/profiles/default/bin/nix`, enable
@@ -54,6 +55,17 @@ configuration is applied if the current Nix daemon still reads the broken
 `/etc/ssl/certs/ca-certificates.crt` path while downloading formatter
 dependencies. The Darwin baseline sets `nix.settings.ssl-cert-file` to
 `/etc/ssl/cert.pem` so future rebuilds use the macOS CA bundle.
+
+Before nix-darwin is installed globally, use the bootstrap wrapper:
+
+```sh
+./scripts/bootstrap-apply-gamma
+```
+
+The first activation may stop if unmanaged files already exist in `/etc` or if
+`/Applications/Nix Apps` is a stale symlink from an earlier setup. Preserve those
+files by moving them aside with a `.before-nix-darwin` suffix, then rerun the
+bootstrap wrapper.
 
 ## Recovery Contract
 
