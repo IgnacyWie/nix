@@ -1,0 +1,17 @@
+# Generated macOS metadata
+**/.DS_Store
+**/.Trash
+
+# Common generated dependency and build outputs
+**/node_modules
+**/.next
+**/dist
+**/build
+**/target
+
+# Large user media outside the v1 restore contract
+/Users/ignacywielogorski/Movies
+/Users/ignacywielogorski/Music
+
+# Broad application state is excluded until specific paths are inventoried.
+/Users/ignacywielogorski/Library

@@ -21,3 +21,10 @@ This repository describes the reproducible setup for personal machines using Nix
 ## Current Status
 
 The repository currently contains planning documentation. The first implementation target is `gamma` using `nix-darwin`, Home Manager, and flakes.
+
+## Recovery Contract
+
+- [backup.md](backup.md): Restic to Backblaze B2 scope, credential pattern,
+  schedule, retention, and restore drills.
+- [manual-steps.md](manual-steps.md): post-restore checklist for Nix, secrets,
+  authentication, keyboard layout, Rosetta, and macOS permissions.
