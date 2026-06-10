@@ -173,29 +173,67 @@
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
             agent = homeConfig.launchd.agents.gamma-restic-backup;
-            interval = builtins.head agent.config.StartCalendarInterval;
+            expectedCalendarInterval = [
+              {
+                Day = null;
+                Hour = 20;
+                Minute = 0;
+                Month = null;
+                Weekday = null;
+              }
+            ];
+            expectedProgramArguments = [
+              program
+              "--scheduled"
+            ];
             program = builtins.head agent.config.ProgramArguments;
+            backupExcludes = pkgs.writeText "expected-backup-excludes" (
+              builtins.readFile ./backup-excludes.txt
+            );
           in
           assert agent.enable;
-          assert interval.Hour == 20;
-          assert interval.Minute == 0;
+          assert agent.config.ProcessType == "Background";
           assert agent.config.RunAtLoad == true;
           assert agent.config.StartInterval == 21600;
+          assert agent.config.StartCalendarInterval == expectedCalendarInterval;
+          assert agent.config.ProgramArguments == expectedProgramArguments;
+          assert
+            agent.config.StandardOutPath
+            == "/Users/ignacywielogorski/Library/Logs/gamma-restic-backup/launchd-stdout.log";
+          assert
+            agent.config.StandardErrorPath
+            == "/Users/ignacywielogorski/Library/Logs/gamma-restic-backup/launchd-stderr.log";
           pkgs.runCommand "gamma-backup-config-check" { } ''
             set -eu
 
             test -x ${program}
-            test "${builtins.elemAt agent.config.ProgramArguments 1}" = "--scheduled"
-            grep -q 'RESTIC_REPOSITORY=b2:gamma-backup-restic:gamma' ${program}
-            grep -q 'restic-gamma-b2-account-id' ${program}
-            grep -q 'restic-gamma-b2-account-key' ${program}
-            grep -q 'restic-gamma-password' ${program}
-            grep -q -- '--exclude-file' ${program}
-            grep -q -- '--scheduled' ${program}
-            grep -q 'retry 3 300 backup' ${program}
-            grep -q 'retry 2 300 retention' ${program}
-            grep -q 'Last successful backup is less than 20 hours old' ${program}
-            grep -q -- '--keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune' ${program}
+            test "$(basename ${program})" = "gamma-restic-backup"
+            cmp ${backupExcludes} ${./backup-excludes.txt}
+
+            grep -Fqx "export RESTIC_REPOSITORY=b2:gamma-backup-restic:gamma" ${program}
+            grep -Fqx "B2_ACCOUNT_ID=\"\$(/usr/bin/security find-generic-password -a \"\$USER\" -s restic-gamma-b2-account-id -w)\"" ${program}
+            grep -Fqx "B2_ACCOUNT_KEY=\"\$(/usr/bin/security find-generic-password -a \"\$USER\" -s restic-gamma-b2-account-key -w)\"" ${program}
+            grep -Fqx "RESTIC_PASSWORD=\"\$(/usr/bin/security find-generic-password -a \"\$USER\" -s restic-gamma-password -w)\"" ${program}
+            grep -Fqx "export B2_ACCOUNT_ID" ${program}
+            grep -Fqx "export B2_ACCOUNT_KEY" ${program}
+            grep -Fqx "export RESTIC_PASSWORD" ${program}
+
+            grep -Eq '^retry 3 300 backup restic backup "\$\{backup_args\[@\]\}" --exclude-file /nix/store/[a-z0-9]+-source/backup-excludes\.txt$' ${program}
+            grep -Fqx "retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune" ${program}
+            grep -Fqx "    printf 'Last successful backup is less than 20 hours old; skipping scheduled catch-up.\n'" ${program}
+
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Documents" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Desktop" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Pictures" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Projects" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Developer" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Downloads" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/typst" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/nix" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/.ssh" ${program}
+
+            ! grep -Eq "^(export )?(B2_ACCOUNT_ID|B2_ACCOUNT_KEY|RESTIC_PASSWORD)='[^$]" ${program}
+            ! grep -Eq "^(export )?(B2_ACCOUNT_ID|B2_ACCOUNT_KEY|RESTIC_PASSWORD)=\"[^$]" ${program}
 
             touch "$out"
           '';
