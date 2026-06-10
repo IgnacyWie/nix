@@ -46,6 +46,17 @@
       bind -T copy-mode-vi v send-keys -X begin-selection
       bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'pbcopy'
 
+      # Codex and other full-screen terminal apps consume normal scroll input.
+      # These no-prefix bindings make the scroll intent explicit to tmux first.
+      bind-key -n S-Up copy-mode -u \; send-keys -X scroll-up
+      bind-key -n S-Down copy-mode \; send-keys -X scroll-down
+      bind-key -n S-PPage copy-mode -u \; send-keys -X page-up
+      bind-key -n S-NPage copy-mode \; send-keys -X page-down
+      bind-key -T copy-mode-vi S-Up send-keys -X scroll-up
+      bind-key -T copy-mode-vi S-Down send-keys -X scroll-down
+      bind-key -T copy-mode-vi S-PPage send-keys -X page-up
+      bind-key -T copy-mode-vi S-NPage send-keys -X page-down
+
       bind r source-file ~/.config/tmux/tmux.conf \; display "Reloaded!"
 
       bind -n M-Left select-pane -L
