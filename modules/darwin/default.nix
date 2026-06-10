@@ -1,6 +1,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./homebrew.nix
+  ];
+
   fonts.packages = [
     pkgs.nerd-fonts.meslo-lg
   ];

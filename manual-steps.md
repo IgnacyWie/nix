@@ -49,6 +49,13 @@ Recover these before relying on the workstation for daily development:
 - SSH keys from the Secret Store or another documented recovery source.
 - SSH key permissions and agent behavior.
 - Browser login for Zen Browser or the current default browser.
+- Zen Browser profiles, settings, extensions, and sessions through browser sync,
+  backup restore, or manual login. Nix only installs the app in v1.
+- Raycast settings, extensions, and account state through Raycast's own sync,
+  backup restore, or manual setup. Nix only installs the app in v1.
+- OrbStack runtime state and container data through its own backup or restore
+  process. OrbStack remains the v1 Docker runtime and Docker CLI source of
+  truth.
 - App Store login for applications that cannot be installed through Nix or
   Homebrew.
 

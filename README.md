@@ -21,7 +21,15 @@ This repository describes the reproducible setup for personal machines using Nix
 ## Current Status
 
 The repository contains the first runnable flake skeleton for `gamma` using
-`nix-darwin`, Home Manager, and flakes.
+`nix-darwin`, Home Manager, flakes, and non-authoritative Homebrew app
+installation.
+
+Homebrew activation installs declared GUI apps and formulae for `gamma`, but it
+does not auto-update, upgrade, clean up, or remove unlisted Homebrew-managed
+software during the v1 migration. Zen Browser and Raycast are installed only as
+apps; their profiles, settings, extensions, sessions, and internal state remain
+outside Nix. OrbStack is the Docker runtime and initial Docker CLI source of
+truth, so this flake does not add a competing Docker CLI.
 
 ## Apply Flow
 
