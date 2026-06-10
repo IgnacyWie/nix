@@ -51,11 +51,27 @@
       "com.apple.springing.enabled" = true;
     };
 
+    universalaccess = {
+      reduceMotion = true;
+    };
+
+    WindowManager = {
+      AppWindowGroupingBehavior = true;
+      AutoHide = false;
+      EnableStandardClickToShowDesktop = false;
+      EnableTiledWindowMargins = false;
+      GloballyEnabled = false;
+      HideDesktop = true;
+      StageManagerHideWidgets = true;
+      StandardHideDesktopIcons = true;
+      StandardHideWidgets = true;
+    };
+
     screencapture = {
       type = "png";
     };
 
-    CustomUserPreferences."com.apple.HIToolbox" =
+    CustomUserPreferences =
       let
         dvorakQwerty = {
           InputSourceKind = "Keyboard Layout";
@@ -69,13 +85,21 @@
         };
       in
       {
-        AppleEnabledInputSources = [
-          dvorakQwerty
-          polishPro
-        ];
-        AppleSelectedInputSources = [
-          dvorakQwerty
-        ];
+        NSGlobalDomain = {
+          AppleMiniaturizeOnDoubleClick = false;
+          AppleReduceDesktopTinting = true;
+          QLPanelAnimationDuration = 0;
+        };
+
+        "com.apple.HIToolbox" = {
+          AppleEnabledInputSources = [
+            dvorakQwerty
+            polishPro
+          ];
+          AppleSelectedInputSources = [
+            dvorakQwerty
+          ];
+        };
       };
   };
 }

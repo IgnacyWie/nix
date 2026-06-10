@@ -97,6 +97,9 @@ Verify the nix-darwin Workstation Defaults after activation:
 - Finder shows the expected path/status bars, desktop volumes, and home-folder
   new-window target.
 - Dark mode and key-repeat behavior are active.
+- Reduce Motion is enabled, including reduced Space-switching animation.
+- Stage Manager remains disabled, desktop icons/widgets stay hidden, click
+  wallpaper to show Desktop is disabled, and tiled window margins stay disabled.
 - Screenshots use PNG format.
 
 Some macOS defaults, especially appearance and input-source changes, may require

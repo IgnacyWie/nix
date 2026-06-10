@@ -84,6 +84,7 @@
               "KeyboardLayout ID" = 30788;
               "KeyboardLayout Name" = "Polish Pro";
             };
+            customGlobal = defaults.CustomUserPreferences.NSGlobalDomain;
             hitoolbox = defaults.CustomUserPreferences."com.apple.HIToolbox";
           in
           assert defaults.dock.autohide == true;
@@ -126,7 +127,20 @@
           assert defaults.NSGlobalDomain.NSWindowShouldDragOnGesture == true;
           assert defaults.NSGlobalDomain._HIHideMenuBar == false;
           assert defaults.NSGlobalDomain."com.apple.springing.enabled" == true;
+          assert defaults.universalaccess.reduceMotion == true;
+          assert defaults.WindowManager.AppWindowGroupingBehavior == true;
+          assert defaults.WindowManager.AutoHide == false;
+          assert defaults.WindowManager.EnableStandardClickToShowDesktop == false;
+          assert defaults.WindowManager.EnableTiledWindowMargins == false;
+          assert defaults.WindowManager.GloballyEnabled == false;
+          assert defaults.WindowManager.HideDesktop == true;
+          assert defaults.WindowManager.StageManagerHideWidgets == true;
+          assert defaults.WindowManager.StandardHideDesktopIcons == true;
+          assert defaults.WindowManager.StandardHideWidgets == true;
           assert defaults.screencapture.type == "png";
+          assert customGlobal.AppleMiniaturizeOnDoubleClick == false;
+          assert customGlobal.AppleReduceDesktopTinting == true;
+          assert customGlobal.QLPanelAnimationDuration == 0;
           assert
             hitoolbox.AppleEnabledInputSources == [
               dvorakQwerty
