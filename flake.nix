@@ -818,18 +818,55 @@
               cat > "$bin/fzf" <<'EOF'
               #!${pkgs.runtimeShell}
               printf 'fzf %s\n' "$*" >> "$TMPDIR/fzf.log"
+
+              preview=""
+              args=("$@")
+              for ((i = 0; i < $#; i++)); do
+                case "''${args[$i]}" in
+                  --preview)
+                    if [ $((i + 1)) -lt $# ]; then
+                      preview="''${args[$((i + 1))]}"
+                    fi
+                    ;;
+                  --preview=*)
+                    preview="''${args[$i]#--preview=}"
+                    ;;
+                esac
+              done
+
+              run_preview() {
+                local preview_selected="$1"
+                local output="$2"
+                local quoted_selected
+                local preview_command
+
+                if [ -z "$preview" ]; then
+                  return 0
+                fi
+
+                printf -v quoted_selected '%q' "$preview_selected"
+                preview_command="''${preview//\"\{\}\"/$quoted_selected}"
+                preview_command="''${preview_command//\{\}/$quoted_selected}"
+                ( eval "$preview_command" ) > "$output"
+              }
+
+              input=$(cat)
               case "$*" in
                 *"backup snapshot> "*)
                   if [ "''${BACKUP_RESTORE_PICKER_CANCEL_STAGE:-}" = snapshot ]; then
                     exit 130
                   fi
-                  sed -n '1p'
+                  selected=$(printf '%s\n' "$input" | sed -n '1p')
+                  run_preview "$selected" "$TMPDIR/snapshot-preview.out"
+                  printf '%s\n' "$selected"
                   ;;
                 *"backup file> "*)
                   if [ "''${BACKUP_RESTORE_PICKER_CANCEL_STAGE:-}" = file ]; then
                     exit 130
                   fi
-                  grep '/Users/ignacywielogorski/Documents/check.txt'
+                  selected=$(printf '%s\n' "$input" | grep '/Users/ignacywielogorski/Documents/check.txt')
+                  run_preview "$selected" "$TMPDIR/file-preview.out"
+                  printf '%s\n' "$selected"
                   ;;
                 *"backup action> "*)
                   printf '%s\n' "''${BACKUP_RESTORE_PICKER_ACTION:-print-command}"
@@ -858,6 +895,8 @@
               env $picker_env BACKUP_RESTORE_PICKER_ACTION=print-command ${backupRestorePicker} > "$TMPDIR/print-command.out"
               grep -q 'restic restore abc123de --target .*/Restores/restic-abc123de-20260102-030405 --include /Users/ignacywielogorski/Documents/check.txt' "$TMPDIR/print-command.out"
               ! grep -q -- '--target /Users/ignacywielogorski/Documents' "$TMPDIR/print-command.out"
+              grep -q 'summary: {"total_files_processed":2}' "$TMPDIR/snapshot-preview.out"
+              grep -q 'hello backup' "$TMPDIR/file-preview.out"
 
               env $picker_env BACKUP_RESTORE_PICKER_ACTION=copy-command ${backupRestorePicker} > "$TMPDIR/copy-command.out"
               grep -q 'Copied restore command to clipboard' "$TMPDIR/copy-command.out"

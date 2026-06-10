@@ -858,7 +858,7 @@
           "\nhostname: " + (.hostname // "") +
           "\npaths:\n" + (((.paths // []) | map("  - " + .)) | join("\n")) +
           "\ntags: " + (((.tags // []) | join(", ")) // "") +
-          "\nsummary: " + ((.summary // {}) | tostring)
+          "\nsummary: " + (if .summary == null then "" else (.summary | tostring) end)
       ' "$BACKUP_RESTORE_PICKER_SNAPSHOT_JSON"
       PREVIEW
         )
