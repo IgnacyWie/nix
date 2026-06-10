@@ -20,6 +20,10 @@ Declared tap:
 
 - `koekeishiya/formulae`: used only for the required yabai and skhd formulae.
 
+Reviewed CLI tools such as `age`, `bitwarden-cli`, `gnupg`, `helm`, `httpie`,
+`k9s`, `kubectl`, `kustomize`, `openssh`, `pinentry_mac`, and `sops` are
+installed through Nix system packages instead of Homebrew formulae.
+
 ## Sanitization Notes
 
 This file is not raw `brew leaves` output. Unlisted Homebrew formulae are not

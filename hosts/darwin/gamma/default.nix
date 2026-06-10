@@ -20,8 +20,10 @@
 
   environment.systemPackages = with pkgs; [
     aider-chat
+    age
     bat
     bun
+    bitwarden-cli
     chafa
     claude-code
     codex
@@ -36,17 +38,26 @@
     git
     gemini-cli
     glow
+    gnupg
     gnused
+    helm
     htop
+    httpie
     just
     jq
+    k9s
+    kubectl
+    kustomize
     lazygit
     lazysql
     neovim
     opencode
+    openssh
+    pinentry_mac
     posting
     restic
     ripgrep
+    sops
     terminal-notifier
     tree
     typst

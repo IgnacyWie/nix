@@ -20,11 +20,15 @@
     ];
 
     casks = [
+      "bitwarden"
       "ghostty"
-      "zen"
-      "raycast"
       "karabiner-elements"
+      "loom"
       "orbstack"
+      "raycast"
+      "sf-symbols"
+      "whatsapp"
+      "zen"
     ];
 
     extraConfig = ''
