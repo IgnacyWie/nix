@@ -119,7 +119,10 @@ Run this separately from the single-file Restic restore.
 8. Grant required macOS permissions for Karabiner, yabai, skhd, and backup
    access.
 9. Restore a representative subset of data into a temporary path.
-10. Confirm development tools and terminal configuration are usable.
+10. Verify Node and pnpm shell behavior with
+    [docs/node-pnpm-shell.md](docs/node-pnpm-shell.md), especially that `nvm`
+    wins over stale Homebrew Node and global pnpm shims.
+11. Confirm development tools and terminal configuration are usable.
 
 The drill passes only if the workstation can be rebuilt using repository
 configuration plus Secret Store recovery, without relying on undocumented state

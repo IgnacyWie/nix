@@ -81,3 +81,5 @@ bootstrap wrapper.
   schedule, retention, and restore drills.
 - [manual-steps.md](manual-steps.md): post-restore checklist for Nix, secrets,
   authentication, keyboard layout, Rosetta, and macOS permissions.
+- [docs/node-pnpm-shell.md](docs/node-pnpm-shell.md): Node, `nvm`, and
+  Corepack/pnpm shell behavior required for JavaScript development repos.

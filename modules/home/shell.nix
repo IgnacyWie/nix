@@ -58,6 +58,7 @@ in
   home.activation.createWorkstationDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Developer"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/typst"}
+    run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.nvm"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/bin"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/scripts"}
   '';
@@ -81,6 +82,10 @@ in
 
     initContent = ''
       unset MAILCHECK
+
+      path=(''${path:#/opt/homebrew/opt/node@20/bin})
+      path=(''${path:#$HOME/Library/pnpm})
+      export PATH
 
       if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
         . "/opt/homebrew/opt/nvm/nvm.sh"
