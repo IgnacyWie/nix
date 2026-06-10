@@ -30,7 +30,6 @@
 
     extraConfig = ''
       bind-key -r f run-shell "tmux neww ~/.local/scripts/tmux-sessionizer"
-      bind-key -n C-h new-window -c "#{pane_current_path}" "~/.local/scripts/git-branch-switcher"
 
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
@@ -92,6 +91,7 @@
 
       if-shell 'test -x ~/.tmux/plugins/tpm/tpm' 'run-shell ~/.tmux/plugins/tpm/tpm'
 
+      bind-key -n C-h display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"
       unbind -n C-l
 
       set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
