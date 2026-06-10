@@ -223,6 +223,7 @@
             grep -q 'bind-key -n C-f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
+            grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
             grep -q "set -g @plugin 'seebi/tmux-colors-solarized'" ${tmuxConfig}
             grep -q "set -g @plugin 'niksingh710/minimal-tmux-status'" ${tmuxConfig}
             grep -q 'set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/' ${tmuxConfig}
@@ -262,6 +263,7 @@
               grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
+              grep -q "bindkey -s '\^X\^D' 'dev-command-runner" ${zshInit}
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"
@@ -363,6 +365,7 @@
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
             tmuxSessionizer = homeConfig.home.file.".local/scripts/tmux-sessionizer".source;
+            devCommandRunner = homeConfig.home.file.".local/scripts/dev-command-runner".source;
             gitBranchSwitcher = homeConfig.home.file.".local/scripts/git-branch-switcher".source;
             typstSmartOpen = homeConfig.home.file.".local/scripts/typst-smart-open".source;
             typstTemplate = homeConfig.home.file."typst/academic-template.typ".source;
@@ -377,6 +380,7 @@
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*glow.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazygit.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazysql.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*neovim.*" name != null) packageNames;
@@ -392,6 +396,7 @@
                 pkgs.git
                 pkgs.gnugrep
                 pkgs.gnused
+                pkgs.jq
                 pkgs.zsh
               ];
             }
@@ -399,6 +404,7 @@
               set -eu
 
               test -x ${tmuxSessionizer}
+              test -x ${devCommandRunner}
               test -x ${gitBranchSwitcher}
               test -x ${typstSmartOpen}
               test -r ${typstTemplate}
@@ -410,6 +416,11 @@
               grep -q 'typst document> ' ${typstSmartOpen}
               grep -q 'typst compile --pages 1' ${typstSmartOpen}
               grep -q 'Type a new document name' ${typstSmartOpen}
+              grep -q 'dev command> ' ${devCommandRunner}
+              grep -q 'package_manager()' ${devCommandRunner}
+              grep -q 'pnpm-lock.yaml' ${devCommandRunner}
+              grep -q 'git rev-parse --show-toplevel' ${devCommandRunner}
+              grep -q 'tmux display-popup -E -d "$PROJECT_ROOT" -w 90% -h 80%' ${devCommandRunner}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
@@ -490,6 +501,90 @@
               grep -q 'title: "issue-10-check"' "$home/typst/issue-10-check.typ"
               grep -q 'new-session -d -s typst_' "$TMPDIR/tmux.log"
               grep -q "nvim 'issue-10-check.typ'" "$TMPDIR/tmux.log"
+
+              rm -rf "$TMPDIR/dev-project" "$TMPDIR/dev-command.log" "$TMPDIR/dev-fzf-list.log"
+              mkdir -p "$TMPDIR/dev-project/subdir" "$TMPDIR/dev-project/scripts"
+              cd "$TMPDIR/dev-project"
+              git init
+              git config user.email test@example.com
+              git config user.name Test
+              touch pnpm-lock.yaml
+              cat > package.json <<'EOF'
+              {
+                "name": "dev-command-runner-check",
+                "packageManager": "pnpm@10.0.0",
+                "scripts": {
+                  "dev": "vite --host 127.0.0.1",
+                  "lint": "eslint .",
+                  "typecheck": "tsc --noEmit",
+                  "test": "vitest run"
+                }
+              }
+              EOF
+              cat > justfile <<'EOF'
+              check:
+                nix flake check
+
+              _private:
+                echo hidden
+              EOF
+              cat > Makefile <<'EOF'
+              test:
+              	echo test
+
+              _internal:
+              	echo hidden
+              EOF
+              cat > flake.nix <<'EOF'
+              { outputs = { self }: { }; }
+              EOF
+              cat > scripts/check <<'EOF'
+              #!/usr/bin/env bash
+              echo check
+              EOF
+              chmod +x scripts/check
+              git add .
+              git commit -m initial
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              cat > "$TMPDIR/dev-fzf-list.log"
+              if [ "''${FZF_CANCEL:-0}" = 1 ]; then
+                exit 130
+              fi
+              grep -F "$FZF_SELECT" "$TMPDIR/dev-fzf-list.log" | head -n 1
+              EOF
+              chmod +x "$bin/fzf"
+
+              cat > "$bin/pnpm" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'pwd=%s\nargs=%s\n' "$PWD" "$*" > "$TMPDIR/dev-command.log"
+              EOF
+              chmod +x "$bin/pnpm"
+
+              cd "$TMPDIR/dev-project/subdir"
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                TMPDIR="$TMPDIR" \
+                FZF_SELECT="pnpm run dev" \
+                ${devCommandRunner}
+
+              grep -q $'package.json\tpnpm run dev' "$TMPDIR/dev-fzf-list.log"
+              grep -q $'package.json\tpnpm run typecheck' "$TMPDIR/dev-fzf-list.log"
+              grep -q $'package.json\tpnpm test' "$TMPDIR/dev-fzf-list.log"
+              grep -q $'justfile\tjust check' "$TMPDIR/dev-fzf-list.log"
+              grep -q $'Makefile\tmake test' "$TMPDIR/dev-fzf-list.log"
+              grep -q $'nix\tnix flake check' "$TMPDIR/dev-fzf-list.log"
+              grep -q $'scripts\t./scripts/check' "$TMPDIR/dev-fzf-list.log"
+              grep -q "pwd=$TMPDIR/dev-project" "$TMPDIR/dev-command.log"
+              grep -q 'args=run dev' "$TMPDIR/dev-command.log"
+
+              rm -f "$TMPDIR/dev-command.log"
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                TMPDIR="$TMPDIR" \
+                FZF_CANCEL=1 \
+                FZF_SELECT="pnpm run dev" \
+                ${devCommandRunner}
+              test ! -e "$TMPDIR/dev-command.log"
 
               touch "$out"
             '';

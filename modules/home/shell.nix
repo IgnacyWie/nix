@@ -150,6 +150,7 @@ in
       bindkey -s '^H' 'git-branch-switcher\n'
       bindkey -s '^F' 'tmux-sessionizer\n'
       bindkey -s '^G' 'typst-smart-open\n'
+      bindkey -s '^X^D' 'dev-command-runner\n'
     '';
   };
 }

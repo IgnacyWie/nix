@@ -158,6 +158,18 @@ already exist. The zsh `Ctrl-H` binding launches this script outside tmux, and
 the tmux `Ctrl-H` binding launches it in a popup from the current pane
 directory, after tmux plugins have loaded.
 
+Home Manager manages `~/.local/scripts/dev-command-runner`. From inside a
+project, it starts at the Git repository root when available, discovers useful
+development commands from `package.json`, `justfile`/`Justfile`, `Makefile`,
+`flake.nix`, and executable files in `scripts/`, then runs the selected command
+from the project root. Its `fzf` selector uses the `dev command> ` prompt and
+previews script bodies, Just recipes, Make targets, repo scripts, and Nix check
+context. JavaScript package scripts infer the package manager from lock files,
+preferring pnpm, then Yarn, Bun, npm lock files, and finally npm. The zsh
+binding is `Ctrl-X Ctrl-D`; raw `Ctrl-D` is intentionally left to zsh for
+delete-char/EOF behavior. Inside tmux, prefix `D` launches the same runner in a
+90% by 80% popup from the current pane directory.
+
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst
 document from `~/typst` or creates a new one from the template, then starts a
