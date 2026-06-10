@@ -135,6 +135,66 @@
             touch "$out"
           '';
 
+        gamma-shell-caffeinate-wrappers =
+          let
+            homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
+            zshInit = pkgs.writeText "zsh-init" homeConfig.programs.zsh.initContent;
+            zshAliases = homeConfig.programs.zsh.shellAliases;
+          in
+          assert !(builtins.hasAttr "codex" zshAliases);
+          assert !(builtins.hasAttr "claude" zshAliases);
+          pkgs.runCommand "gamma-shell-caffeinate-wrappers-check"
+            {
+              nativeBuildInputs = [
+                pkgs.coreutils
+                pkgs.gnugrep
+                pkgs.zsh
+              ];
+            }
+            ''
+              set -eu
+
+              grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
+              grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
+              grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
+
+              bin="$TMPDIR/bin"
+              mkdir -p "$bin"
+
+              cat > "$bin/caffeinate" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'caffeinate args:'
+              for arg in "$@"; do
+                printf ' <%s>' "$arg"
+              done
+              printf '\n'
+              EOF
+              chmod +x "$bin/caffeinate"
+
+              cat > "$bin/codex" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'real codex should be wrapped\n'
+              EOF
+              chmod +x "$bin/codex"
+
+              cat > "$bin/claude" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'real claude should be wrapped\n'
+              EOF
+              chmod +x "$bin/claude"
+
+              PATH="$bin:${pkgs.coreutils}/bin:${pkgs.zsh}/bin" zsh -f <<EOF > "$TMPDIR/wrapper.log"
+              source ${zshInit}
+              codex --help 'two words'
+              claude --version
+              EOF
+
+              grep -q 'caffeinate args: <-dims> <'"$bin"'/codex> <--help> <two words>' "$TMPDIR/wrapper.log"
+              grep -q 'caffeinate args: <-dims> <'"$bin"'/claude> <--version>' "$TMPDIR/wrapper.log"
+
+              touch "$out"
+            '';
+
         gamma-neovim-config =
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;

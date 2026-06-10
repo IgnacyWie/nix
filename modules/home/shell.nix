@@ -30,8 +30,6 @@ let
   };
 
   projectAliases = {
-    claude = "claude --permission-mode bypassPermissions";
-    codex = "codex --dangerously-bypass-approvals-and-sandbox";
     deploy = "vercel --prod";
     dev = "pnpm run dev";
     revdojo = "./revisiondojo.sh";
@@ -118,6 +116,18 @@ in
       if [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]; then
         . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
       fi
+
+      codex() {
+        local bin
+        bin="$(whence -p codex)" || return
+        caffeinate -dims "$bin" "$@"
+      }
+
+      claude() {
+        local bin
+        bin="$(whence -p claude)" || return
+        caffeinate -dims "$bin" "$@"
+      }
 
       autoload -Uz add-zsh-hook vcs_info
       zstyle ':vcs_info:git:*' formats '%b'

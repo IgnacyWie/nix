@@ -104,6 +104,12 @@ plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
 Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
+Home Manager defines zsh functions for `codex` and `claude` that resolve the
+real executable with `whence -p` and run it under `caffeinate -dims`, forwarding
+all arguments unchanged. This keeps long-running interactive AI CLI sessions
+from sleeping the Mac without relying on recursive aliases or manual shell
+edits.
+
 Home Manager manages Neovim as the primary editor and links the reviewed
 LazyVim-based configuration from `config/nvim` to `~/.config/nvim`. The
 migration keeps the existing LazyVim extras, plugin lock file, Solarized Osaka
