@@ -26,35 +26,6 @@
       if [ -n "$readme" ]; then
         printf 'README: %s\n\n' "$(basename "$readme")"
 
-        image_ref=$(
-          grep -Eo '!\[[^]]*\]\([^)]+' "$readme" \
-            | sed -E 's/^!\[[^]]*\]\(//; s/[[:space:]].*$//' \
-            | grep -Ev '^[[:alpha:]][[:alnum:]+.-]*:|^#' \
-            | head -n 1
-        )
-
-        if [ -n "$image_ref" ]; then
-          case "$image_ref" in
-            /*) image_path="$image_ref" ;;
-            *) image_path="$(dirname "$readme")/$image_ref" ;;
-          esac
-
-          if [ -f "$image_path" ]; then
-            printf 'Image: %s\n\n' "$image_ref"
-
-            if command -v chafa >/dev/null 2>&1; then
-              image_rows=$(( ''${FZF_PREVIEW_LINES:-30} / 3 ))
-              [ "$image_rows" -lt 8 ] && image_rows=8
-              [ "$image_rows" -gt 20 ] && image_rows=20
-              chafa --format kitty --passthrough auto --size "''${FZF_PREVIEW_COLUMNS:-80}x''${image_rows}" "$image_path"
-            else
-              printf '%s\n' "$image_path"
-            fi
-
-            printf '\n'
-          fi
-        fi
-
         if command -v glow >/dev/null 2>&1; then
           glow -s dark -w "''${FZF_PREVIEW_COLUMNS:-100}" "$readme" | sed -n '1,120p'
         elif command -v bat >/dev/null 2>&1; then

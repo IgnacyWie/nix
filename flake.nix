@@ -118,7 +118,6 @@
             grep -q 'bind-key -n C-f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
-            grep -q 'set -g allow-passthrough on' ${tmuxConfig}
             grep -q "set -g @plugin 'seebi/tmux-colors-solarized'" ${tmuxConfig}
             grep -q "set -g @plugin 'niksingh710/minimal-tmux-status'" ${tmuxConfig}
             grep -q 'set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/' ${tmuxConfig}
@@ -182,9 +181,7 @@
               grep -q 'tmux session> ' ${tmuxSessionizer}
               grep -q 'README: %s' ${tmuxSessionizer}
               grep -q 'glow -s dark' ${tmuxSessionizer}
-              grep -q 'chafa --format kitty --passthrough auto --size' ${tmuxSessionizer}
-              grep -q 'image_rows=' ${tmuxSessionizer}
-              grep -q 'Image: %s' ${tmuxSessionizer}
+              ! grep -q 'chafa' ${tmuxSessionizer}
               grep -q 'Recent commits:' ${tmuxSessionizer}
               grep -q 'typst document> ' ${typstSmartOpen}
               grep -q 'typst compile --pages 1' ${typstSmartOpen}
