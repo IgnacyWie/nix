@@ -395,8 +395,6 @@
             homebrewBrewfile = pkgs.writeText "Brewfile" gammaConfiguration.config.homebrew.brewfile;
             homebrewCasks = gammaConfiguration.config.homebrew.casks;
             homebrewCaskNames = builtins.map (cask: cask.name) homebrewCasks;
-            systemPackages = gammaConfiguration.config.environment.systemPackages;
-            packageNames = builtins.map (package: package.name or "") systemPackages;
             karabinerConfig = homeConfig.xdg.configFile."karabiner/karabiner.json".source;
             karabinerGermanLetters =
               homeConfig.xdg.configFile."karabiner/assets/complex_modifications/1709730136.json".source;
@@ -407,7 +405,6 @@
             yabaiConfig = yabaiFile.source;
           in
           assert builtins.elem "karabiner-elements" homebrewCaskNames;
-          assert builtins.any (name: builtins.match ".*blueutil.*" name != null) packageNames;
           assert yabaiFile.executable;
           pkgs.runCommand "gamma-window-management-config-check"
             {
@@ -452,7 +449,6 @@
               grep -q 'echo "yabai configuration loaded.."' ${yabaiConfig}
 
               grep -q 'cmd - return : open -na Ghostty.app' ${skhdConfig}
-              grep -q 'blueutil --connect b0-67-2f-1c-03-65' ${skhdConfig}
               grep -q "alt - w: open -a 'Zen Browser'" ${skhdConfig}
               grep -q 'alt - 1 : yabai -m space --focus  1' ${skhdConfig}
               grep -q 'alt + shift - 9 : yabai -m window --space  9' ${skhdConfig}

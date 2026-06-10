@@ -131,8 +131,7 @@ Run this separately from the single-file Restic restore.
 6. Verify browser and App Store login.
 7. Verify `Dvorak-QWERTY`, Caps Lock to Escape (nix-darwin), and right Command/right Option mapping in Karabiner-Elements.
 8. Verify the migrated skhd bindings for Ghostty launch, space focus/move,
-   window focus/swap/warp, fullscreen, sticky, padding/gap toggle, and the
-   device-specific `blueutil` headphone binding.
+   window focus/swap/warp, fullscreen, sticky, and padding/gap toggle.
 9. Verify the migrated yabai layout, padding, gap, app rules, and
    scripting-addition behavior. If `sudo yabai --load-sa` fails, complete the
    documented sudoers/SIP steps before treating the restore as complete.

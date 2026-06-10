@@ -15,8 +15,6 @@ alt - f : yabai -m window --toggle zoom-fullscreen
 
 alt - s : yabai -m window --toggle sticky
 
-# Headphones Connect
-f19 : blueutil --connect b0-67-2f-1c-03-65
 f18 : ~/.scripts/tailscale_trigger.sh
 f17 : open /Volumes
 f16 : open -a iTerm2 cd ~/Developer/backend

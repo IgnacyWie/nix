@@ -21,7 +21,6 @@
   environment.systemPackages = with pkgs; [
     aider-chat
     bat
-    blueutil
     bun
     chafa
     claude-code
