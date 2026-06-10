@@ -263,6 +263,12 @@
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
             grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
             grep -q 'bind-key -n C-i display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"' ${tmuxConfig}
+            grep -q 'bind-key -n C-h if-shell' ${tmuxConfig}
+            grep -q 'bind-key -n C-j if-shell' ${tmuxConfig}
+            grep -q 'bind-key -n C-k if-shell' ${tmuxConfig}
+            grep -q 'bind-key -n C-l if-shell' ${tmuxConfig}
+            grep -q 'bind-key -n C-\\\\ if-shell' ${tmuxConfig}
+            grep -q "'select-pane -R'" ${tmuxConfig}
             grep -q 'bind-key -n S-Up copy-mode -u \\; send-keys -X scroll-up' ${tmuxConfig}
             grep -q 'bind-key -n S-Down copy-mode \\; send-keys -X scroll-down' ${tmuxConfig}
             grep -q 'bind-key -n S-PPage copy-mode -u \\; send-keys -X page-up' ${tmuxConfig}
@@ -273,6 +279,7 @@
             grep -q 'bind-key -T copy-mode-vi S-NPage send-keys -X page-down' ${tmuxConfig}
             grep -q "set -g @plugin 'seebi/tmux-colors-solarized'" ${tmuxConfig}
             grep -q "set -g @plugin 'niksingh710/minimal-tmux-status'" ${tmuxConfig}
+            grep -q "set -g @plugin 'christoomey/vim-tmux-navigator'" ${tmuxConfig}
             grep -q 'set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/' ${tmuxConfig}
             grep -q 'set -g @minimal-tmux-status "top"' ${tmuxConfig}
             grep -q 'set -g @minimal-tmux-bg "#278BD3"' ${tmuxConfig}
@@ -281,8 +288,9 @@
             grep -q 'unbind-key -n C-h' ${tmuxConfig}
             grep -q 'unbind-key -n C-j' ${tmuxConfig}
             grep -q 'unbind-key -n C-k' ${tmuxConfig}
+            grep -q 'unbind-key -n C-l' ${tmuxConfig}
             grep -q 'unbind-key -n C-\\\\' ${tmuxConfig}
-            grep -q 'bind-key -n C-h display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"' ${tmuxConfig}
+            ! grep -q 'git-branch-switcher' ${tmuxConfig}
             test -x ${tpmSource}/tpm
 
             touch "$out"
@@ -310,6 +318,7 @@
               grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
+              grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^O' 'dev-command-runner" ${zshInit}
               grep -q "bindkey -s '\^I' 'issue-picker\\\\n'" ${zshInit}
 

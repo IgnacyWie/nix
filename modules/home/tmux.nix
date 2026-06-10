@@ -40,6 +40,17 @@
       bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"
       bind-key -n C-i display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"
 
+      unbind-key -n C-h
+      unbind-key -n C-j
+      unbind-key -n C-k
+      unbind-key -n C-l
+      unbind-key -n C-\\
+      bind-key -n C-h if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" 'send-keys C-h' 'select-pane -L'
+      bind-key -n C-j if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" 'send-keys C-j' 'select-pane -D'
+      bind-key -n C-k if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" 'send-keys C-k' 'select-pane -U'
+      bind-key -n C-l if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" 'send-keys C-l' 'select-pane -R'
+      bind-key -n C-\\ if-shell "ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+/)?g?\\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?$'" 'send-keys C-\\' 'select-pane -l'
+
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
       unbind '"'
@@ -103,18 +114,13 @@
 
       set -g @plugin 'seebi/tmux-colors-solarized'
       set -g @plugin 'niksingh710/minimal-tmux-status'
+      set -g @plugin 'christoomey/vim-tmux-navigator'
 
       set -g @minimal-tmux-status "top"
       set -g @minimal-tmux-bg "#278BD3"
       set -g @colors-solarized 'dark'
 
       if-shell 'test -x ~/.tmux/plugins/tpm/tpm' 'run-shell ~/.tmux/plugins/tpm/tpm'
-
-      unbind-key -n C-h
-      unbind-key -n C-j
-      unbind-key -n C-k
-      unbind-key -n C-\\
-      bind-key -n C-h display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"
 
       set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
       set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'

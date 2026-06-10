@@ -127,6 +127,105 @@ all arguments unchanged. This keeps long-running interactive AI CLI sessions
 from sleeping the Mac without relying on recursive aliases or manual shell
 edits.
 
+## Managed Keybindings
+
+### Shell Workflow
+
+| Key | Scope | Action |
+| --- | --- | --- |
+| `Ctrl-F` | zsh, tmux | Launch `tmux-sessionizer`; tmux opens it in a popup. |
+| `Ctrl-G` | zsh, tmux | Launch `typst-smart-open`; tmux opens it from `~/typst`. |
+| `Ctrl-I` | zsh, tmux | Launch `issue-picker`; tmux opens it in a popup. |
+| `Ctrl-O` | zsh | Launch `dev-command-runner`. |
+| `Ctrl-T` | zsh | Launch `git-branch-switcher`. |
+| tmux prefix `D` | tmux | Launch `dev-command-runner` in a popup. |
+| tmux prefix `f` | tmux | Launch `tmux-sessionizer` in a popup. |
+
+### tmux
+
+| Key | Action |
+| --- | --- |
+| `Ctrl-H/J/K/L` | Move left/down/up/right across Neovim splits and tmux panes through `vim-tmux-navigator`; `Ctrl-L` no longer clears the shell in tmux. |
+| `Ctrl-\` | Move to the previously active tmux pane through `vim-tmux-navigator`. |
+| tmux prefix `h/j/k/l` | Select the left/down/up/right tmux pane. |
+| `Alt-Left/Right/Up/Down` | Select the neighboring tmux pane. |
+| tmux prefix `\|` | Split the current pane horizontally. |
+| tmux prefix `-` | Split the current pane vertically. |
+| tmux prefix `r` | Reload `~/.config/tmux/tmux.conf`. |
+| copy mode `v` | Begin selection. |
+| copy mode `y` | Copy selection to the macOS clipboard with `pbcopy`. |
+| `Shift-Up/Down` | Enter or stay in copy mode and scroll by line. |
+| `Shift-PageUp/PageDown` | Enter or stay in copy mode and scroll by page. |
+
+### Neovim
+
+| Key | Action |
+| --- | --- |
+| `Ctrl-H/J/K/L` | Move left/down/up/right across Neovim splits and tmux panes. |
+| `Ctrl-\` | Move to the previously active tmux pane. |
+| `+` / `-` | Increment or decrement the number under the cursor. |
+| `dw` | Delete backward from the cursor to the start of the word. |
+| `Ctrl-A` | Select the whole file. |
+| `Ctrl-M` | Jump forward in the jumplist. |
+| `<leader>t` | Start Typst preview. |
+| `<leader>fe`, `<leader>e` | Toggle Neo-tree at the project root. |
+| `<leader>fE`, `<leader>E` | Toggle Neo-tree at the current working directory. |
+| `<leader>ge` | Toggle Neo-tree Git status view. |
+| `<leader>be` | Toggle Neo-tree buffer view. |
+| `<leader>xx`, `<leader>xX` | Toggle workspace or buffer diagnostics in Trouble. |
+| `<leader>cs`, `<leader>cl` | Toggle Trouble symbols or LSP view. |
+| `<leader>xL`, `<leader>xQ` | Toggle Trouble location list or quickfix list. |
+| `<localleader>me`, `<localleader>r` | Evaluate Molten operator or visual selection. |
+| `<localleader>rr`, `<localleader>rc` | Re-evaluate a Molten cell or run a Quarto cell. |
+| `<localleader>ra`, `<localleader>rA`, `<localleader>RA` | Run cells above, all cells, or all languages. |
+| `<localleader>rl` | Run the current Quarto line. |
+| `<localleader>os`, `<localleader>oh` | Open or hide Molten output. |
+| `<localleader>md`, `<localleader>mx` | Delete a Molten cell or open output in the browser. |
+| `` `a``/`` `c``/`` `e``/`` `l``/`` `n``/`` `o``/`` `s``/`` `z``/`` `x`` | Insert Polish lowercase diacritics in insert mode. |
+| Uppercase variants such as `` `A`` and `` `Z`` | Insert Polish uppercase diacritics in insert mode. |
+
+### Ghostty
+
+These bindings preserve QWERTY-style Command shortcuts on the Dvorak-QWERTY
+Command layout.
+
+| Key | Action |
+| --- | --- |
+| `Cmd-J` | Copy to clipboard. |
+| `Cmd-K` | Paste from clipboard. |
+| `Cmd-,` | Close surface. |
+| `Cmd-Y` | New tab. |
+| `Cmd-B` | New window. |
+| `Cmd-'` | Quit Ghostty. |
+| `Cmd-W` | Reload Ghostty config. |
+
+### Window Management
+
+| Key | Action |
+| --- | --- |
+| `Cmd-Return` | Open a new Ghostty instance. |
+| `Alt-Return` | Open Ghostty and start `ssh dev`. |
+| `Alt-W` | Open Zen Browser. |
+| `Alt-F`, `Alt-U` | Toggle yabai fullscreen zoom for the focused window. |
+| `Alt-S` | Toggle sticky window. |
+| `Alt-H/T` | Focus previous or next window. |
+| `Alt-Shift-D/H/T/N` | Swap the focused window west/south/north/east. |
+| `Shift-Cmd-D/H/T/N` | Stack the focused window west/south/north/east. |
+| `Alt-Cmd-D/H/T/N` | Warp the focused window west/south/north/east. |
+| `Alt-Tab`, `Alt-Shift-Tab` | Focus next or previous stacked window. |
+| `Alt-Shift-0` | Balance windows in the current space. |
+| `Alt-R` | Rotate the current space by 90 degrees. |
+| `Alt-J` | Toggle yabai padding and gaps. |
+| `Alt-1` through `Alt-9` | Focus space 1 through 9. |
+| `Alt-0`, `Alt-L` | Focus the recent space. |
+| `Alt-Shift-1` through `Alt-Shift-9` | Move the focused window to space 1 through 9. |
+| `Alt-Shift-Space` | Toggle floating mode and place the focused window on a grid. |
+| `F18` | Run the local Tailscale trigger script. |
+| `F17` | Open `/Volumes`. |
+| `F16` | Open iTerm2 at `~/Developer/backend`. |
+| `F8` | Focus space 6. |
+| `F4` | Open Firefox Developer Edition. |
+
 Home Manager manages Neovim as the primary editor and links the reviewed
 LazyVim-based configuration from `config/nvim` to `~/.config/nvim`. The
 migration keeps the existing LazyVim extras, plugin lock file, Solarized Osaka
@@ -154,9 +253,7 @@ Home Manager manages `~/.local/scripts/git-branch-switcher`. Inside a Git
 repository, it uses `fzf` to select local and remote branches by recent commit
 date, shows a short commit-log preview, and switches to the selected branch.
 Selecting a remote branch creates a local tracking branch when one does not
-already exist. The zsh `Ctrl-H` binding launches this script outside tmux, and
-the tmux `Ctrl-H` binding launches it in a popup from the current pane
-directory, after tmux plugins have loaded.
+already exist. The zsh `Ctrl-T` binding launches this script.
 
 Home Manager manages `~/.local/scripts/dev-command-runner`. From inside a
 project, it starts at the Git repository root when available, discovers useful
