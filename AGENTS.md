@@ -63,6 +63,8 @@ chore(docs): created PLAN.md
 
 Continue using `type(scope): summary`, such as `feat(nix): add darwin host` or `docs(backup): document restore drill`.
 
+After every major change or feature, update the relevant documentation, commit the work with an appropriate Conventional Commit message, and push it to the configured upstream unless explicitly told not to.
+
 Pull requests should describe the intent, list important commands run, mention any manual macOS steps, and call out changes that affect secrets, backups, or system defaults.
 
 ## Security & Configuration Tips
