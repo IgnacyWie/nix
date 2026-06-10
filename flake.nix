@@ -86,6 +86,8 @@
             };
             customGlobal = defaults.CustomUserPreferences.NSGlobalDomain;
             hitoolbox = defaults.CustomUserPreferences."com.apple.HIToolbox";
+            spotlightHotkey =
+              defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys."64";
           in
           assert defaults.dock.autohide == true;
           assert defaults.dock.autohide-delay == 0.0;
@@ -164,6 +166,14 @@
             hitoolbox.AppleSelectedInputSources == [
               dvorakQwerty
             ];
+          assert spotlightHotkey.enabled == false;
+          assert
+            spotlightHotkey.value.parameters == [
+              32
+              49
+              1048576
+            ];
+          assert spotlightHotkey.value.type == "standard";
           pkgs.runCommand "gamma-macos-defaults-check" { } ''
             set -eu
             touch "$out"

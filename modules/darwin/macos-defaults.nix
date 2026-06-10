@@ -117,6 +117,22 @@
             dvorakQwerty
           ];
         };
+
+        "com.apple.symbolichotkeys" = {
+          AppleSymbolicHotKeys = {
+            "64" = {
+              enabled = false;
+              value = {
+                parameters = [
+                  32
+                  49
+                  1048576
+                ];
+                type = "standard";
+              };
+            };
+          };
+        };
       };
   };
 }
