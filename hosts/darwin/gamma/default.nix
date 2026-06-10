@@ -39,6 +39,7 @@
     just
     jq
     lazygit
+    lazysql
     neovim
     opencode
     posting

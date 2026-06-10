@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   home.file.".tmux.conf" = {
@@ -6,6 +6,16 @@
     text = ''
       source-file ${config.xdg.configHome}/tmux/tmux.conf
     '';
+  };
+
+  home.file.".tmux/plugins/tpm" = {
+    force = true;
+    source = pkgs.fetchFromGitHub {
+      owner = "tmux-plugins";
+      repo = "tpm";
+      rev = "99469c4a9b1ccf77fade25842dc7bafbc8ce9946";
+      hash = "sha256-hW8mfwB8F9ZkTQ72WQp/1fy8KL1IIYMZBtZYIwZdMQc=";
+    };
   };
 
   programs.tmux = {
@@ -69,7 +79,8 @@
       bind-key k select-pane -U
       bind-key l select-pane -R
 
-      set -g @plugin 'tmux-plugins/tpm'
+      set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/
+
       set -g @plugin 'christoomey/vim-tmux-navigator'
       set -g @plugin 'seebi/tmux-colors-solarized'
       set -g @plugin 'niksingh710/minimal-tmux-status'

@@ -95,13 +95,20 @@ switches to a named tmux session, and opens the first window as `codex` before
 adding the usual development, Git, database, and REST client windows. The zsh
 `Ctrl-F` binding and tmux prefix `f` binding both launch this script.
 
+Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
+`~/typst/academic-template.typ` template. The script opens an existing Typst
+document from `~/typst` or creates a new one from the template, then starts a
+dedicated tmux editor session. Home Manager creates `~/Developer` and `~/typst`
+when missing, but it does not manage project directories or generated Typst
+documents.
+
 Home Manager manages tmux configuration while Homebrew remains the tmux binary
-provider on `gamma`. TPM remains the v1 tmux plugin manager, with
-`tmux-plugins/tpm`, `christoomey/vim-tmux-navigator`,
-`seebi/tmux-colors-solarized`, and `niksingh710/minimal-tmux-status` declared
-in `modules/home/tmux.nix`. The Darwin PAM configuration enables Touch ID for
-sudo and reattaches sudo authentication to the user session so Touch ID also
-works inside tmux.
+provider on `gamma`. Home Manager also pins the TPM checkout at
+`~/.tmux/plugins/tpm`; TPM remains the v1 tmux plugin manager for
+`christoomey/vim-tmux-navigator`, `seebi/tmux-colors-solarized`, and
+`niksingh710/minimal-tmux-status`, using the old `~/.tmux/plugins/` plugin path.
+The Darwin PAM configuration enables Touch ID for sudo and reattaches sudo
+authentication to the user session so Touch ID also works inside tmux.
 
 ## Recovery Contract
 
