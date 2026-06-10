@@ -6,6 +6,7 @@
     ./git.nix
     ./shell.nix
     ./ssh.nix
+    ./tmux.nix
   ];
 
   home = {

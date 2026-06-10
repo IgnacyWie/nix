@@ -16,6 +16,7 @@
 
     brews = [
       "nvm"
+      "tmux"
       "yabai"
       "skhd"
     ];

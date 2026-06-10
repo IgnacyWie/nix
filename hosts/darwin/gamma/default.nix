@@ -45,7 +45,6 @@
     restic
     ripgrep
     terminal-notifier
-    tmux
     tree
     typst
     uv
