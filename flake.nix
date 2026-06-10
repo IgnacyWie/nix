@@ -81,15 +81,22 @@
           assert agent.enable;
           assert interval.Hour == 20;
           assert interval.Minute == 0;
+          assert agent.config.RunAtLoad == true;
+          assert agent.config.StartInterval == 21600;
           pkgs.runCommand "gamma-backup-config-check" { } ''
             set -eu
 
             test -x ${program}
+            test "${builtins.elemAt agent.config.ProgramArguments 1}" = "--scheduled"
             grep -q 'RESTIC_REPOSITORY=b2:gamma-backup-restic:gamma' ${program}
             grep -q 'restic-gamma-b2-account-id' ${program}
             grep -q 'restic-gamma-b2-account-key' ${program}
             grep -q 'restic-gamma-password' ${program}
             grep -q -- '--exclude-file' ${program}
+            grep -q -- '--scheduled' ${program}
+            grep -q 'retry 3 300 backup' ${program}
+            grep -q 'retry 2 300 retention' ${program}
+            grep -q 'Last successful backup is less than 20 hours old' ${program}
             grep -q -- '--keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune' ${program}
 
             touch "$out"

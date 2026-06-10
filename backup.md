@@ -93,7 +93,18 @@ and unpushed work can be part of the recoverable workstation state.
 
 ## Schedule And Retention
 
-The intended v1 schedule is one automatic backup per day.
+The intended v1 cadence is one successful automatic backup per day.
+
+The launchd agent starts at login, at 20:00, and every 6 hours as a catch-up
+attempt. Scheduled runs skip when a successful backup marker is less than 20
+hours old. This makes laptop sleep, temporary network loss, and Nix
+configuration reloads less likely to leave the machine unprotected for a full
+day.
+
+Each managed run retries the backup up to 3 times with a 5 minute delay between
+attempts. Retention is retried up to 2 times after a successful backup. A
+process killed by shutdown, sleep, or launchd unload cannot continue retrying
+inside that same process, so the catch-up launchd interval is the recovery path.
 
 The intended retention policy is:
 

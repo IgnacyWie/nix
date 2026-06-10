@@ -49,6 +49,25 @@ let
       export B2_ACCOUNT_KEY
       export RESTIC_PASSWORD
 
+      mode="manual"
+      if [ "''${1:-}" = "--scheduled" ]; then
+        mode="scheduled"
+      elif [ "''${1:-}" != "" ]; then
+        printf 'Usage: gamma-restic-backup [--scheduled]\n' >&2
+        exit 2
+      fi
+
+      state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/gamma-restic-backup"
+      success_marker="$state_dir/last-success"
+      mkdir -p "$state_dir"
+
+      if [ "$mode" = "scheduled" ] && [ -e "$success_marker" ]; then
+        if find "$success_marker" -mmin -1200 -print -quit | grep -q .; then
+          printf 'Last successful backup is less than 20 hours old; skipping scheduled catch-up.\n'
+          exit 0
+        fi
+      fi
+
       backup_args=()
 
       add_backup_path() {
@@ -66,8 +85,34 @@ let
         exit 1
       fi
 
-      restic backup "''${backup_args[@]}" --exclude-file ${lib.escapeShellArg ../../backup-excludes.txt}
-      restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
+      retry() {
+        attempts="$1"
+        delay_seconds="$2"
+        description="$3"
+        shift 3
+
+        attempt=1
+        while true; do
+          printf 'Starting %s attempt %s/%s.\n' "$description" "$attempt" "$attempts"
+          if "$@"; then
+            return 0
+          fi
+
+          status="$?"
+          if [ "$attempt" -ge "$attempts" ]; then
+            printf '%s failed after %s attempts; last exit code: %s.\n' "$description" "$attempts" "$status" >&2
+            return "$status"
+          fi
+
+          printf '%s failed with exit code %s; retrying in %s seconds.\n' "$description" "$status" "$delay_seconds" >&2
+          sleep "$delay_seconds"
+          attempt="$((attempt + 1))"
+        done
+      }
+
+      retry 3 300 backup restic backup "''${backup_args[@]}" --exclude-file ${lib.escapeShellArg ../../backup-excludes.txt}
+      touch "$success_marker"
+      retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
     '';
   };
 in
@@ -85,8 +130,11 @@ in
     config = {
       ProgramArguments = [
         (lib.getExe backupCommand)
+        "--scheduled"
       ];
       ProcessType = "Background";
+      RunAtLoad = true;
+      StartInterval = 21600;
       StartCalendarInterval = [
         {
           Hour = 20;
