@@ -151,7 +151,7 @@ in
       bindkey -s '^I' 'issue-picker\n'
       bindkey -s '^F' 'tmux-sessionizer\n'
       bindkey -s '^G' 'typst-smart-open\n'
-      bindkey -s '^X^D' 'dev-command-runner\n'
+      bindkey -s '^O' 'dev-command-runner\n'
     '';
   };
 }

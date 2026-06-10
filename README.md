@@ -166,7 +166,7 @@ from the project root. Its `fzf` selector uses the `dev command> ` prompt and
 previews script bodies, Just recipes, Make targets, repo scripts, and Nix check
 context. JavaScript package scripts infer the package manager from lock files,
 preferring pnpm, then Yarn, Bun, npm lock files, and finally npm. The zsh
-binding is `Ctrl-X Ctrl-D`; raw `Ctrl-D` is intentionally left to zsh for
+binding is `Ctrl-O`; raw `Ctrl-D` is intentionally left to zsh for
 delete-char/EOF behavior. Inside tmux, prefix `D` launches the same runner in a
 90% by 80% popup from the current pane directory.
 

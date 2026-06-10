@@ -310,7 +310,7 @@
               grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
-              grep -q "bindkey -s '\^X\^D' 'dev-command-runner" ${zshInit}
+              grep -q "bindkey -s '\^O' 'dev-command-runner" ${zshInit}
               grep -q "bindkey -s '\^I' 'issue-picker\\\\n'" ${zshInit}
 
               bin="$TMPDIR/bin"
