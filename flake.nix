@@ -262,6 +262,7 @@
             grep -q 'bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
             grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
+            grep -q 'bind-key -n C-i display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"' ${tmuxConfig}
             grep -q 'bind-key -n S-Up copy-mode -u \\; send-keys -X scroll-up' ${tmuxConfig}
             grep -q 'bind-key -n S-Down copy-mode \\; send-keys -X scroll-down' ${tmuxConfig}
             grep -q 'bind-key -n S-PPage copy-mode -u \\; send-keys -X page-up' ${tmuxConfig}
@@ -310,6 +311,7 @@
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
               grep -q "bindkey -s '\^X\^D' 'dev-command-runner" ${zshInit}
+              grep -q "bindkey -s '\^I' 'issue-picker\\\\n'" ${zshInit}
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"
@@ -413,6 +415,7 @@
             tmuxSessionizer = homeConfig.home.file.".local/scripts/tmux-sessionizer".source;
             devCommandRunner = homeConfig.home.file.".local/scripts/dev-command-runner".source;
             gitBranchSwitcher = homeConfig.home.file.".local/scripts/git-branch-switcher".source;
+            issuePicker = homeConfig.home.file.".local/scripts/issue-picker".source;
             typstSmartOpen = homeConfig.home.file.".local/scripts/typst-smart-open".source;
             backupRestorePicker = homeConfig.home.file.".local/scripts/backup-restore-picker".source;
             typstTemplate = homeConfig.home.file."typst/academic-template.typ".source;
@@ -426,6 +429,7 @@
           assert builtins.any (name: builtins.match ".*chafa.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*bat.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*gh.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*glow.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
@@ -455,10 +459,16 @@
               test -x ${tmuxSessionizer}
               test -x ${devCommandRunner}
               test -x ${gitBranchSwitcher}
+              test -x ${issuePicker}
               test -x ${typstSmartOpen}
               test -x ${backupRestorePicker}
               test -r ${typstTemplate}
               grep -q 'tmux session> ' ${tmuxSessionizer}
+              grep -q 'issue> ' ${issuePicker}
+              grep -q 'issue action> ' ${issuePicker}
+              grep -q 'github_repo_from_remote' ${issuePicker}
+              grep -q 'pbcopy' ${issuePicker}
+              grep -q 'git switch -c "$branch_name"' ${issuePicker}
               grep -q 'README: %s' ${tmuxSessionizer}
               grep -q 'glow -s dark' ${tmuxSessionizer}
               ! grep -q 'chafa' ${tmuxSessionizer}
@@ -479,6 +489,10 @@
               ! grep -q 'restore-original-path' ${backupRestorePicker}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
+
+              test "$(ISSUE_PICKER_TEST_REMOTE=1 ${issuePicker} git@github.com:IgnacyWie/nix.git)" = "IgnacyWie/nix"
+              test "$(ISSUE_PICKER_TEST_REMOTE=1 ${issuePicker} https://github.com/IgnacyWie/nix.git)" = "IgnacyWie/nix"
+              test "$(ISSUE_PICKER_TEST_REMOTE=1 ${issuePicker} https://github.com/IgnacyWie/nix)" = "IgnacyWie/nix"
 
               home="$TMPDIR/home"
               bin="$TMPDIR/bin"
@@ -539,6 +553,117 @@
                 ${gitBranchSwitcher}
 
               test "$(git branch --show-current)" = "feature/git-branch-switcher"
+
+              cat > "$bin/gh" <<'EOF'
+              #!${pkgs.runtimeShell}
+              case "$1 $2" in
+                "issue list")
+                  printf '#31    feat(scripts): add fuzzy GitHub issue picker                    ready-for-agent \n'
+                  ;;
+                "issue view")
+                  printf '{"number":31,"title":"feat(scripts): add fuzzy GitHub issue picker","url":"https://github.com/IgnacyWie/nix/issues/31"}\n'
+                  ;;
+                *)
+                  printf 'unexpected gh call: %s\n' "$*" >&2
+                  exit 1
+                  ;;
+              esac
+              EOF
+              chmod +x "$bin/gh"
+
+              cat > "$bin/pbcopy" <<'EOF'
+              #!${pkgs.runtimeShell}
+              cat > "$TMPDIR/pbcopy.log"
+              EOF
+              chmod +x "$bin/pbcopy"
+
+              cat > "$bin/open" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf '%s\n' "$*" > "$TMPDIR/open.log"
+              EOF
+              chmod +x "$bin/open"
+
+              mkdir -p "$home/Developer/issue-project"
+              cd "$home/Developer/issue-project"
+              git init
+              git config user.email test@example.com
+              git config user.name Test
+              git remote add origin git@github.com:IgnacyWie/nix.git
+              printf 'main\n' > README.md
+              git add README.md
+              git commit -m initial
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              exit 130
+              EOF
+              chmod +x "$bin/fzf"
+
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                ${issuePicker}
+
+              test ! -e "$TMPDIR/pbcopy.log"
+              test "$(git branch --show-current)" = "master"
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              count_file="$TMPDIR/issue-picker-fzf-count"
+              count=0
+              if [ -f "$count_file" ]; then
+                count=$(cat "$count_file")
+              fi
+              count=$((count + 1))
+              printf '%s\n' "$count" > "$count_file"
+              case "$count" in
+                1) printf '#31    feat(scripts): add fuzzy GitHub issue picker                    ready-for-agent \n' ;;
+                2) printf 'copy-url\n' ;;
+              esac
+              EOF
+              chmod +x "$bin/fzf"
+              rm -f "$TMPDIR/issue-picker-fzf-count"
+
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                ${issuePicker}
+
+              test "$(cat "$TMPDIR/pbcopy.log")" = "https://github.com/IgnacyWie/nix/issues/31"
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              count_file="$TMPDIR/issue-picker-fzf-count"
+              count=0
+              if [ -f "$count_file" ]; then
+                count=$(cat "$count_file")
+              fi
+              count=$((count + 1))
+              printf '%s\n' "$count" > "$count_file"
+              case "$count" in
+                1) printf '#31    feat(scripts): add fuzzy GitHub issue picker                    ready-for-agent \n' ;;
+                2) printf 'branch\n' ;;
+              esac
+              EOF
+              chmod +x "$bin/fzf"
+              rm -f "$TMPDIR/issue-picker-fzf-count"
+
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                ${issuePicker}
+
+              test "$(git branch --show-current)" = "issue-31-add-fuzzy-github-issue-picker"
+
+              git switch master
+              rm -f "$TMPDIR/issue-picker-fzf-count"
+
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                ${issuePicker}
+
+              test "$(git branch --show-current)" = "issue-31-add-fuzzy-github-issue-picker"
 
               cat > "$bin/fzf" <<'EOF'
               #!${pkgs.runtimeShell}
