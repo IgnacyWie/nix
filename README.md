@@ -140,7 +140,7 @@ Karabiner. LazyVim's built-in defaults are inherited but not duplicated here.
 | `Ctrl-F` | zsh, tmux | Launch `tmux-sessionizer`; tmux opens it in a popup. |
 | `Ctrl-G` | zsh, tmux | Launch `typst-smart-open`; tmux opens it from `~/typst`. |
 | `Ctrl-I` | zsh, tmux | Launch `issue-picker`; tmux opens it in a popup. |
-| `Ctrl-O` | zsh | Launch `dev-command-runner`. |
+| `Ctrl-O` | zsh, tmux | Launch `dev-command-runner`; tmux opens it in a popup. |
 | `Ctrl-T` | zsh | Launch `git-branch-switcher`. |
 | tmux prefix `D` | tmux | Launch `dev-command-runner` in a popup. |
 | tmux prefix `f` | tmux | Launch `tmux-sessionizer` in a popup. |
@@ -301,10 +301,10 @@ development commands from `package.json`, `justfile`/`Justfile`, `Makefile`,
 from the project root. Its `fzf` selector uses the `dev command> ` prompt and
 previews script bodies, Just recipes, Make targets, repo scripts, and Nix check
 context. JavaScript package scripts infer the package manager from lock files,
-preferring pnpm, then Yarn, Bun, npm lock files, and finally npm. The zsh
-binding is `Ctrl-O`; raw `Ctrl-D` is intentionally left to zsh for
-delete-char/EOF behavior. Inside tmux, prefix `D` launches the same runner in a
-90% by 80% popup from the current pane directory.
+preferring pnpm, then Yarn, Bun, npm lock files, and finally npm. The zsh and
+tmux binding is `Ctrl-O`; raw `Ctrl-D` is intentionally left to zsh for
+delete-char/EOF behavior. Inside tmux, `Ctrl-O` and prefix `D` launch the same
+runner in a 90% by 80% popup from the current pane directory.
 
 Home Manager manages `~/.local/scripts/issue-picker`. Inside a GitHub-backed
 Git repository, it detects the current `owner/repo` from the local Git remote,
