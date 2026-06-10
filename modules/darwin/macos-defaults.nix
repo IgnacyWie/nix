@@ -4,6 +4,7 @@
   system.defaults = {
     dock = {
       autohide = true;
+      autohide-delay = 0.0;
       autohide-time-modifier = 0.0;
       launchanim = false;
       magnification = false;
@@ -12,7 +13,9 @@
       show-recents = false;
       showAppExposeGestureEnabled = true;
       showDesktopGestureEnabled = true;
+      showhidden = true;
       showMissionControlGestureEnabled = true;
+      slow-motion-allowed = false;
       tilesize = 67;
     };
 
@@ -40,10 +43,12 @@
       AppleEnableSwipeNavigateWithScrolls = false;
       AppleInterfaceStyle = "Dark";
       AppleShowAllExtensions = true;
+      AppleShowScrollBars = "Always";
       ApplePressAndHoldEnabled = false;
       InitialKeyRepeat = 30;
       KeyRepeat = 2;
       NSAutomaticWindowAnimationsEnabled = false;
+      NSDocumentSaveNewDocumentsToCloud = false;
       NSTableViewDefaultSizeMode = 2;
       NSWindowResizeTime = 0.001;
       NSWindowShouldDragOnGesture = true;
@@ -53,6 +58,14 @@
 
     universalaccess = {
       reduceMotion = true;
+      reduceTransparency = true;
+    };
+
+    trackpad = {
+      Clicking = true;
+      ForceSuppressed = true;
+      TrackpadRightClick = true;
+      TrackpadThreeFingerDrag = true;
     };
 
     WindowManager = {
@@ -68,6 +81,10 @@
     };
 
     screencapture = {
+      disable-shadow = true;
+      location = "/Users/ignacywielogorski/Pictures/Screenshots";
+      save-selections = true;
+      show-thumbnail = false;
       type = "png";
     };
 

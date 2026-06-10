@@ -79,6 +79,7 @@ in
   home.activation.createWorkstationDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Developer"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/typst"}
+    run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Pictures/Screenshots"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.nvm"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/bin"}
     run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/scripts"}

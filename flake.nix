@@ -88,6 +88,7 @@
             hitoolbox = defaults.CustomUserPreferences."com.apple.HIToolbox";
           in
           assert defaults.dock.autohide == true;
+          assert defaults.dock.autohide-delay == 0.0;
           assert defaults.dock.autohide-time-modifier == 0.0;
           assert defaults.dock.launchanim == false;
           assert defaults.dock.magnification == false;
@@ -96,7 +97,9 @@
           assert defaults.dock.show-recents == false;
           assert defaults.dock.showAppExposeGestureEnabled == true;
           assert defaults.dock.showDesktopGestureEnabled == true;
+          assert defaults.dock.showhidden == true;
           assert defaults.dock.showMissionControlGestureEnabled == true;
+          assert defaults.dock.slow-motion-allowed == false;
           assert defaults.dock.tilesize == 67;
           assert defaults.finder.AppleShowAllExtensions == true;
           assert defaults.finder.AppleShowAllFiles == false;
@@ -118,16 +121,23 @@
           assert defaults.NSGlobalDomain.AppleEnableSwipeNavigateWithScrolls == false;
           assert defaults.NSGlobalDomain.AppleInterfaceStyle == "Dark";
           assert defaults.NSGlobalDomain.AppleShowAllExtensions == true;
+          assert defaults.NSGlobalDomain.AppleShowScrollBars == "Always";
           assert defaults.NSGlobalDomain.ApplePressAndHoldEnabled == false;
           assert defaults.NSGlobalDomain.InitialKeyRepeat == 30;
           assert defaults.NSGlobalDomain.KeyRepeat == 2;
           assert defaults.NSGlobalDomain.NSAutomaticWindowAnimationsEnabled == false;
+          assert defaults.NSGlobalDomain.NSDocumentSaveNewDocumentsToCloud == false;
           assert defaults.NSGlobalDomain.NSTableViewDefaultSizeMode == 2;
           assert defaults.NSGlobalDomain.NSWindowResizeTime == 0.001;
           assert defaults.NSGlobalDomain.NSWindowShouldDragOnGesture == true;
           assert defaults.NSGlobalDomain._HIHideMenuBar == false;
           assert defaults.NSGlobalDomain."com.apple.springing.enabled" == true;
           assert defaults.universalaccess.reduceMotion == true;
+          assert defaults.universalaccess.reduceTransparency == true;
+          assert defaults.trackpad.Clicking == true;
+          assert defaults.trackpad.ForceSuppressed == true;
+          assert defaults.trackpad.TrackpadRightClick == true;
+          assert defaults.trackpad.TrackpadThreeFingerDrag == true;
           assert defaults.WindowManager.AppWindowGroupingBehavior == true;
           assert defaults.WindowManager.AutoHide == false;
           assert defaults.WindowManager.EnableStandardClickToShowDesktop == false;
@@ -137,6 +147,10 @@
           assert defaults.WindowManager.StageManagerHideWidgets == true;
           assert defaults.WindowManager.StandardHideDesktopIcons == true;
           assert defaults.WindowManager.StandardHideWidgets == true;
+          assert defaults.screencapture.disable-shadow == true;
+          assert defaults.screencapture.location == "/Users/ignacywielogorski/Pictures/Screenshots";
+          assert defaults.screencapture.save-selections == true;
+          assert defaults.screencapture.show-thumbnail == false;
           assert defaults.screencapture.type == "png";
           assert customGlobal.AppleMiniaturizeOnDoubleClick == false;
           assert customGlobal.AppleReduceDesktopTinting == true;
