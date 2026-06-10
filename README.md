@@ -99,7 +99,9 @@ Home Manager manages `~/.local/scripts/git-branch-switcher`. Inside a Git
 repository, it uses `fzf` to select local and remote branches by recent commit
 date, shows a short commit-log preview, and switches to the selected branch.
 Selecting a remote branch creates a local tracking branch when one does not
-already exist. The zsh `Ctrl-H` binding launches this script.
+already exist. The zsh `Ctrl-H` binding launches this script outside tmux, and
+the tmux `Ctrl-H` binding launches it in a new window from the current pane
+directory.
 
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst

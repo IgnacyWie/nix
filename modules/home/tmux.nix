@@ -30,6 +30,7 @@
 
     extraConfig = ''
       bind-key -r f run-shell "tmux neww ~/.local/scripts/tmux-sessionizer"
+      bind-key -n C-h new-window -c "#{pane_current_path}" "~/.local/scripts/git-branch-switcher"
 
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"

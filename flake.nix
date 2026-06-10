@@ -122,6 +122,7 @@
             grep -q 'set -g @minimal-tmux-status "top"' ${tmuxConfig}
             grep -q 'set -g @minimal-tmux-bg "#278BD3"' ${tmuxConfig}
             grep -q "set -g @colors-solarized 'dark'" ${tmuxConfig}
+            grep -q 'bind-key -n C-h new-window -c "#{pane_current_path}" "~/.local/scripts/git-branch-switcher"' ${tmuxConfig}
             grep -q "if-shell 'test -x ~/.tmux/plugins/tpm/tpm' 'run-shell ~/.tmux/plugins/tpm/tpm'" ${tmuxConfig}
             test -x ${tpmSource}/tpm
 
