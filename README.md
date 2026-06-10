@@ -95,6 +95,12 @@ switches to a named tmux session, and opens the first window as `codex` before
 adding the usual development, Git, database, and REST client windows. The zsh
 `Ctrl-F` binding and tmux prefix `f` binding both launch this script.
 
+Home Manager manages `~/.local/scripts/git-branch-switcher`. Inside a Git
+repository, it uses `fzf` to select local and remote branches by recent commit
+date, shows a short commit-log preview, and switches to the selected branch.
+Selecting a remote branch creates a local tracking branch when one does not
+already exist. The zsh `Ctrl-H` binding launches this script.
+
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst
 document from `~/typst` or creates a new one from the template, then starts a

@@ -136,6 +136,7 @@ in
       add-zsh-hook precmd gamma_prompt_precmd
       PROMPT='γ %~/ ''${gamma_git_prompt}'
 
+      bindkey -s '^H' 'git-branch-switcher\n'
       bindkey -s '^F' 'tmux-sessionizer\n'
       bindkey -s '^G' 'typst-smart-open\n'
     '';

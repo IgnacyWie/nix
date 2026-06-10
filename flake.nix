@@ -132,6 +132,7 @@
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
             tmuxSessionizer = homeConfig.home.file.".local/scripts/tmux-sessionizer".source;
+            gitBranchSwitcher = homeConfig.home.file.".local/scripts/git-branch-switcher".source;
             typstSmartOpen = homeConfig.home.file.".local/scripts/typst-smart-open".source;
             typstTemplate = homeConfig.home.file."typst/academic-template.typ".source;
             homebrewBrews = gammaConfiguration.config.homebrew.brews;
@@ -141,6 +142,7 @@
           in
           assert builtins.elem "tmux" homebrewBrewNames;
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazygit.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazysql.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*neovim.*" name != null) packageNames;
@@ -152,6 +154,8 @@
                 pkgs.bash
                 pkgs.coreutils
                 pkgs.findutils
+                pkgs.gawk
+                pkgs.git
                 pkgs.gnugrep
                 pkgs.gnused
                 pkgs.zsh
@@ -161,6 +165,7 @@
               set -eu
 
               test -x ${tmuxSessionizer}
+              test -x ${gitBranchSwitcher}
               test -x ${typstSmartOpen}
               test -r ${typstTemplate}
 
@@ -201,6 +206,34 @@
               grep -q 'new-window -t example-project -n node -c' "$TMPDIR/tmux.log"
               grep -q 'send-keys -t example-project:4 lazysql C-m' "$TMPDIR/tmux.log"
               grep -q 'switch-client -t example-project' "$TMPDIR/tmux.log"
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'feature/git-branch-switcher\n'
+              EOF
+              chmod +x "$bin/fzf"
+
+              mkdir -p "$home/Developer/git-project"
+              cd "$home/Developer/git-project"
+              git init
+              git config user.email test@example.com
+              git config user.name Test
+              printf 'main\n' > README.md
+              git add README.md
+              git commit -m initial
+              git branch feature/git-branch-switcher
+
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.gnused}/bin" \
+                HOME="$home" \
+                ${gitBranchSwitcher}
+
+              test "$(git branch --show-current)" = "feature/git-branch-switcher"
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'issue-10-check\n'
+              EOF
+              chmod +x "$bin/fzf"
 
               PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:${pkgs.zsh}/bin" \
                 HOME="$home" \

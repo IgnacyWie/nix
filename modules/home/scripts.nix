@@ -83,6 +83,73 @@
     '';
   };
 
+  home.file.".local/scripts/git-branch-switcher" = {
+    executable = true;
+    force = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      if ! repo_root=$(git rev-parse --show-toplevel 2>/dev/null); then
+        printf '%s\n' "git-branch-switcher: not inside a git repository" >&2
+        exit 1
+      fi
+
+      cd "$repo_root"
+
+      if [[ $# -eq 1 ]]; then
+        selected=$1
+      else
+        branch_list=$(
+          git for-each-ref \
+            --sort=-committerdate \
+            --format='%(refname:short)' \
+            refs/heads \
+            refs/remotes \
+            | sed '/ -> /d;/\/HEAD$/d' \
+            | awk '!seen[$0]++'
+        )
+
+        if ! selected=$(
+          fzf \
+            --prompt='git branch> ' \
+            --preview='git log --oneline --decorate --color=always -n 20 {} 2>/dev/null' \
+            <<< "$branch_list"
+        ); then
+          exit 0
+        fi
+      fi
+
+      if [[ -z $selected ]]; then
+        exit 0
+      fi
+
+      current_branch=$(git branch --show-current)
+      if [[ $selected == "$current_branch" ]]; then
+        exit 0
+      fi
+
+      if git show-ref --verify --quiet "refs/heads/$selected"; then
+        git switch "$selected"
+        exit 0
+      fi
+
+      if [[ $selected == */* ]] && git show-ref --verify --quiet "refs/remotes/$selected"; then
+        local_branch=''${selected#*/}
+
+        if git show-ref --verify --quiet "refs/heads/$local_branch"; then
+          git switch "$local_branch"
+        else
+          git switch --track "$selected"
+        fi
+
+        exit 0
+      fi
+
+      git switch "$selected"
+    '';
+  };
+
   home.file.".local/scripts/typst-smart-open" = {
     executable = true;
     force = true;

@@ -128,9 +128,10 @@ Run this separately from the single-file Restic restore.
     [docs/node-pnpm-shell.md](docs/node-pnpm-shell.md), especially that `nvm`
     wins over stale Homebrew Node and global pnpm shims.
 11. Verify local workflow scripts after applying Home Manager:
-    `command -v tmux-sessionizer`, `command -v typst-smart-open`, and one
-    interactive smoke test for each script. The scripts expect `~/Developer`
-    and `~/typst`, which Home Manager creates without managing their contents.
+    `command -v tmux-sessionizer`, `command -v git-branch-switcher`,
+    `command -v typst-smart-open`, and one interactive smoke test for each
+    script. The scripts expect `~/Developer` and `~/typst`, which Home Manager
+    creates without managing their contents.
 12. Confirm development tools and terminal configuration are usable.
 
 The drill passes only if the workstation can be rebuilt using repository
