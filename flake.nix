@@ -135,6 +135,7 @@
             gitBranchSwitcher = homeConfig.home.file.".local/scripts/git-branch-switcher".source;
             typstSmartOpen = homeConfig.home.file.".local/scripts/typst-smart-open".source;
             typstTemplate = homeConfig.home.file."typst/academic-template.typ".source;
+            homebrewBrewfile = pkgs.writeText "Brewfile" gammaConfiguration.config.homebrew.brewfile;
             homebrewBrews = gammaConfiguration.config.homebrew.brews;
             homebrewBrewNames = builtins.map (brew: brew.name) homebrewBrews;
             systemPackages = gammaConfiguration.config.environment.systemPackages;
@@ -168,6 +169,8 @@
               test -x ${gitBranchSwitcher}
               test -x ${typstSmartOpen}
               test -r ${typstTemplate}
+              grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
+              grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
               home="$TMPDIR/home"
               bin="$TMPDIR/bin"

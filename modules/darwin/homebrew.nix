@@ -17,8 +17,6 @@
     brews = [
       "nvm"
       "tmux"
-      "yabai"
-      "skhd"
     ];
 
     casks = [
@@ -28,5 +26,10 @@
       "karabiner-elements"
       "orbstack"
     ];
+
+    extraConfig = ''
+      brew "koekeishiya/formulae/yabai", trusted: true
+      brew "koekeishiya/formulae/skhd", trusted: true
+    '';
   };
 }
