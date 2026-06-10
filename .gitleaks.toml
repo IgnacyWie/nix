@@ -1,0 +1,50 @@
+title = "Personal Infrastructure secret scanning"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "personal-infra-restic-b2-env-secret"
+description = "Detect committed Restic or Backblaze B2 credential values"
+regex = '''(?i)\b(?:RESTIC_PASSWORD|B2_ACCOUNT_ID|B2_ACCOUNT_KEY)\b\s*(?:=|:|=>)\s*["']?([A-Za-z0-9][A-Za-z0-9_+/=.-]{11,})["']?'''
+secretGroup = 1
+keywords = [
+  "B2_ACCOUNT_ID",
+  "B2_ACCOUNT_KEY",
+  "RESTIC_PASSWORD",
+]
+tags = [
+  "backup",
+  "b2",
+  "restic",
+]
+
+[[rules]]
+id = "personal-infra-keychain-or-vault-export"
+description = "Detect committed local exports from Keychain or password managers"
+path = '''(?i)(^|/).*(keychain|vaultwarden|bitwarden|1password).*\.(csv|json|plist|txt)$'''
+regex = '''(?s).+'''
+tags = [
+  "local-secret-file",
+  "password-manager",
+]
+
+[[rules]]
+id = "personal-infra-local-env-file"
+description = "Detect committed local environment files that may contain workstation or backup secrets"
+path = '''(?i)(^|/)\.env(\.(local|private|production|development|backup|restic|b2))?$'''
+regex = '''(?s).+'''
+tags = [
+  "env",
+  "local-secret-file",
+]
+
+[[rules]]
+id = "personal-infra-backup-secret-file"
+description = "Detect committed local backup secret files"
+path = '''(?i)(^|/).*(restic|backup|b2).*(secret|password|credential|env).*$'''
+regex = '''(?s).+'''
+tags = [
+  "backup",
+  "local-secret-file",
+]
