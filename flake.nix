@@ -115,6 +115,7 @@
             grep -q "keybind = cmd+'=quit" ${ghosttyConfig}
             grep -q 'keybind = cmd+w=reload_config' ${ghosttyConfig}
 
+            grep -q 'bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q "set -g @plugin 'seebi/tmux-colors-solarized'" ${tmuxConfig}
             grep -q "set -g @plugin 'niksingh710/minimal-tmux-status'" ${tmuxConfig}
             grep -q 'set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/' ${tmuxConfig}
