@@ -22,6 +22,7 @@
     casks = [
       "bitwarden"
       "ghostty"
+      "google-chrome"
       "karabiner-elements"
       "loom"
       "orbstack"
@@ -29,6 +30,7 @@
       "sf-symbols"
       "whatsapp"
       "zen"
+      "firefox@developer-edition"
     ];
 
     extraConfig = ''

@@ -32,6 +32,7 @@
     curl
     eza
     fd
+    ffmpeg
     fzf
     gawk
     gh
@@ -40,9 +41,11 @@
     glow
     gnupg
     gnused
-    helm
+    google-cloud-sdk
+    kubernetes-helm
     htop
     httpie
+    imagemagick
     just
     jq
     k9s
@@ -53,11 +56,13 @@
     neovim
     opencode
     openssh
+    pandoc
     pinentry_mac
     posting
     restic
     ripgrep
     sops
+    tailscale
     terminal-notifier
     tree
     typst
