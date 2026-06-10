@@ -140,7 +140,9 @@
           assert defaults.trackpad.Clicking == true;
           assert defaults.trackpad.ForceSuppressed == true;
           assert defaults.trackpad.TrackpadRightClick == true;
-          assert defaults.trackpad.TrackpadThreeFingerDrag == true;
+          assert defaults.trackpad.TrackpadFourFingerHorizSwipeGesture == 0;
+          assert defaults.trackpad.TrackpadThreeFingerDrag == false;
+          assert defaults.trackpad.TrackpadThreeFingerHorizSwipeGesture == 2;
           assert defaults.WindowManager.AppWindowGroupingBehavior == true;
           assert defaults.WindowManager.AutoHide == false;
           assert defaults.WindowManager.EnableStandardClickToShowDesktop == false;

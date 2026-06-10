@@ -65,7 +65,9 @@
       Clicking = true;
       ForceSuppressed = true;
       TrackpadRightClick = true;
-      TrackpadThreeFingerDrag = true;
+      TrackpadFourFingerHorizSwipeGesture = 0;
+      TrackpadThreeFingerDrag = false;
+      TrackpadThreeFingerHorizSwipeGesture = 2;
     };
 
     WindowManager = {

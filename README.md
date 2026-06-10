@@ -132,10 +132,11 @@ nix-darwin manages the first reviewed Workstation Defaults batch for `gamma`:
 stable Dock behavior including left-side quick autohide, Finder
 visibility/search defaults, global key-repeat and appearance defaults,
 screenshot format and destination behavior, reduced-motion and
-reduced-transparency accessibility behavior, trackpad defaults, selected
-WindowManager preferences, visible scroll bars, local-first document saves,
-disabled window/session restoration after app quit or login, and the native
-macOS input-source baseline. The
+reduced-transparency accessibility behavior, trackpad defaults including
+three-finger Space switching without three-finger drag, selected WindowManager
+preferences, visible scroll bars, local-first document saves, disabled
+window/session restoration after app quit or login, and the native macOS
+input-source baseline. The
 selected input source is `DVORAK - QWERTY CMD`, with `Polish Pro` enabled as the
 secondary layout. Privacy permissions, Rosetta 2, app-managed settings, volatile
 Dock contents, and Spaces UUID/window placement state remain manual or app-owned.
