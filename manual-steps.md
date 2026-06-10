@@ -35,10 +35,9 @@ Review build output before switching system-changing configuration.
 Expected Keychain service names:
 
 ```text
-restic/gamma/repository
-restic/gamma/password
-backblaze/gamma/b2-account-id
-backblaze/gamma/b2-account-key
+restic-gamma-b2-account-id
+restic-gamma-b2-account-key
+restic-gamma-password
 ```
 
 ## Authentication

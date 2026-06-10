@@ -15,12 +15,11 @@ The backup target is a Restic repository stored in Backblaze B2.
 Canonical repository shape:
 
 ```sh
-b2:<bucket-name>:gamma/restic
+b2:gamma-backup-restic:gamma
 ```
 
-The concrete bucket name, B2 account id, B2 application key, and Restic password
-must stay outside Git. Store the recoverable source of truth in Vaultwarden under
-an item named:
+The B2 account id, B2 application key, and Restic password must stay outside
+Git. Store the recoverable source of truth in Vaultwarden under an item named:
 
 ```text
 gamma Restic Backblaze B2
@@ -30,19 +29,18 @@ At runtime, Restic credentials should be read from macOS Keychain. Use this
 service-name pattern:
 
 ```text
-restic/gamma/repository
-restic/gamma/password
-backblaze/gamma/b2-account-id
-backblaze/gamma/b2-account-key
+restic-gamma-b2-account-id
+restic-gamma-b2-account-key
+restic-gamma-password
 ```
 
 Expected runtime environment:
 
 ```sh
-export RESTIC_REPOSITORY="$(security find-generic-password -s restic/gamma/repository -w)"
-export RESTIC_PASSWORD="$(security find-generic-password -s restic/gamma/password -w)"
-export B2_ACCOUNT_ID="$(security find-generic-password -s backblaze/gamma/b2-account-id -w)"
-export B2_ACCOUNT_KEY="$(security find-generic-password -s backblaze/gamma/b2-account-key -w)"
+export RESTIC_REPOSITORY="b2:gamma-backup-restic:gamma"
+export B2_ACCOUNT_ID="$(security find-generic-password -a "$USER" -s restic-gamma-b2-account-id -w)"
+export B2_ACCOUNT_KEY="$(security find-generic-password -a "$USER" -s restic-gamma-b2-account-key -w)"
+export RESTIC_PASSWORD="$(security find-generic-password -a "$USER" -s restic-gamma-password -w)"
 ```
 
 Do not commit exported values, generated environment files, Restic passwords,
@@ -99,28 +97,17 @@ The intended v1 schedule is one automatic backup per day.
 The intended retention policy is:
 
 ```sh
-restic forget --keep-daily 14 --keep-weekly 8 --keep-monthly 12 --prune
+restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
 ```
 
-Retention should run after a successful backup. Do not automate pruning until a
-single-file restore has been verified.
+Retention runs after a successful managed backup.
 
 ## Manual Backup
 
-After loading the runtime environment from Keychain, run:
+After applying the Home Manager configuration, run:
 
 ```sh
-restic backup \
-  ~/Documents \
-  ~/Desktop \
-  ~/Pictures \
-  ~/Projects \
-  ~/Developer \
-  ~/Downloads \
-  ~/typst \
-  ~/nix \
-  ~/.ssh \
-  --exclude-file ./backup-excludes.txt
+gamma-restic-backup
 ```
 
 Check the repository after backup:

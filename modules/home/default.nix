@@ -1,6 +1,10 @@
 { ... }:
 
 {
+  imports = [
+    ./backup.nix
+  ];
+
   home = {
     username = "ignacywielogorski";
     homeDirectory = "/Users/ignacywielogorski";
