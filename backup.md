@@ -131,6 +131,43 @@ restic check
 
 ## Restore Commands
 
+Home Manager provides a safe fuzzy restore helper:
+
+```sh
+backup-restore-picker
+```
+
+The picker is for inspection, command generation, and restore drills. It uses
+the same Restic repository and Keychain services as `gamma-restic-backup`.
+Missing credentials produce a clear error before any snapshot or restore action
+runs.
+
+The picker has three staged selectors:
+
+1. `backup snapshot> ` selects a Restic snapshot and previews snapshot metadata.
+2. `backup file> ` browses files in that snapshot and previews metadata. Text
+   files under 1 MiB are previewed with `bat` when available.
+3. `backup action> ` selects one safe action.
+
+Supported v1 actions:
+
+- `print-command`: prints an explicit `restic restore` command.
+- `copy-command`: copies that command with `pbcopy`.
+- `restore-to-review-dir`: restores only after typing `restore`.
+
+Generated restore commands target a timestamped review directory under
+`~/Restores`, for example:
+
+```sh
+restic restore <snapshot-id> \
+  --target "$HOME/Restores/restic-<snapshot-id>-<timestamp>" \
+  --include /Users/ignacywielogorski/Documents/<file>
+```
+
+The v1 picker does not restore directly to the original path, overwrite an
+existing review target, delete files, prune snapshots, or open/move restored
+files after completion.
+
 List snapshots:
 
 ```sh
@@ -183,6 +220,23 @@ Procedure:
 
 Success means Restic credentials, repository access, snapshot metadata, and file
 restore all work.
+
+### Fuzzy Picker Review Restore
+
+Frequency: after changing `backup-restore-picker` or backup credentials.
+
+Procedure:
+
+1. Run `backup-restore-picker`.
+2. Select a recent snapshot.
+3. Select a known small text file.
+4. Choose `print-command` and verify the target is under `~/Restores`.
+5. Rerun the picker, choose `restore-to-review-dir`, and type `restore`.
+6. Compare the restored file contents against the expected source.
+7. Remove the review directory after the drill.
+
+Success means the fuzzy workflow can inspect backups and restore into a safe
+review directory without writing over the active home directory.
 
 ### Fresh-User Rebuild Drill
 

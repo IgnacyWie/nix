@@ -373,6 +373,7 @@
             tmuxSessionizer = homeConfig.home.file.".local/scripts/tmux-sessionizer".source;
             gitBranchSwitcher = homeConfig.home.file.".local/scripts/git-branch-switcher".source;
             typstSmartOpen = homeConfig.home.file.".local/scripts/typst-smart-open".source;
+            backupRestorePicker = homeConfig.home.file.".local/scripts/backup-restore-picker".source;
             typstTemplate = homeConfig.home.file."typst/academic-template.typ".source;
             homebrewBrewfile = pkgs.writeText "Brewfile" gammaConfiguration.config.homebrew.brewfile;
             homebrewBrews = gammaConfiguration.config.homebrew.brews;
@@ -382,13 +383,16 @@
           in
           assert builtins.elem "tmux" homebrewBrewNames;
           assert builtins.any (name: builtins.match ".*chafa.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*bat.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*glow.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazygit.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazysql.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*neovim.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*posting.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*typst.*" name != null) packageNames;
           pkgs.runCommand "gamma-workflow-scripts-check"
             {
@@ -400,6 +404,7 @@
                 pkgs.git
                 pkgs.gnugrep
                 pkgs.gnused
+                pkgs.jq
                 pkgs.zsh
               ];
             }
@@ -409,6 +414,7 @@
               test -x ${tmuxSessionizer}
               test -x ${gitBranchSwitcher}
               test -x ${typstSmartOpen}
+              test -x ${backupRestorePicker}
               test -r ${typstTemplate}
               grep -q 'tmux session> ' ${tmuxSessionizer}
               grep -q 'README: %s' ${tmuxSessionizer}
@@ -418,6 +424,12 @@
               grep -q 'typst document> ' ${typstSmartOpen}
               grep -q 'typst compile --pages 1' ${typstSmartOpen}
               grep -q 'Type a new document name' ${typstSmartOpen}
+              grep -q 'backup snapshot> ' ${backupRestorePicker}
+              grep -q 'backup file> ' ${backupRestorePicker}
+              grep -q 'backup action> ' ${backupRestorePicker}
+              grep -q 'restore-to-review-dir' ${backupRestorePicker}
+              grep -q 'Type restore to run this command' ${backupRestorePicker}
+              ! grep -q 'restore-original-path' ${backupRestorePicker}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
@@ -498,6 +510,127 @@
               grep -q 'title: "issue-10-check"' "$home/typst/issue-10-check.typ"
               grep -q 'new-session -d -s typst_' "$TMPDIR/tmux.log"
               grep -q "nvim 'issue-10-check.typ'" "$TMPDIR/tmux.log"
+
+              rm -f "$TMPDIR/restic.log" "$TMPDIR/pbcopy.log" "$TMPDIR/fzf.log"
+
+              cat > "$bin/security" <<'EOF'
+              #!${pkgs.runtimeShell}
+              case "$*" in
+                *restic-gamma-b2-account-id*) printf 'b2-account-id\n' ;;
+                *restic-gamma-b2-account-key*) printf 'b2-account-key\n' ;;
+                *restic-gamma-password*) printf 'restic-password\n' ;;
+                *) exit 1 ;;
+              esac
+              EOF
+              chmod +x "$bin/security"
+
+              cat > "$bin/restic" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'restic %s\n' "$*" >> "$TMPDIR/restic.log"
+              case "$1" in
+                snapshots)
+                  cat <<'JSON'
+              [
+                {
+                  "time": "2026-01-02T03:04:05Z",
+                  "id": "abc123def456",
+                  "short_id": "abc123de",
+                  "hostname": "gamma",
+                  "paths": ["/Users/ignacywielogorski/Documents"],
+                  "tags": ["manual"],
+                  "summary": {"total_files_processed": 2}
+                }
+              ]
+              JSON
+                  ;;
+                ls)
+                  cat <<'JSON'
+              {"path":"/Users/ignacywielogorski/Documents","type":"dir","mtime":"2026-01-02T03:04:05Z"}
+              {"path":"/Users/ignacywielogorski/Documents/check.txt","type":"file","size":12,"mtime":"2026-01-02T03:04:05Z"}
+              JSON
+                  ;;
+                dump)
+                  printf 'hello backup\n'
+                  ;;
+                restore)
+                  printf 'restore %s\n' "$*" >> "$TMPDIR/restore.log"
+                  ;;
+              esac
+              EOF
+              chmod +x "$bin/restic"
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'fzf %s\n' "$*" >> "$TMPDIR/fzf.log"
+              case "$*" in
+                *"backup snapshot> "*)
+                  if [ "''${BACKUP_RESTORE_PICKER_CANCEL_STAGE:-}" = snapshot ]; then
+                    exit 130
+                  fi
+                  sed -n '1p'
+                  ;;
+                *"backup file> "*)
+                  if [ "''${BACKUP_RESTORE_PICKER_CANCEL_STAGE:-}" = file ]; then
+                    exit 130
+                  fi
+                  grep '/Users/ignacywielogorski/Documents/check.txt'
+                  ;;
+                *"backup action> "*)
+                  printf '%s\n' "''${BACKUP_RESTORE_PICKER_ACTION:-print-command}"
+                  ;;
+                *)
+                  exit 1
+                  ;;
+              esac
+              EOF
+              chmod +x "$bin/fzf"
+
+              cat > "$bin/pbcopy" <<'EOF'
+              #!${pkgs.runtimeShell}
+              cat > "$TMPDIR/pbcopy.log"
+              EOF
+              chmod +x "$bin/pbcopy"
+
+              picker_env="PATH=$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.gawk}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin HOME=$home USER=tester TMPDIR=$TMPDIR BACKUP_RESTORE_PICKER_SECURITY_BIN=$bin/security BACKUP_RESTORE_PICKER_PBCOPY_BIN=$bin/pbcopy BACKUP_RESTORE_PICKER_NOW=20260102-030405"
+
+              env $picker_env BACKUP_RESTORE_PICKER_CANCEL_STAGE=snapshot ${backupRestorePicker} > "$TMPDIR/cancel-snapshot.out"
+              ! grep -q 'restore abc123de' "$TMPDIR/restic.log"
+
+              env $picker_env BACKUP_RESTORE_PICKER_CANCEL_STAGE=file ${backupRestorePicker} > "$TMPDIR/cancel-file.out"
+              ! grep -q 'restore abc123de' "$TMPDIR/restic.log"
+
+              env $picker_env BACKUP_RESTORE_PICKER_ACTION=print-command ${backupRestorePicker} > "$TMPDIR/print-command.out"
+              grep -q 'restic restore abc123de --target .*/Restores/restic-abc123de-20260102-030405 --include /Users/ignacywielogorski/Documents/check.txt' "$TMPDIR/print-command.out"
+              ! grep -q -- '--target /Users/ignacywielogorski/Documents' "$TMPDIR/print-command.out"
+
+              env $picker_env BACKUP_RESTORE_PICKER_ACTION=copy-command ${backupRestorePicker} > "$TMPDIR/copy-command.out"
+              grep -q 'Copied restore command to clipboard' "$TMPDIR/copy-command.out"
+              grep -q 'restic restore abc123de --target .*/Restores/restic-abc123de-20260102-030405 --include /Users/ignacywielogorski/Documents/check.txt' "$TMPDIR/pbcopy.log"
+
+              if printf '\n' | env $picker_env BACKUP_RESTORE_PICKER_ACTION=restore-to-review-dir ${backupRestorePicker} > "$TMPDIR/restore-refused.out" 2> "$TMPDIR/restore-refused.err"; then
+                printf 'restore-to-review-dir unexpectedly succeeded without confirmation\n' >&2
+                exit 1
+              fi
+              grep -q 'Restore cancelled; confirmation did not match.' "$TMPDIR/restore-refused.err"
+              ! grep -q 'restore abc123de' "$TMPDIR/restic.log"
+
+              rm -f "$TMPDIR/restore.log"
+              printf 'restore\n' | env $picker_env BACKUP_RESTORE_PICKER_ACTION=restore-to-review-dir ${backupRestorePicker} > "$TMPDIR/restore-confirmed.out"
+              grep -q 'restore restore abc123de --target .*/Restores/restic-abc123de-20260102-030405 --include /Users/ignacywielogorski/Documents/check.txt' "$TMPDIR/restore.log"
+              grep -q 'Restore completed into review directory: .*/Restores/restic-abc123de-20260102-030405' "$TMPDIR/restore-confirmed.out"
+              test -d "$home/Restores/restic-abc123de-20260102-030405"
+
+              cat > "$bin/security-fail" <<'EOF'
+              #!${pkgs.runtimeShell}
+              exit 1
+              EOF
+              chmod +x "$bin/security-fail"
+
+              if env $picker_env BACKUP_RESTORE_PICKER_SECURITY_BIN=$bin/security-fail ${backupRestorePicker} > "$TMPDIR/missing-config.out" 2> "$TMPDIR/missing-config.err"; then
+                printf 'backup-restore-picker unexpectedly succeeded with missing Restic configuration\n' >&2
+                exit 1
+              fi
+              grep -q 'missing Restic configuration' "$TMPDIR/missing-config.err"
 
               touch "$out"
             '';
