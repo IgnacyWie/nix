@@ -85,6 +85,7 @@
               "KeyboardLayout Name" = "Polish Pro";
             };
             customGlobal = defaults.CustomUserPreferences.NSGlobalDomain;
+            customLoginwindow = defaults.CustomSystemPreferences."/Library/Preferences/com.apple.loginwindow";
             hitoolbox = defaults.CustomUserPreferences."com.apple.HIToolbox";
             spotlightHotkey =
               defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys."64";
@@ -156,7 +157,9 @@
           assert defaults.screencapture.type == "png";
           assert customGlobal.AppleMiniaturizeOnDoubleClick == false;
           assert customGlobal.AppleReduceDesktopTinting == true;
+          assert customGlobal.NSQuitAlwaysKeepsWindows == false;
           assert customGlobal.QLPanelAnimationDuration == 0;
+          assert customLoginwindow.TALLogoutSavesState == false;
           assert
             hitoolbox.AppleEnabledInputSources == [
               dvorakQwerty

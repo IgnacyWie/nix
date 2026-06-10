@@ -105,6 +105,7 @@
         NSGlobalDomain = {
           AppleMiniaturizeOnDoubleClick = false;
           AppleReduceDesktopTinting = true;
+          NSQuitAlwaysKeepsWindows = false;
           QLPanelAnimationDuration = 0;
         };
 
@@ -134,5 +135,11 @@
           };
         };
       };
+
+    CustomSystemPreferences = {
+      "/Library/Preferences/com.apple.loginwindow" = {
+        TALLogoutSavesState = false;
+      };
+    };
   };
 }
