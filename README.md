@@ -136,12 +136,12 @@ Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
 Home Manager defines zsh functions for `codex` and `claude` that resolve the
-real executable with `whence -p` and run it under `caffeinate -dims`, forwarding
-all user-provided arguments after the configured permission-bypass flags. Codex
-uses `--dangerously-bypass-approvals-and-sandbox`; Claude uses
+real executable with `whence -p` and run it under `caffeinate -dims -t 3600`,
+forwarding all user-provided arguments after the configured permission-bypass
+flags. Codex uses `--dangerously-bypass-approvals-and-sandbox`; Claude uses
 `--dangerously-skip-permissions`. This keeps long-running interactive AI CLI
-sessions from sleeping the Mac and intentionally starts them without approval
-prompts.
+sessions from sleeping the Mac for up to one hour and intentionally starts them
+without approval prompts.
 
 ## Managed Keybindings
 

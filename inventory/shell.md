@@ -12,7 +12,7 @@ Workstation:
 - aliases for navigation, Git, Nix helper scripts, and reviewed project
   workflows.
 - `codex` and `claude` wrapper functions that run the real executable under
-  `caffeinate` with their permission-bypass flags enabled.
+  `caffeinate` for up to one hour with their permission-bypass flags enabled.
 - removal of stale Homebrew Node and pnpm shim paths before shell startup.
 
 ## Sensitive Findings
