@@ -26,3 +26,6 @@ jobs:
 
       - name: Run flake validation
         run: ./scripts/check
+
+      - name: Build gamma Darwin system closure
+        run: ./scripts/build-gamma
