@@ -141,7 +141,12 @@ in
         vcs_info
 
         if [ -n "$vcs_info_msg_0_" ]; then
-          gamma_git_prompt="%F{green}$vcs_info_msg_0_%f "
+          local gamma_git_dirty=""
+          if [ -n "$(git status --porcelain --untracked-files=normal 2>/dev/null)" ]; then
+            gamma_git_dirty="*"
+          fi
+
+          gamma_git_prompt="%F{green}$vcs_info_msg_0_$gamma_git_dirty%f "
         else
           gamma_git_prompt=""
         fi
