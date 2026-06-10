@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   home.file.".tmux.conf" = {
@@ -90,10 +95,20 @@
 
       if-shell 'test -x ~/.tmux/plugins/tpm/tpm' 'run-shell ~/.tmux/plugins/tpm/tpm'
 
+      unbind-key -n C-h
+      unbind-key -n C-j
+      unbind-key -n C-k
+      unbind-key -n C-\\
       bind-key -n C-h display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"
 
       set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
       set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
     '';
   };
+
+  home.activation.reloadTmuxConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if command -v tmux >/dev/null 2>&1 && tmux has-session 2>/dev/null; then
+      run tmux source-file ${lib.escapeShellArg "${config.xdg.configHome}/tmux/tmux.conf"}
+    fi
+  '';
 }

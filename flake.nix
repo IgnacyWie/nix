@@ -122,6 +122,10 @@
             grep -q 'set -g @minimal-tmux-bg "#278BD3"' ${tmuxConfig}
             grep -q "set -g @colors-solarized 'dark'" ${tmuxConfig}
             grep -q "if-shell 'test -x ~/.tmux/plugins/tpm/tpm' 'run-shell ~/.tmux/plugins/tpm/tpm'" ${tmuxConfig}
+            grep -q 'unbind-key -n C-h' ${tmuxConfig}
+            grep -q 'unbind-key -n C-j' ${tmuxConfig}
+            grep -q 'unbind-key -n C-k' ${tmuxConfig}
+            grep -q 'unbind-key -n C-\\\\' ${tmuxConfig}
             grep -q 'bind-key -n C-h display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"' ${tmuxConfig}
             test -x ${tpmSource}/tpm
 
