@@ -10,7 +10,12 @@
       if [[ $# -eq 1 ]]; then
         selected=$1
       else
-        selected=$(find ~/Developer -mindepth 1 -maxdepth 1 -type d | fzf)
+        selected=$(
+          {
+            find "$HOME/Developer" -mindepth 1 -maxdepth 1 -type d
+            [[ -d "$HOME/nix" ]] && printf '%s\n' "$HOME/nix"
+          } | fzf
+        )
       fi
 
       if [[ -z $selected ]]; then
@@ -21,23 +26,23 @@
       tmux_running=$(pgrep tmux)
 
       if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-        tmux new-session -s $selected_name -c $selected -d
+        tmux new-session -s $selected_name -c "$selected" -d
 
         tmux rename-window -t $selected_name:0 "codex"
         tmux send-keys -t $selected_name:0 "codex" C-m
 
-        tmux new-window -t $selected_name -n "node" -c $selected
+        tmux new-window -t $selected_name -n "node" -c "$selected"
         tmux send-keys -t $selected_name:1 "pnpm run dev" C-m
 
-        tmux new-window -t $selected_name -n "misc" -c $selected
+        tmux new-window -t $selected_name -n "misc" -c "$selected"
 
-        tmux new-window -t $selected_name -n "git" -c $selected
+        tmux new-window -t $selected_name -n "git" -c "$selected"
         tmux send-keys -t $selected_name:3 "lazygit" C-m
 
-        tmux new-window -t $selected_name -n "db" -c $selected
+        tmux new-window -t $selected_name -n "db" -c "$selected"
         tmux send-keys -t $selected_name:4 "lazysql" C-m
 
-        tmux new-window -t $selected_name -n "rest" -c $selected
+        tmux new-window -t $selected_name -n "rest" -c "$selected"
         tmux send-keys -t $selected_name:5 "posting" C-m
 
         tmux attach -t $selected_name
@@ -45,23 +50,23 @@
       fi
 
       if ! tmux has-session -t=$selected_name 2>/dev/null; then
-        tmux new-session -ds $selected_name -c $selected
+        tmux new-session -ds $selected_name -c "$selected"
 
         tmux rename-window -t $selected_name:0 "codex"
         tmux send-keys -t $selected_name:0 "codex" C-m
 
-        tmux new-window -t $selected_name -n "node" -c $selected
+        tmux new-window -t $selected_name -n "node" -c "$selected"
         tmux send-keys -t $selected_name:1 "pnpm run dev" C-m
 
-        tmux new-window -t $selected_name -n "misc" -c $selected
+        tmux new-window -t $selected_name -n "misc" -c "$selected"
 
-        tmux new-window -t $selected_name -n "git" -c $selected
+        tmux new-window -t $selected_name -n "git" -c "$selected"
         tmux send-keys -t $selected_name:3 "lazygit" C-m
 
-        tmux new-window -t $selected_name -n "db" -c $selected
+        tmux new-window -t $selected_name -n "db" -c "$selected"
         tmux send-keys -t $selected_name:4 "lazysql" C-m
 
-        tmux new-window -t $selected_name -n "rest" -c $selected
+        tmux new-window -t $selected_name -n "rest" -c "$selected"
         tmux send-keys -t $selected_name:5 "posting" C-m
       fi
 

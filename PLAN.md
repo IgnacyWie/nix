@@ -233,7 +233,7 @@ Do not carry Oh My Zsh into the Nix-managed shell baseline unless a later review
 Manage Neovim configuration in this repository rather than pointing to a separate Neovim config repository. Migrate the current Neovim setup after inspecting it, preserving intentional options, keymaps, plugins, and language tooling rather than starting from a blank config.
 Manage Ghostty configuration through Home Manager after inspecting the existing config. Migrate the whole current Ghostty config unless inspection shows machine-specific or obsolete settings.
 Preserve Ghostty's Dvorak-QWERTY command-key workarounds as intentional keybindings.
-Migrate `~/.local/scripts` into this repository after review. Preserve script behavior first, then refactor later only after the managed versions work. Current workflow scripts include `tmux-sessionizer` for project tmux sessions under `~/Developer` and `typst-smart-open` for creating/opening Typst documents under `~/typst`.
+Migrate `~/.local/scripts` into this repository after review. Preserve script behavior first, then refactor later only after the managed versions work. Current workflow scripts include `tmux-sessionizer` for project tmux sessions under `~/Developer` plus the `~/nix` configuration repository, and `typst-smart-open` for creating/opening Typst documents under `~/typst`.
 Manage the Typst template required by `typst-smart-open`, currently `~/typst/academic-template.typ`, as a repository asset if it contains no sensitive material.
 Have Home Manager create `~/Developer` and `~/typst` if missing, but do not manage project contents or generated Typst documents inside those directories.
 Migrate tmux configuration through Home Manager, but keep TPM as the tmux plugin manager for v1.
