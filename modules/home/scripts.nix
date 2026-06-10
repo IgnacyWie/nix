@@ -219,11 +219,40 @@
 
       cd "$WORK_DIR" || exit
 
-      SELECTION=$(
+      PREVIEW_COMMAND=$(cat <<'PREVIEW'
+      file={}
+
+      if [ -z "$file" ] || [ ! -f "$file" ]; then
+        printf 'Type a new document name to create it from the template.\n'
+        exit 0
+      fi
+
+      if command -v typst >/dev/null 2>&1 && command -v chafa >/dev/null 2>&1; then
+        preview_dir="''${TMPDIR:-/tmp}/typst-preview-$(id -u)"
+        mkdir -p "$preview_dir"
+        preview_image="$preview_dir/$(basename "''${file%.typ}").png"
+
+        if typst compile --pages 1 "$file" "$preview_image" >/dev/null 2>&1 && [ -f "$preview_image" ]; then
+          chafa --size "''${FZF_PREVIEW_COLUMNS:-80}x''${FZF_PREVIEW_LINES:-24}" "$preview_image"
+          exit 0
+        fi
+      fi
+
+      if command -v bat >/dev/null 2>&1; then
+        bat --style=plain --color=always --line-range :120 "$file"
+      else
+        sed -n '1,120p' "$file"
+      fi
+      PREVIEW
+      )
+
+      if ! SELECTION=$(
         find . -maxdepth 1 -name "*.typ" -not -name "$TEMPLATE_FILE" \
           | sed 's|./||' \
-          | fzf --print-query --preview 'head -n 20 {}'
-      )
+          | fzf --print-query --prompt='typst document> ' --preview="$PREVIEW_COMMAND"
+      ); then
+        exit 0
+      fi
 
       QUERY=$(echo "$SELECTION" | head -n 1)
       FILE=$(echo "$SELECTION" | tail -n 1)

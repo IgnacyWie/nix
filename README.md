@@ -110,9 +110,12 @@ directory, after tmux plugins have loaded.
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst
 document from `~/typst` or creates a new one from the template, then starts a
-dedicated tmux editor session. Home Manager creates `~/Developer` and `~/typst`
-when missing, but it does not manage project directories or generated Typst
-documents.
+dedicated tmux editor session. Its `fzf` selector renders the first page of
+existing Typst documents with `typst` and `chafa`, falling back to source text.
+The zsh `Ctrl-G` binding launches this script outside tmux, and the tmux
+`Ctrl-G` binding launches it in a popup from `~/typst`. Home Manager creates
+`~/Developer` and `~/typst` when missing, but it does not manage project
+directories or generated Typst documents.
 
 Home Manager manages tmux configuration while Homebrew remains the tmux binary
 provider on `gamma`. The Homebrew Brewfile trusts only the required Koekeishiya
