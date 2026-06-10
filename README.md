@@ -93,8 +93,8 @@ Home Manager also manages `~/.local/scripts/tmux-sessionizer`. It selects a
 project under `~/Developer` or the `~/nix` configuration repository, creates or
 switches to a named tmux session, and opens the first window as `codex` before
 adding the usual development, Git, database, and REST client windows. The zsh
-`Ctrl-F` binding launches this script outside tmux, and the tmux prefix `f`
-binding launches it in a popup from the current pane directory.
+`Ctrl-F` binding launches this script outside tmux. Inside tmux, `Ctrl-F` and
+tmux prefix `f` both launch it in a popup from the current pane directory.
 
 Home Manager manages `~/.local/scripts/git-branch-switcher`. Inside a Git
 repository, it uses `fzf` to select local and remote branches by recent commit

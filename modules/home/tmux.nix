@@ -34,6 +34,7 @@
     terminal = "tmux-256color";
 
     extraConfig = ''
+      bind-key -n C-f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"
       bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"
 
       bind | split-window -h -c "#{pane_current_path}"
