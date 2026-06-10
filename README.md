@@ -129,6 +129,10 @@ edits.
 
 ## Managed Keybindings
 
+This section documents the keybindings and remaps managed by this repository.
+It lists custom bindings from zsh, tmux, Neovim config files, Ghostty, skhd, and
+Karabiner. LazyVim's built-in defaults are inherited but not duplicated here.
+
 ### Shell Workflow
 
 | Key | Scope | Action |
@@ -168,10 +172,18 @@ edits.
 | `Ctrl-A` | Select the whole file. |
 | `Ctrl-M` | Jump forward in the jumplist. |
 | `<leader>t` | Start Typst preview. |
+| `Tab` | Jump forward in a LuaSnip snippet placeholder while selecting snippets. |
+| `Shift-Tab` | Jump backward in a LuaSnip snippet placeholder in insert/select mode. |
+| `Alt-]`, `Alt-[` | Cycle to the next or previous Copilot suggestion. |
 | `<leader>fe`, `<leader>e` | Toggle Neo-tree at the project root. |
 | `<leader>fE`, `<leader>E` | Toggle Neo-tree at the current working directory. |
 | `<leader>ge` | Toggle Neo-tree Git status view. |
 | `<leader>be` | Toggle Neo-tree buffer view. |
+| Neo-tree `l`, `h` | Open the selected node or close the selected node. |
+| Neo-tree `Y` | Copy the selected path to the clipboard. |
+| Neo-tree `O` | Open the selected path with the system application. |
+| Neo-tree `P` | Toggle preview. |
+| Neo-tree `Space` | Disabled. |
 | `<leader>xx`, `<leader>xX` | Toggle workspace or buffer diagnostics in Trouble. |
 | `<leader>cs`, `<leader>cl` | Toggle Trouble symbols or LSP view. |
 | `<leader>xL`, `<leader>xQ` | Toggle Trouble location list or quickfix list. |
@@ -198,6 +210,33 @@ Command layout.
 | `Cmd-B` | New window. |
 | `Cmd-'` | Quit Ghostty. |
 | `Cmd-W` | Reload Ghostty config. |
+
+### Karabiner
+
+| Key | Action |
+| --- | --- |
+| `Caps Lock` | Send `Escape` through nix-darwin. |
+| `Cmd-'` in Zathura | Send `Ctrl-Q`. |
+| hold `A` for 500 ms | Type `ä`; tap still types `a`. |
+| hold `Shift-A` for 500 ms | Type `Ä`; tap still types `A`. |
+| `Right-Cmd-Q/W/E/R/T/Y/U/I/O/P` | Type `1/2/3/4/5/6/7/8/9/0`. |
+| `Right-Opt-Q/W/E/R/T/Y/U/I` | Send `Right-Opt-1/2/3/4/5/6/7/8`. |
+| `Right-Opt-Shift-Q/W/E/R/T/Y/U/I/O/P` | Send `Right-Opt-Shift-1/2/3/4/5/6/7/8/9/0`. |
+| `non-US backslash` | Send `Fn`. |
+| `Eject` | Open `~/Downloads`. |
+| `F4`, `F5`, `F8` | Preserve these keys as function keys in Karabiner. |
+| simultaneous `Q+W`, `Q+E` | Decrease or increase display brightness. |
+| simultaneous `` `+I/J/H/R/N/A`` | Open `~/Developer`, home, Downloads, Pictures, Desktop, or Applications. |
+| simultaneous `Z+;` | Open Safari and enter app-launcher mode. |
+| app-launcher `;` | Open Safari. |
+| simultaneous `Z+L` / app-launcher `L` | Opens Netflix in one rule and Notes in a later duplicate rule; this conflict is preserved from the current Karabiner config. |
+| simultaneous `Z+T` / app-launcher `T` | Open YouTube. |
+| simultaneous `Z+G` / app-launcher `G` | Open `https://s19.idu.edu.pl`. |
+| simultaneous `Z+I` / app-launcher `I` | Open Zed. |
+| simultaneous `Z+K` / app-launcher `K` | Open iTerm. |
+| simultaneous `Z+R` / app-launcher `R` | Open System Preferences. |
+| simultaneous `Z+M` / app-launcher `M` | Open Messages. |
+| simultaneous `Z+P` / app-launcher `P` | Open Things3. |
 
 ### Window Management
 
