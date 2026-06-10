@@ -2,7 +2,8 @@
 
 This directory contains the migrated LazyVim-based primary editor
 configuration. Home Manager installs it to `~/.config/nvim` through
-`modules/home/neovim.nix`.
+`modules/home/neovim.nix`. That link is authoritative: activation replaces
+pre-existing files in that tree with the repository-managed version.
 
 ## Migration Notes
 
