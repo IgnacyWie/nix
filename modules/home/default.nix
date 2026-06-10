@@ -3,6 +3,9 @@
 {
   imports = [
     ./backup.nix
+    ./git.nix
+    ./shell.nix
+    ./ssh.nix
   ];
 
   home = {

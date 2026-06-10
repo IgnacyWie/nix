@@ -24,6 +24,7 @@
     bun
     claude-code
     codex
+    corepack
     coreutils
     curl
     eza
@@ -39,7 +40,6 @@
     jq
     lazygit
     neovim
-    nodejs_24
     opencode
     posting
     restic

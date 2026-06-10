@@ -15,6 +15,7 @@
     ];
 
     brews = [
+      "nvm"
       "yabai"
       "skhd"
     ];
