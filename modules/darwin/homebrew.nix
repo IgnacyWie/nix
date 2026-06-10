@@ -15,6 +15,7 @@
     ];
 
     brews = [
+      "mas"
       "nvm"
       "tmux"
     ];
@@ -28,10 +29,15 @@
       "orbstack"
       "raycast"
       "sf-symbols"
+      "tailscale"
       "whatsapp"
       "zen"
       "firefox@developer-edition"
     ];
+
+    masApps = {
+      Flighty = 1358823008;
+    };
 
     extraConfig = ''
       brew "koekeishiya/formulae/yabai", trusted: true

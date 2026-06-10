@@ -2,8 +2,11 @@
 
 ## Reviewed Baseline
 
-No App Store apps are currently part of the declarative v1 Workstation
-baseline.
+The following App Store applications are installed through nix-darwin
+Homebrew `masApps` for the `gamma` Workstation:
+
+- `Flighty` (`1358823008`): flight tracker app. Account, subscription, iCloud,
+  trip, and notification state remain outside Nix.
 
 ## Restore Validation
 

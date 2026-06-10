@@ -7,7 +7,11 @@ for the `gamma` Workstation:
 
 - `bitwarden`: desktop password manager client, including use with Vaultwarden
   servers. Vault contents and server configuration remain outside Nix.
+- `firefox@developer-edition`: secondary development browser. Profiles,
+  extensions, sessions, and account state remain outside Nix.
 - `ghostty`: terminal app. Configuration is managed by Home Manager.
+- `google-chrome`: Chromium-family browser for compatibility testing. Profiles,
+  extensions, sessions, and account state remain outside Nix.
 - `karabiner-elements`: app and driver provider for keyboard remaps. Desired
   config is managed through Home Manager.
 - `loom`: screen recording app. Account state and recordings remain outside
@@ -17,6 +21,8 @@ for the `gamma` Workstation:
 - `raycast`: launcher app only. Settings, extensions, and account state remain
   app-owned or manually restored.
 - `sf-symbols`: Apple symbol browser for design and development work.
+- `tailscale`: macOS menu bar UI from the standalone/Homebrew distribution.
+  Login, network state, and VPN permissions remain outside Nix.
 - `whatsapp`: messaging app. Account state remains outside Nix.
 - `zen`: browser app only. Profiles, sessions, extensions, and account state
   remain outside Nix.

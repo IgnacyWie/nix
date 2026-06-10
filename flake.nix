@@ -445,10 +445,17 @@
             homebrewBrewfile = pkgs.writeText "Brewfile" gammaConfiguration.config.homebrew.brewfile;
             homebrewBrews = gammaConfiguration.config.homebrew.brews;
             homebrewBrewNames = builtins.map (brew: brew.name) homebrewBrews;
+            homebrewCasks = gammaConfiguration.config.homebrew.casks;
+            homebrewCaskNames = builtins.map (cask: cask.name) homebrewCasks;
+            homebrewMasApps = gammaConfiguration.config.homebrew.masApps;
             systemPackages = gammaConfiguration.config.environment.systemPackages;
             packageNames = builtins.map (package: package.name or "") systemPackages;
           in
+          assert builtins.elem "mas" homebrewBrewNames;
           assert builtins.elem "tmux" homebrewBrewNames;
+          assert builtins.elem "bitwarden" homebrewCaskNames;
+          assert builtins.elem "tailscale" homebrewCaskNames;
+          assert homebrewMasApps.Flighty == 1358823008;
           assert builtins.any (name: builtins.match ".*chafa.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*bat.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
