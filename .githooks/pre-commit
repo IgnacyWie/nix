@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
+
+cd "${REPO_ROOT}"
+
+before_format_diff="$(git diff --binary)"
+
+echo "pre-commit: formatting Nix files"
+"${REPO_ROOT}/scripts/fmt"
+
+after_format_diff="$(git diff --binary)"
+if [ "${before_format_diff}" != "${after_format_diff}" ]; then
+  cat >&2 <<'EOF'
+pre-commit: formatter changed files.
+
+Review the formatting changes, stage them, and commit again.
+EOF
+  exit 1
+fi
+
+echo "pre-commit: validating flake"
+"${REPO_ROOT}/scripts/check"

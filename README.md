@@ -65,6 +65,27 @@ configuration is applied if the current Nix daemon still reads the broken
 dependencies. The Darwin baseline sets `nix.settings.ssl-cert-file` to
 `/etc/ssl/cert.pem` so future rebuilds use the macOS CA bundle.
 
+## Local Pre-Commit Checks
+
+Install or update the local Git hook after cloning:
+
+```sh
+./scripts/install-pre-commit-hook
+```
+
+The installer sets this clone's `core.hooksPath` to `.githooks`. The
+repository-managed `pre-commit` hook runs:
+
+```sh
+./scripts/fmt
+./scripts/check
+```
+
+If formatting changes files, the hook stops so the changes can be reviewed and
+staged before committing again. `./scripts/check` runs `nix flake check`, which
+mirrors the main local validation path without running system-changing commands
+such as `darwin-rebuild switch` or `./scripts/apply-gamma`.
+
 Before nix-darwin is installed globally, use the bootstrap wrapper:
 
 ```sh
