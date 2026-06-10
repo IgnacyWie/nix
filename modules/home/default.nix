@@ -5,6 +5,7 @@
     ./backup.nix
     ./git.nix
     ./ghostty.nix
+    ./neovim.nix
     ./scripts.nix
     ./shell.nix
     ./ssh.nix

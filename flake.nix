@@ -135,6 +135,65 @@
             touch "$out"
           '';
 
+        gamma-neovim-config =
+          let
+            homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
+            nvimConfig = homeConfig.xdg.configFile."nvim".source;
+            homePackages = homeConfig.home.packages;
+            homePackageNames = builtins.map (package: package.name or "") homePackages;
+          in
+          assert homeConfig.programs.neovim.enable;
+          assert homeConfig.programs.neovim.defaultEditor;
+          assert homeConfig.programs.neovim.viAlias;
+          assert homeConfig.programs.neovim.vimAlias;
+          assert builtins.any (name: builtins.match ".*gcc.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*gnumake.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*lua-language-server.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*nil.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*nodejs.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*python.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*stylua.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*tree-sitter.*" name != null) homePackageNames;
+          pkgs.runCommand "gamma-neovim-config-check" { } ''
+            set -eu
+
+            test -r ${nvimConfig}/init.lua
+            test -r ${nvimConfig}/lazy-lock.json
+            test -r ${nvimConfig}/lazyvim.json
+            test -r ${nvimConfig}/stylua.toml
+            test -r ${nvimConfig}/lua/config/keymaps.lua
+            test -r ${nvimConfig}/lua/config/options.lua
+            test -r ${nvimConfig}/lua/plugins/avante.lua
+            test -r ${nvimConfig}/lua/plugins/copilot.lua
+            test -r ${nvimConfig}/lua/plugins/molten.lua
+            test -r ${nvimConfig}/lua/plugins/nerdtree.lua
+            test -r ${nvimConfig}/lua/plugins/nvim-tmux-configuration.lua
+            test -r ${nvimConfig}/lua/plugins/typst-preview.lua
+            test -r ${nvimConfig}/snippets/javascript/my_snippets.code-snippets
+            test ! -e ${nvimConfig}/lua/plugins/example.lua
+            test ! -e ${nvimConfig}/LICENSE
+
+            grep -q 'lazyvim.plugins.extras.ai.copilot' ${nvimConfig}/lazyvim.json
+            grep -q 'lazyvim.plugins.extras.lang.typescript' ${nvimConfig}/lazyvim.json
+            grep -q 'lazyvim.plugins.extras.lang.rust' ${nvimConfig}/lazyvim.json
+            grep -q 'vim.g.snacks_animate = false' ${nvimConfig}/lua/config/options.lua
+            grep -q 'vim.opt.clipboard = "unnamedplus"' ${nvimConfig}/lua/config/options.lua
+            grep -q 'vim.opt.swapfile = false' ${nvimConfig}/lua/config/options.lua
+            grep -q 'Polish ą' ${nvimConfig}/lua/config/keymaps.lua
+            grep -q ':TypstPreview<Return>' ${nvimConfig}/lua/config/keymaps.lua
+            grep -q 'solarized-osaka' ${nvimConfig}/lua/plugins/colorscheme.lua
+            grep -q 'provider = "openai"' ${nvimConfig}/lua/plugins/avante.lua
+            grep -q 'zbirenbaum/copilot.lua' ${nvimConfig}/lua/plugins/copilot.lua
+            grep -q 'benlubas/molten-nvim' ${nvimConfig}/lua/plugins/molten.lua
+            grep -q 'quarto-dev/quarto-nvim' ${nvimConfig}/lua/plugins/molten.lua
+            grep -q 'GCBallesteros/jupytext.nvim' ${nvimConfig}/lua/plugins/molten.lua
+            grep -q 'position = "right"' ${nvimConfig}/lua/plugins/nerdtree.lua
+            grep -q 'christoomey/vim-tmux-navigator' ${nvimConfig}/lua/plugins/nvim-tmux-configuration.lua
+            grep -q 'qutebrowser %s' ${nvimConfig}/lua/plugins/typst-preview.lua
+
+            touch "$out"
+          '';
+
         gamma-workflow-scripts =
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;

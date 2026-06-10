@@ -83,6 +83,14 @@ plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
 Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
+Home Manager manages Neovim as the primary editor and links the reviewed
+LazyVim-based configuration from `config/nvim` to `~/.config/nvim`. The
+migration keeps the existing LazyVim extras, plugin lock file, Solarized Osaka
+theme, Copilot and Avante plugin specs, Typst preview binding, tmux navigation,
+Neo-tree-on-right workflow, Molten/Quarto/Jupytext notebook workflow,
+JavaScript snippets, and Polish diacritic insert-mode mappings. Local plugin
+auth state and provider credentials remain outside the repository.
+
 Home Manager manages Ghostty at `~/.config/ghostty/config`. The migrated
 configuration keeps the existing Tango Dark theme, MesloLGS Nerd Font Mono,
 window padding, tab-style titlebar, close behavior, and Dvorak-QWERTY
