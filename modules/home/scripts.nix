@@ -15,12 +15,16 @@
       if [[ $# -eq 1 ]]; then
         selected=$1
       else
-        selected=$(
+        if ! selected=$(
           {
             find "$HOME/Developer" -mindepth 1 -maxdepth 1 -type d
             [[ -d "$HOME/nix" ]] && printf '%s\n' "$HOME/nix"
-          } | fzf
-        )
+          } | fzf \
+            --prompt='tmux session> ' \
+            --preview='printf "Path: %s\n\n" {}; find {} -maxdepth 2 -mindepth 1 | sort | sed "s|{}|.|" | head -n 40; if git -C {} rev-parse --is-inside-work-tree >/dev/null 2>&1; then printf "\nRecent commits:\n"; git -C {} log --oneline --decorate --color=always -n 12; fi'
+        ); then
+          exit 0
+        fi
       fi
 
       if [[ -z $selected ]]; then

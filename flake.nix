@@ -175,6 +175,8 @@
               test -x ${gitBranchSwitcher}
               test -x ${typstSmartOpen}
               test -r ${typstTemplate}
+              grep -q 'tmux session> ' ${tmuxSessionizer}
+              grep -q 'Recent commits:' ${tmuxSessionizer}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
@@ -195,7 +197,7 @@
 
               cat > "$bin/fzf" <<'EOF'
               #!${pkgs.runtimeShell}
-              printf 'issue-10-check\n'
+              printf '%s/Developer/example-project\n' "$HOME"
               EOF
               chmod +x "$bin/fzf"
 
@@ -209,7 +211,7 @@
                 HOME="$home" \
                 TMUX=1 \
                 TMPDIR="$TMPDIR" \
-                ${tmuxSessionizer} "$home/Developer/example-project"
+                ${tmuxSessionizer}
 
               grep -q 'new-session -ds example-project -c' "$TMPDIR/tmux.log"
               grep -q 'new-window -t example-project -n node -c' "$TMPDIR/tmux.log"
