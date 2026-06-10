@@ -15,13 +15,41 @@
       if [[ $# -eq 1 ]]; then
         selected=$1
       else
+        preview_command=$(cat <<'PREVIEW'
+      project={}
+      readme=$(
+        find "$project" -maxdepth 1 -type f \( -iname "README" -o -iname "README.*" \) \
+          | sort \
+          | head -n 1
+      )
+
+      if [ -n "$readme" ]; then
+        printf 'README: %s\n\n' "$(basename "$readme")"
+
+        if command -v bat >/dev/null 2>&1; then
+          bat --style=plain --color=always --line-range :120 "$readme"
+        else
+          sed -n '1,120p' "$readme"
+        fi
+      elif git -C "$project" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        printf 'Git status:\n'
+        git -C "$project" status --short
+        printf '\nRecent commits:\n'
+        git -C "$project" log --oneline --decorate --color=always -n 12
+      else
+        printf 'Files:\n'
+        find "$project" -maxdepth 2 -mindepth 1 | sort | sed "s|$project|.|" | head -n 60
+      fi
+      PREVIEW
+        )
+
         if ! selected=$(
           {
             find "$HOME/Developer" -mindepth 1 -maxdepth 1 -type d
             [[ -d "$HOME/nix" ]] && printf '%s\n' "$HOME/nix"
           } | fzf \
             --prompt='tmux session> ' \
-            --preview='printf "Path: %s\n\n" {}; find {} -maxdepth 2 -mindepth 1 | sort | sed "s|{}|.|" | head -n 40; if git -C {} rev-parse --is-inside-work-tree >/dev/null 2>&1; then printf "\nRecent commits:\n"; git -C {} log --oneline --decorate --color=always -n 12; fi'
+            --preview="$preview_command"
         ); then
           exit 0
         fi

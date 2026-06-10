@@ -176,6 +176,7 @@
               test -x ${typstSmartOpen}
               test -r ${typstTemplate}
               grep -q 'tmux session> ' ${tmuxSessionizer}
+              grep -q 'README: %s' ${tmuxSessionizer}
               grep -q 'Recent commits:' ${tmuxSessionizer}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
