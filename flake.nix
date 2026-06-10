@@ -58,6 +58,19 @@
       };
 
       checks.${system} = {
+        gamma-pam-config =
+          let
+            pamConfig = pkgs.writeText "sudo-local-pam" gammaConfiguration.config.security.pam.services.sudo_local.text;
+          in
+          pkgs.runCommand "gamma-pam-config-check" { } ''
+            set -eu
+
+            grep -q 'pam_reattach.so' ${pamConfig}
+            grep -q 'pam_tid.so' ${pamConfig}
+
+            touch "$out"
+          '';
+
         gamma-backup-config =
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;

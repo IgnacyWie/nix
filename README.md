@@ -99,7 +99,9 @@ Home Manager manages tmux configuration while Homebrew remains the tmux binary
 provider on `gamma`. TPM remains the v1 tmux plugin manager, with
 `tmux-plugins/tpm`, `christoomey/vim-tmux-navigator`,
 `seebi/tmux-colors-solarized`, and `niksingh710/minimal-tmux-status` declared
-in `modules/home/tmux.nix`.
+in `modules/home/tmux.nix`. The Darwin PAM configuration enables Touch ID for
+sudo and reattaches sudo authentication to the user session so Touch ID also
+works inside tmux.
 
 ## Recovery Contract
 
