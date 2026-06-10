@@ -26,10 +26,36 @@
       if [ -n "$readme" ]; then
         printf 'README: %s\n\n' "$(basename "$readme")"
 
-        if command -v bat >/dev/null 2>&1; then
+        if command -v glow >/dev/null 2>&1; then
+          glow -s dark -w "''${FZF_PREVIEW_COLUMNS:-100}" "$readme" | sed -n '1,120p'
+        elif command -v bat >/dev/null 2>&1; then
           bat --style=plain --color=always --line-range :120 "$readme"
         else
           sed -n '1,120p' "$readme"
+        fi
+
+        image_ref=$(
+          grep -Eo '!\[[^]]*\]\([^)]+' "$readme" \
+            | sed -E 's/^!\[[^]]*\]\(//; s/[[:space:]].*$//' \
+            | grep -Ev '^[[:alpha:]][[:alnum:]+.-]*:|^#' \
+            | head -n 1
+        )
+
+        if [ -n "$image_ref" ]; then
+          case "$image_ref" in
+            /*) image_path="$image_ref" ;;
+            *) image_path="$(dirname "$readme")/$image_ref" ;;
+          esac
+
+          if [ -f "$image_path" ]; then
+            printf '\nImage: %s\n\n' "$image_ref"
+
+            if command -v chafa >/dev/null 2>&1; then
+              chafa --size "''${FZF_PREVIEW_COLUMNS:-80}x20" "$image_path"
+            else
+              printf '%s\n' "$image_path"
+            fi
+          fi
         fi
       elif git -C "$project" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         printf 'Git status:\n'

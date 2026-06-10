@@ -22,6 +22,7 @@
     aider-chat
     bat
     bun
+    chafa
     claude-code
     codex
     corepack
@@ -34,6 +35,7 @@
     gh
     git
     gemini-cli
+    glow
     gnused
     htop
     just

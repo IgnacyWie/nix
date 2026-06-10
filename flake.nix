@@ -148,7 +148,9 @@
             packageNames = builtins.map (package: package.name or "") systemPackages;
           in
           assert builtins.elem "tmux" homebrewBrewNames;
+          assert builtins.any (name: builtins.match ".*chafa.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*glow.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazygit.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*lazysql.*" name != null) packageNames;
@@ -177,6 +179,9 @@
               test -r ${typstTemplate}
               grep -q 'tmux session> ' ${tmuxSessionizer}
               grep -q 'README: %s' ${tmuxSessionizer}
+              grep -q 'glow -s dark' ${tmuxSessionizer}
+              grep -q 'chafa --size' ${tmuxSessionizer}
+              grep -q 'Image: %s' ${tmuxSessionizer}
               grep -q 'Recent commits:' ${tmuxSessionizer}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
