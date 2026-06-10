@@ -38,18 +38,30 @@ truth, so this flake does not add a competing Docker CLI.
 Validate the flake before applying system changes:
 
 ```sh
-nix flake check
-sudo darwin-rebuild switch --flake .#gamma
+make check
+make apply-gamma
 ```
 
 ## Local Verification Helpers
 
-The `scripts/` wrappers use the same Nix invocation needed during the initial
-flake bootstrap:
+Common repository commands are exposed through `make`:
+
+```sh
+make
+make check
+make eval-gamma
+make build-gamma
+make fmt
+make apply-gamma
+```
+
+The `make` targets are thin wrappers around `scripts/`. The scripts use the
+same Nix invocation needed during the initial flake bootstrap:
 
 ```sh
 ./scripts/check
 ./scripts/eval-gamma
+./scripts/build-gamma
 ./scripts/fmt
 ./scripts/apply-gamma
 ```
@@ -71,7 +83,7 @@ dependencies. The Darwin baseline sets `nix.settings.ssl-cert-file` to
 Install or update the local Git hook after cloning:
 
 ```sh
-./scripts/install-pre-commit-hook
+make install-pre-commit-hook
 ```
 
 The installer sets this clone's `core.hooksPath` to `.githooks`. The

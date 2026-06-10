@@ -17,25 +17,37 @@ Keep modules focused by responsibility. Avoid mixing machine-specific values int
 
 ## Build, Test, and Development Commands
 
-No runnable Nix configuration exists yet. Once `flake.nix` is present, use:
+Use the top-level `Makefile` for common repo workflows:
 
 ```sh
-nix flake check
+make
+```
+
+Lists available targets.
+
+```sh
+make check
 ```
 
 Validates flake outputs and catches evaluation errors.
 
 ```sh
-darwin-rebuild switch --flake .#<hostname>
+make fmt
 ```
 
-Applies the macOS configuration for the selected host.
+Formats Nix files with the configured flake formatter.
 
 ```sh
-nix fmt
+make build-gamma
 ```
 
-Formats Nix files if a formatter is configured.
+Builds the `gamma` Darwin system closure without applying it.
+
+```sh
+make apply-gamma
+```
+
+Applies the macOS configuration for `gamma`.
 
 Do not run system-changing commands unless the target host and expected changes are clear.
 
@@ -49,7 +61,7 @@ Markdown files should use concise headings and actionable lists.
 
 ## Testing Guidelines
 
-For Nix changes, run `nix flake check` before applying. For host changes, review the diff or build output from `darwin-rebuild` before switching.
+For Nix changes, run `make check` before applying. For host changes, review the diff or build output from `make build-gamma` before switching.
 
 When adding backup configuration, test both backup and restore. Document restore commands and manual verification steps in `backup.md` or `manual-steps.md`.
 
