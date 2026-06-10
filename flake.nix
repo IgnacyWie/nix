@@ -106,7 +106,7 @@
           assert defaults.finder.FXDefaultSearchScope == "SCcf";
           assert defaults.finder.FXEnableExtensionChangeWarning == false;
           assert defaults.finder.FXPreferredViewStyle == "clmv";
-          assert defaults.finder.NewWindowTarget == "PfHm";
+          assert defaults.finder.NewWindowTarget == "PfLo";
           assert defaults.finder.NewWindowTargetPath == "file:///Users/ignacywielogorski/";
           assert defaults.finder.ShowExternalHardDrivesOnDesktop == true;
           assert defaults.finder.ShowHardDrivesOnDesktop == true;

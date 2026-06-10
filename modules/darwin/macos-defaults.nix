@@ -25,7 +25,7 @@
       FXDefaultSearchScope = "SCcf";
       FXEnableExtensionChangeWarning = false;
       FXPreferredViewStyle = "clmv";
-      NewWindowTarget = "Home";
+      NewWindowTarget = "Other";
       NewWindowTargetPath = "file:///Users/ignacywielogorski/";
       ShowExternalHardDrivesOnDesktop = true;
       ShowHardDrivesOnDesktop = true;
