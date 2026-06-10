@@ -158,6 +158,18 @@ already exist. The zsh `Ctrl-H` binding launches this script outside tmux, and
 the tmux `Ctrl-H` binding launches it in a popup from the current pane
 directory, after tmux plugins have loaded.
 
+Home Manager manages `~/.local/scripts/issue-picker`. Inside a GitHub-backed
+Git repository, it detects the current `owner/repo` from the local Git remote,
+lists open issues with `gh issue list`, and opens an `fzf` picker with the
+`issue> ` prompt. The preview uses `gh issue view` to show issue title, state,
+labels, assignees, URL, body, and comments when available. After selecting an
+issue, a second `fzf` action menu supports opening the issue in the browser,
+copying its URL with `pbcopy`, creating or switching to an
+`issue-<number>-<slugified-title>` branch, or starting a `codex` session with
+the issue URL as context. The zsh `Ctrl-I` binding launches this script outside
+tmux, and the tmux `Ctrl-I` binding launches it in a popup from the current pane
+directory.
+
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst
 document from `~/typst` or creates a new one from the template, then starts a
