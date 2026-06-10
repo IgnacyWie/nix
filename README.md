@@ -83,11 +83,23 @@ plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
 Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
+Home Manager manages Ghostty at `~/.config/ghostty/config`. The migrated
+configuration keeps the existing Tango Dark theme, MesloLGS Nerd Font Mono,
+window padding, tab-style titlebar, close behavior, and Dvorak-QWERTY
+command-key workaround bindings for copy, paste, surface, tab, window, quit,
+and reload actions.
+
 Home Manager also manages `~/.local/scripts/tmux-sessionizer`. It selects a
 project under `~/Developer` or the `~/nix` configuration repository, creates or
 switches to a named tmux session, and opens the first window as `codex` before
 adding the usual development, Git, database, and REST client windows. The zsh
 `Ctrl-F` binding and tmux prefix `f` binding both launch this script.
+
+Home Manager manages tmux configuration while Homebrew remains the tmux binary
+provider on `gamma`. TPM remains the v1 tmux plugin manager, with
+`tmux-plugins/tpm`, `christoomey/vim-tmux-navigator`,
+`seebi/tmux-colors-solarized`, and `niksingh710/minimal-tmux-status` declared
+in `modules/home/tmux.nix`.
 
 ## Recovery Contract
 
