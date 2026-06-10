@@ -328,6 +328,25 @@
 
               touch "$out"
             '';
+
+        local-pre-commit-hook =
+          pkgs.runCommand "local-pre-commit-hook-check"
+            {
+              nativeBuildInputs = [
+                pkgs.gnugrep
+              ];
+            }
+            ''
+              set -eu
+
+              test -x ${./.githooks/pre-commit}
+              test -x ${./scripts/install-pre-commit-hook}
+              grep -q 'scripts/fmt' ${./.githooks/pre-commit}
+              grep -q 'scripts/check' ${./.githooks/pre-commit}
+              grep -q 'git config core.hooksPath .githooks' ${./scripts/install-pre-commit-hook}
+
+              touch "$out"
+            '';
       };
     };
 }
