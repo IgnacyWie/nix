@@ -12,6 +12,14 @@ _Avoid_: Dotfiles, backup repo, Nix platform
 The personal macOS machine used for daily work and development.
 _Avoid_: Laptop, Mac, client
 
+**Workstation Defaults**:
+Low-risk macOS system preferences for the `gamma` Workstation that are declared through nix-darwin when they are supported and verifiable. App-managed preferences and privacy permissions stay manual unless clean declarative support exists.
+_Avoid_: macOS tweaks, dotfile defaults, hidden settings
+
+**Input Source Baseline**:
+The native macOS keyboard layouts expected on the `gamma` Workstation: `DVORAK - QWERTY CMD` as the selected layout and `Polish Pro` as an enabled secondary layout.
+_Avoid_: Keyboard preference, language setup, typing mode
+
 **Host Family**:
 A grouping of machines by operating system and configuration model, such as Darwin workstations or NixOS servers.
 _Avoid_: Platform, role, environment

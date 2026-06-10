@@ -3,6 +3,7 @@
 {
   imports = [
     ./homebrew.nix
+    ./macos-defaults.nix
   ];
 
   fonts.packages = [

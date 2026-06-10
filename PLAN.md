@@ -57,7 +57,7 @@ Suggested files:
 Create `backup.md` and `manual-steps.md` before writing substantial Nix code, but do not put secrets in either file. Structure `manual-steps.md` as a post-restore checklist, especially for Vaultwarden login, Restic credentials, GitHub authentication, SSH key recovery, browser login, App Store login, and macOS permission prompts.
 Document Rosetta 2 as an install-if-needed manual step rather than a required baseline.
 Commit sanitized inventory files. Do not commit raw local config files until they have been reviewed for secrets, tokens, private hostnames, and obsolete settings.
-Document and verify the Dvorak-QWERTY keyboard layout during restore. Only make it declarative if `nix-darwin` can manage it cleanly.
+Document and verify the Dvorak-QWERTY keyboard layout during restore. Manage the native macOS input-source baseline declaratively through nix-darwin custom user preferences: `DVORAK - QWERTY CMD` selected, with `Polish Pro` enabled as the secondary layout.
 
 Record:
 
@@ -73,7 +73,7 @@ Record:
 - Apps with manual licenses.
 - Apps requiring Full Disk Access, Accessibility, camera, microphone, or other macOS permissions.
 - Intel-only apps that may require Rosetta 2.
-- Keyboard layout and input source, currently Dvorak-QWERTY.
+- Keyboard layout and input source, currently `DVORAK - QWERTY CMD` with `Polish Pro` enabled as the secondary layout.
 
 Current assumption: no cloud-synced folders are in use for backup purposes. Revisit this if iCloud Drive, Dropbox, Google Drive, or similar services become part of the workflow.
 The first flake only needs to support `aarch64-darwin` for `gamma`. Add other systems only when real hosts require them.

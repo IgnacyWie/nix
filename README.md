@@ -16,7 +16,8 @@ This repository describes the reproducible setup for personal machines using Nix
 - Browser: Zen Browser
 - Secret store: Vaultwarden client
 - Backup: Restic to Backblaze B2, with secrets in macOS Keychain
-- Keyboard layout: Dvorak-QWERTY
+- Keyboard layout: `DVORAK - QWERTY CMD`, with `Polish Pro` enabled as the
+  secondary input source
 - Keyboard remap: Caps Lock to Escape (nix-darwin); right Command and right Option are remapped using Karabiner-Elements
 
 ## Current Status
@@ -88,6 +89,14 @@ such as `darwin-rebuild switch` or `./scripts/apply-gamma`.
 
 CI also runs secret scanning on pull requests. See [SECURITY.md](SECURITY.md)
 for the Gitleaks configuration, local scan command, and false-positive process.
+
+## Workstation Defaults
+
+nix-darwin manages the first reviewed Workstation Defaults batch for `gamma`:
+Dock visibility behavior, Finder visibility/search defaults, global key-repeat
+and extension defaults, screenshot format behavior, and the native macOS
+input-source baseline. The selected input source is `DVORAK - QWERTY CMD`, with
+`Polish Pro` enabled as the secondary layout.
 
 Before nix-darwin is installed globally, use the bootstrap wrapper:
 

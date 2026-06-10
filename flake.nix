@@ -71,6 +71,54 @@
             touch "$out"
           '';
 
+        gamma-macos-defaults =
+          let
+            defaults = gammaConfiguration.config.system.defaults;
+            dvorakQwerty = {
+              InputSourceKind = "Keyboard Layout";
+              "KeyboardLayout ID" = 16301;
+              "KeyboardLayout Name" = "DVORAK - QWERTY CMD";
+            };
+            polishPro = {
+              InputSourceKind = "Keyboard Layout";
+              "KeyboardLayout ID" = 30788;
+              "KeyboardLayout Name" = "Polish Pro";
+            };
+            hitoolbox = defaults.CustomUserPreferences."com.apple.HIToolbox";
+          in
+          assert defaults.dock.autohide == true;
+          assert defaults.dock.show-recents == false;
+          assert defaults.dock.mru-spaces == false;
+          assert defaults.dock.expose-group-apps == true;
+          assert defaults.finder.AppleShowAllExtensions == true;
+          assert defaults.finder.AppleShowAllFiles == true;
+          assert defaults.finder.FXDefaultSearchScope == "SCcf";
+          assert defaults.finder.FXEnableExtensionChangeWarning == false;
+          assert defaults.finder.FXPreferredViewStyle == "clmv";
+          assert defaults.finder.ShowPathbar == true;
+          assert defaults.finder.ShowStatusBar == true;
+          assert defaults.finder._FXSortFoldersFirst == true;
+          assert defaults.NSGlobalDomain.AppleShowAllExtensions == true;
+          assert defaults.NSGlobalDomain.ApplePressAndHoldEnabled == false;
+          assert defaults.NSGlobalDomain.InitialKeyRepeat == 15;
+          assert defaults.NSGlobalDomain.KeyRepeat == 2;
+          assert defaults.screencapture.disable-shadow == true;
+          assert defaults.screencapture.include-date == true;
+          assert defaults.screencapture.type == "png";
+          assert
+            hitoolbox.AppleEnabledInputSources == [
+              dvorakQwerty
+              polishPro
+            ];
+          assert
+            hitoolbox.AppleSelectedInputSources == [
+              dvorakQwerty
+            ];
+          pkgs.runCommand "gamma-macos-defaults-check" { } ''
+            set -eu
+            touch "$out"
+          '';
+
         gamma-backup-config =
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;

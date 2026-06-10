@@ -71,8 +71,11 @@ application credentials.
 
 ## Keyboard
 
-Verify the `Dvorak-QWERTY` input source and the keyboard remaps after restore:
+Verify the declarative input-source baseline and the keyboard remaps after
+restore:
 
+- `DVORAK - QWERTY CMD` is the selected input source.
+- `Polish Pro` is enabled as the secondary input source.
 - Caps Lock to Escape.
 - Right Command and right Option mapping in Karabiner-Elements.
 - ISO virtual keyboard behavior in Karabiner-Elements.
@@ -80,10 +83,11 @@ Verify the `Dvorak-QWERTY` input source and the keyboard remaps after restore:
   sending, display brightness chords, Finder shortcuts, app shortcuts, and
   Zathura `Command+'` behavior.
 
-Caps Lock remap is managed by nix-darwin. Right Command/right Option mapping is
-managed in Karabiner-Elements at `~/.config/karabiner/karabiner.json`. If these
-are not configured on first boot, open Karabiner-Elements and apply the
-configured `Default` profile before closing the restore drill.
+The input-source baseline and Caps Lock remap are managed by nix-darwin. Right
+Command/right Option mapping is managed in Karabiner-Elements at
+`~/.config/karabiner/karabiner.json`. If the Karabiner mappings are not
+configured on first boot, open Karabiner-Elements and apply the configured
+`Default` profile before closing the restore drill.
 
 ## Rosetta 2
 
@@ -129,7 +133,8 @@ Run this separately from the single-file Restic restore.
 4. Restore Restic credentials into Keychain.
 5. Authenticate GitHub CLI and SSH.
 6. Verify browser and App Store login.
-7. Verify `Dvorak-QWERTY`, Caps Lock to Escape (nix-darwin), and right Command/right Option mapping in Karabiner-Elements.
+7. Verify `DVORAK - QWERTY CMD`, `Polish Pro`, Caps Lock to Escape
+   (nix-darwin), and right Command/right Option mapping in Karabiner-Elements.
 8. Verify the migrated skhd bindings for Ghostty launch, space focus/move,
    window focus/swap/warp, fullscreen, sticky, and padding/gap toggle.
 9. Verify the migrated yabai layout, padding, gap, app rules, and
