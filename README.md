@@ -17,6 +17,7 @@ This repository describes the reproducible setup for personal machines using Nix
 - Secret store: Vaultwarden client
 - Backup: Restic to Backblaze B2, with secrets in macOS Keychain
 - Keyboard layout: Dvorak-QWERTY
+- Keyboard remap: Caps Lock to Escape
 
 ## Current Status
 
