@@ -15,3 +15,6 @@
 
 # Broad application state is excluded until specific paths are inventoried.
 /Users/ignacywielogorski/Library
+
+# Karabiner generates timestamped backups of managed configuration.
+/Users/ignacywielogorski/.config/karabiner/automatic_backups

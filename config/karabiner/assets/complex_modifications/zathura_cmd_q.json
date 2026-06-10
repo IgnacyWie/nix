@@ -1,0 +1,38 @@
+{
+  "title": "Zathura Cmd+' to Ctrl+Q",
+  "rules": [
+    {
+      "description": "Map Command + ' to Ctrl+Q only in Zathura",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "quote",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "q",
+              "modifiers": [
+                "control"
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^org\\.zathura$",
+                "^org\\.galeon\\.zathura$"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

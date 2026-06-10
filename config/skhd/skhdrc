@@ -1,0 +1,97 @@
+# ZSHRC CONFIGURATION
+
+# Modes
+::raw : yabai -m config active_window_border_color 0xffffffff
+::default : yabai -m config active_window_border_color 0xff336E8E
+:: resize @ : yabai -m config active_window_border_color 0xffdc322f
+
+# Applications Bindings
+cmd - return : open -na Ghostty.app
+alt - return : osascript -e 'tell app "Ghostty" to create window with default profile' \
+          -e 'tell app "Ghostty" to tell current session of current window to write text "ssh dev"'
+
+
+alt - f : yabai -m window --toggle zoom-fullscreen
+
+alt - s : yabai -m window --toggle sticky
+
+# Headphones Connect
+f19 : blueutil --connect b0-67-2f-1c-03-65
+f18 : ~/.scripts/tailscale_trigger.sh
+f17 : open /Volumes
+f16 : open -a iTerm2 cd ~/Developer/backend
+
+f8 : yabai -m space --focus 6
+f4 : open -a 'Firefox Developer Edition'
+
+# focus apps
+alt - w: open -a 'Zen Browser'
+
+# focus window
+alt - h : yabai -m window --focus prev
+alt - t : yabai -m window --focus next
+
+# swap window
+alt + shift - d : yabai -m window --swap west
+alt + shift - h : yabai -m window --swap south
+alt + shift - t : yabai -m window --swap north
+alt + shift - n : yabai -m window --swap east
+
+# move window
+shift + cmd - d : yabai -m window --stack west
+shift + cmd - h : yabai -m window --stack south
+shift + cmd - t : yabai -m window --stack north
+shift + cmd - n : yabai -m window --stack east
+
+# warp winndows
+alt + cmd - d : yabai -m window --warp west
+alt + cmd - h : yabai -m window --warp south
+alt + cmd - t : yabai -m window --warp north
+alt + cmd - n : yabai -m window --warp east
+
+alt - tab : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+alt + shift - tab : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
+
+# balance size of windows
+alt + shift - 0 : yabai -m space --balance
+
+# Full Screen
+alt - u : yabai -m window --toggle zoom-fullscreen
+alt - r : yabai -m space --rotate 90
+alt - j : yabai -m space --toggle padding; yabai -m space --toggle gap
+
+
+# Focusing Spaces
+alt - 1 : yabai -m space --focus  1
+alt - 2 : yabai -m space --focus  2
+alt - 3 : yabai -m space --focus  3
+alt - 4 : yabai -m space --focus  4
+alt - 5 : yabai -m space --focus  5
+alt - 6 : yabai -m space --focus  6
+alt - 7 : yabai -m space --focus  7
+alt - 8 : yabai -m space --focus  8
+alt - 9 : yabai -m space --focus  9
+
+# Focus Recent
+alt - l : yabai -m space --focus recent
+alt - 0 : yabai -m space --focus recent
+
+# send windows to desktop
+alt + shift - 1 : yabai -m window --space  1
+alt + shift - 2 : yabai -m window --space  2
+alt + shift - 3 : yabai -m window --space  3
+alt + shift - 4 : yabai -m window --space  4
+alt + shift - 5 : yabai -m window --space  5
+alt + shift - 6 : yabai -m window --space  6
+alt + shift - 7 : yabai -m window --space  7
+alt + shift - 8 : yabai -m window --space  8
+alt + shift - 9 : yabai -m window --space  9
+
+
+# Toggling window modes
+alt + shift - space : yabai -m window --toggle float;\
+                      yabai -m window --grid 4:4:1:0:2:4
+
+.blacklist [
+    "VMware Fusion"
+]

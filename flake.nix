@@ -389,6 +389,78 @@
               touch "$out"
             '';
 
+        gamma-window-management-config =
+          let
+            homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
+            homebrewBrewfile = pkgs.writeText "Brewfile" gammaConfiguration.config.homebrew.brewfile;
+            homebrewCasks = gammaConfiguration.config.homebrew.casks;
+            homebrewCaskNames = builtins.map (cask: cask.name) homebrewCasks;
+            systemPackages = gammaConfiguration.config.environment.systemPackages;
+            packageNames = builtins.map (package: package.name or "") systemPackages;
+            karabinerConfig = homeConfig.xdg.configFile."karabiner/karabiner.json".source;
+            karabinerGermanLetters =
+              homeConfig.xdg.configFile."karabiner/assets/complex_modifications/1709730136.json".source;
+            karabinerZathura =
+              homeConfig.xdg.configFile."karabiner/assets/complex_modifications/zathura_cmd_q.json".source;
+            skhdConfig = homeConfig.xdg.configFile."skhd/skhdrc".source;
+            yabaiFile = homeConfig.xdg.configFile."yabai/yabairc";
+            yabaiConfig = yabaiFile.source;
+          in
+          assert builtins.elem "karabiner-elements" homebrewCaskNames;
+          assert builtins.any (name: builtins.match ".*blueutil.*" name != null) packageNames;
+          assert yabaiFile.executable;
+          pkgs.runCommand "gamma-window-management-config-check"
+            {
+              nativeBuildInputs = [
+                pkgs.jq
+                pkgs.gnugrep
+              ];
+            }
+            ''
+              set -eu
+
+              grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
+              grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
+
+              test -r ${karabinerConfig}
+              test -r ${karabinerGermanLetters}
+              test -r ${karabinerZathura}
+              test -r ${skhdConfig}
+              test -x ${yabaiConfig}
+              test ! -e ${./config/karabiner}/automatic_backups
+
+              jq -e '.profiles[] | select(.name == "Default" and .selected == true)' ${karabinerConfig} > /dev/null
+              jq -e '.profiles[] | select(.name == "Minecraft")' ${karabinerConfig} > /dev/null
+              grep -q '"keyboard_type_v2": "iso"' ${karabinerConfig}
+              grep -q "Map Command + ' to Ctrl+Q only in Zathura" ${karabinerConfig}
+              grep -q 'Easier Numbers' ${karabinerConfig}
+              grep -q 'Easier Pane Switching' ${karabinerConfig}
+              grep -q 'Make the' ${karabinerConfig}
+              grep -q 'Easier Pane Sending' ${karabinerConfig}
+              grep -q 'Display Brightness simlayer' ${karabinerConfig}
+              grep -q 'Finder Key ~' ${karabinerConfig}
+              grep -q 'App Key ;' ${karabinerConfig}
+              grep -q 'German' ${karabinerGermanLetters}
+              grep -q 'Zathura Cmd' ${karabinerZathura}
+
+              grep -q 'sudo yabai --load-sa' ${yabaiConfig}
+              grep -q 'event=dock_did_restart' ${yabaiConfig}
+              grep -q 'focus_follows_mouse autoraise' ${yabaiConfig}
+              grep -q 'auto_padding_width 1600' ${yabaiConfig}
+              grep -q 'yabai -m rule --add app="\^Karabiner-Elements\$" manage=off' ${yabaiConfig}
+              grep -q 'yabai -m rule --add app="\^System Settings\$" manage=off space=5' ${yabaiConfig}
+              grep -q 'echo "yabai configuration loaded.."' ${yabaiConfig}
+
+              grep -q 'cmd - return : open -na Ghostty.app' ${skhdConfig}
+              grep -q 'blueutil --connect b0-67-2f-1c-03-65' ${skhdConfig}
+              grep -q "alt - w: open -a 'Zen Browser'" ${skhdConfig}
+              grep -q 'alt - 1 : yabai -m space --focus  1' ${skhdConfig}
+              grep -q 'alt + shift - 9 : yabai -m window --space  9' ${skhdConfig}
+              grep -q '"VMware Fusion"' ${skhdConfig}
+
+              touch "$out"
+            '';
+
         local-pre-commit-hook =
           pkgs.runCommand "local-pre-commit-hook-check"
             {

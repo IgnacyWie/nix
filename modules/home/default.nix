@@ -10,6 +10,7 @@
     ./shell.nix
     ./ssh.nix
     ./tmux.nix
+    ./window-management.nix
   ];
 
   home = {

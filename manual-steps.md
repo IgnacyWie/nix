@@ -75,11 +75,15 @@ Verify the `Dvorak-QWERTY` input source and the keyboard remaps after restore:
 
 - Caps Lock to Escape.
 - Right Command and right Option mapping in Karabiner-Elements.
+- ISO virtual keyboard behavior in Karabiner-Elements.
+- Karabiner complex modifications for easier numbers, pane switching, pane
+  sending, display brightness chords, Finder shortcuts, app shortcuts, and
+  Zathura `Command+'` behavior.
 
 Caps Lock remap is managed by nix-darwin. Right Command/right Option mapping is
-managed in Karabiner-Elements. If these are not configured on first boot, open
-Karabiner-Elements and apply the configured profile before closing the restore
-drill.
+managed in Karabiner-Elements at `~/.config/karabiner/karabiner.json`. If these
+are not configured on first boot, open Karabiner-Elements and apply the
+configured `Default` profile before closing the restore drill.
 
 ## Rosetta 2
 
@@ -99,9 +103,14 @@ restore process and should not be treated as silently reproducible.
 Expected permission categories:
 
 - Karabiner: Input Monitoring and Accessibility, if used.
-- yabai: Accessibility and any scripting automation prompts required by the
-  chosen configuration.
-- skhd: Accessibility, if used.
+- yabai: Accessibility, Automation prompts, and scripting-addition setup. Review
+  whether SIP changes are still required for the macOS version in use before
+  enabling the scripting addition.
+- yabai sudoers: the migrated config runs `sudo yabai --load-sa` on startup and
+  after Dock restarts. If scripting additions remain required, configure the
+  narrow yabai sudoers rule recommended by the installed Koekeishiya formula
+  rather than granting broad passwordless sudo.
+- skhd: Accessibility/Input Monitoring, if prompted.
 - Backup tooling: Full Disk Access or selected folder access so Restic can read
   the protected backup scope.
 - Terminal or Ghostty: permissions needed to run backup, restore, development,
@@ -121,18 +130,24 @@ Run this separately from the single-file Restic restore.
 5. Authenticate GitHub CLI and SSH.
 6. Verify browser and App Store login.
 7. Verify `Dvorak-QWERTY`, Caps Lock to Escape (nix-darwin), and right Command/right Option mapping in Karabiner-Elements.
-8. Grant required macOS permissions for Karabiner, yabai, skhd, and backup
-   access.
-9. Restore a representative subset of data into a temporary path.
-10. Verify Node and pnpm shell behavior with
+8. Verify the migrated skhd bindings for Ghostty launch, space focus/move,
+   window focus/swap/warp, fullscreen, sticky, padding/gap toggle, and the
+   device-specific `blueutil` headphone binding.
+9. Verify the migrated yabai layout, padding, gap, app rules, and
+   scripting-addition behavior. If `sudo yabai --load-sa` fails, complete the
+   documented sudoers/SIP steps before treating the restore as complete.
+10. Grant required macOS permissions for Karabiner, yabai, skhd, and backup
+    access.
+11. Restore a representative subset of data into a temporary path.
+12. Verify Node and pnpm shell behavior with
     [docs/node-pnpm-shell.md](docs/node-pnpm-shell.md), especially that `nvm`
     wins over stale Homebrew Node and global pnpm shims.
-11. Verify local workflow scripts after applying Home Manager:
+13. Verify local workflow scripts after applying Home Manager:
     `command -v tmux-sessionizer`, `command -v git-branch-switcher`,
     `command -v typst-smart-open`, and one interactive smoke test for each
     script. The scripts expect `~/Developer` and `~/typst`, which Home Manager
     creates without managing their contents.
-12. Confirm development tools and terminal configuration are usable.
+14. Confirm development tools and terminal configuration are usable.
 
 The drill passes only if the workstation can be rebuilt using repository
 configuration plus Secret Store recovery, without relying on undocumented state

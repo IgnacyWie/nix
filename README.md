@@ -161,6 +161,15 @@ old `~/.tmux/plugins/` plugin path.
 The Darwin PAM configuration enables Touch ID for sudo and reattaches sudo
 authentication to the user session so Touch ID also works inside tmux.
 
+Home Manager manages the v1 keyboard and window-management configuration:
+Karabiner at `~/.config/karabiner/karabiner.json` plus intentional complex
+modifications, skhd at `~/.config/skhd/skhdrc`, and yabai at
+`~/.config/yabai/yabairc`. Homebrew remains the v1 app and daemon provider for
+Karabiner-Elements, yabai, and skhd. The migrated yabai config keeps the current
+scripting-addition load commands and Dock restart signal, but fresh restores
+still require the manual macOS approvals and sudoers/SIP review documented in
+`manual-steps.md`. Karabiner automatic backups are intentionally not tracked.
+
 ## Recovery Contract
 
 - [backup.md](backup.md): Restic to Backblaze B2 scope, credential pattern,

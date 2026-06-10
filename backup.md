@@ -83,6 +83,7 @@ content:
 /Users/ignacywielogorski/Library
 /Users/ignacywielogorski/Movies
 /Users/ignacywielogorski/Music
+/Users/ignacywielogorski/.config/karabiner/automatic_backups
 ```
 
 Only exclude a directory from the backup if either it is reproducible from Git,
