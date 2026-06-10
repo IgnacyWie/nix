@@ -4,3 +4,4 @@
 vim.g.snacks_animate = false -- Disable all animations
 vim.opt.clipboard = "unnamedplus" -- Use the system clipboard instead of the buffers
 vim.opt.swapfile = false
+vim.lsp.log.set_level(vim.lsp.log.levels.OFF)

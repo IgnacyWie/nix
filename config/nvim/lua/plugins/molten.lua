@@ -3,12 +3,11 @@ return {
   {
     "benlubas/molten-nvim",
     version = "^1.0.0",
-    dependencies = { "3rd/image.nvim" },
     build = ":UpdateRemotePlugins",
     init = function()
       -- general molten options
       vim.g.molten_auto_open_output = false
-      vim.g.molten_image_provider = "image.nvim"
+      vim.g.molten_image_provider = "none"
       vim.g.molten_wrap_output = true
       vim.g.molten_virt_text_output = true
       vim.g.molten_virt_lines_off_by_1 = true
@@ -30,17 +29,27 @@ return {
     end,
   },
 
-  -- Image provider with your kitty config
+  -- Image rendering is available for notebook-oriented filetypes, but should
+  -- not initialize during normal code editing sessions.
   {
     "3rd/image.nvim",
+    ft = { "markdown", "quarto", "typst" },
     opts = {
       backend = "kitty",
+      processor = "magick_cli",
+      integrations = {
+        markdown = { enabled = true, filetypes = { "markdown", "quarto" } },
+        typst = { enabled = true, filetypes = { "typst" } },
+        asciidoc = { enabled = false },
+        neorg = { enabled = false },
+        syslang = { enabled = false },
+      },
       max_width = 100,
       max_height = 12,
       max_height_window_percentage = math.huge,
       max_width_window_percentage = math.huge,
-      window_overlap_clear_enabled = true,
-      window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+      window_overlap_clear_enabled = false,
+      window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif" },
     },
   },
 
