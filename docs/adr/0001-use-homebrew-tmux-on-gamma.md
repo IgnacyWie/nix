@@ -34,6 +34,8 @@ The host system package list also omits Nix tmux. Homebrew declares `tmux` expli
 
 `tmux` should resolve to `/opt/homebrew/bin/tmux` after applying the configuration and opening a new shell.
 
+Mouse support remains disabled in tmux because Homebrew tmux `3.3a` crashes under Ghostty when tmux handles mouse selection. With `mouse off`, text selection is handled by Ghostty instead.
+
 If Nix tmux is reintroduced later, verify attach behavior in Ghostty before switching:
 
 ```sh

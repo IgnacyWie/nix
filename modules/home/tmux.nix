@@ -12,7 +12,8 @@
     enable = true;
     baseIndex = 1;
     keyMode = "vi";
-    mouse = true;
+    # Homebrew tmux 3.3a crashes in Ghostty when tmux handles mouse selection.
+    mouse = false;
     package = null;
     shell = "/bin/zsh";
     terminal = "tmux-256color";
