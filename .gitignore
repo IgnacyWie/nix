@@ -1,0 +1,35 @@
+# Local credentials and machine-only secret material.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+secrets/
+secret/
+credentials/
+*.secret
+*.secrets
+*.credential
+*.credentials
+*.password
+*secret.env
+*secrets.env
+*credential.env
+*credentials.env
+*password.env
+*keychain*.json
+*keychain*.plist
+*keychain*.txt
+*vaultwarden*.csv
+*vaultwarden*.json
+*bitwarden*.csv
+*bitwarden*.json
+*1password*.csv
+*1password*.json
+
+# SSH private keys should be restored from the secret store, not Git.
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pem

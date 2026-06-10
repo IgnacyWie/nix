@@ -86,6 +86,9 @@ staged before committing again. `./scripts/check` runs `nix flake check`, which
 mirrors the main local validation path without running system-changing commands
 such as `darwin-rebuild switch` or `./scripts/apply-gamma`.
 
+CI also runs secret scanning on pull requests. See [SECURITY.md](SECURITY.md)
+for the Gitleaks configuration, local scan command, and false-positive process.
+
 Before nix-darwin is installed globally, use the bootstrap wrapper:
 
 ```sh
