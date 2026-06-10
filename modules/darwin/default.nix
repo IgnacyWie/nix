@@ -1,6 +1,10 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
+  fonts.packages = [
+    pkgs.nerd-fonts.meslo-lg
+  ];
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"

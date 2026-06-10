@@ -19,7 +19,37 @@
   };
 
   environment.systemPackages = with pkgs; [
+    aider-chat
+    bat
+    bun
+    claude-code
+    codex
+    coreutils
+    curl
+    eza
+    fd
+    fzf
+    gawk
+    gh
     git
-    vim
+    gemini-cli
+    gnused
+    htop
+    just
+    jq
+    lazygit
+    neovim
+    nodejs_24
+    opencode
+    posting
+    restic
+    ripgrep
+    terminal-notifier
+    tmux
+    tree
+    typst
+    uv
+    wget
+    zoxide
   ];
 }
