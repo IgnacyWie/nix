@@ -151,7 +151,22 @@ in
       bindkey -s '^I' 'issue-picker\n'
       bindkey -s '^F' 'tmux-sessionizer\n'
       bindkey -s '^G' 'typst-smart-open\n'
-      bindkey -s '^O' 'dev-command-runner\n'
+
+      gamma_dev_command_runner_widget() {
+        zle -I
+
+        if [[ -n "''${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
+          tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"
+          zle reset-prompt
+        else
+          BUFFER="dev-command-runner"
+          CURSOR=''${#BUFFER}
+          zle accept-line
+        fi
+      }
+
+      zle -N gamma_dev_command_runner_widget
+      bindkey '^O' gamma_dev_command_runner_widget
     '';
   };
 }

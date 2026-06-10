@@ -320,7 +320,9 @@
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
-              grep -q "bindkey -s '\^O' 'dev-command-runner" ${zshInit}
+              grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
+              grep -q 'tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${zshInit}
+              grep -q "bindkey '\^O' gamma_dev_command_runner_widget" ${zshInit}
               grep -q "bindkey -s '\^I' 'issue-picker\\\\n'" ${zshInit}
 
               bin="$TMPDIR/bin"
