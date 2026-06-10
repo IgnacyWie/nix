@@ -168,6 +168,13 @@ The zsh `Ctrl-G` binding launches this script outside tmux, and the tmux
 `~/Developer` and `~/typst` when missing, but it does not manage project
 directories or generated Typst documents.
 
+Home Manager manages `~/.local/scripts/backup-restore-picker` as the safe
+Restic restore helper. It uses staged `fzf` selectors for snapshots, files, and
+actions, defaults to printing or copying an explicit restore command, and only
+runs a restore into a timestamped `~/Restores` review directory after typed
+confirmation. It does not restore directly over original paths in v1; see
+[backup.md](backup.md) for the restore safety model and drill.
+
 Home Manager manages tmux configuration while Homebrew remains the tmux binary
 provider on `gamma`. The Homebrew Brewfile trusts only the required Koekeishiya
 formulae, `koekeishiya/formulae/yabai` and `koekeishiya/formulae/skhd`, rather
