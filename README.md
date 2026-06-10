@@ -226,6 +226,9 @@ still require the manual macOS approvals and sudoers/SIP review documented in
 
 - [backup.md](backup.md): Restic to Backblaze B2 scope, credential pattern,
   schedule, retention, and restore drills.
+- [inventory/](inventory/): sanitized migration inventory for apps, shell,
+  editor, SSH/GPG, directories, cloud services, licenses, permissions,
+  Intel-only app findings, keyboard/input state, and security validation.
 - [manual-steps.md](manual-steps.md): post-restore checklist for Nix, secrets,
   authentication, keyboard layout, Rosetta, and macOS permissions.
 - [docs/node-pnpm-shell.md](docs/node-pnpm-shell.md): Node, `nvm`, and

@@ -20,6 +20,12 @@ remove it from the branch before merging. Do not add real tokens, private SSH
 keys, Restic passwords, B2 keys, Vaultwarden exports, or raw Keychain dumps to
 this repository.
 
+Sanitized inventory updates are also checked by `./scripts/check`. The flake
+verifies that required inventory files exist, glossary terms are present, and
+obvious sensitive file shapes such as raw environment files, private SSH keys,
+Keychain exports, Vaultwarden exports, and password-manager exports do not
+appear under `inventory/`.
+
 ## False Positives
 
 Treat ignores as reviewed security exceptions:

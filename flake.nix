@@ -977,6 +977,75 @@
 
               touch "$out"
             '';
+
+        gamma-sanitized-inventory =
+          pkgs.runCommand "gamma-sanitized-inventory-check"
+            {
+              nativeBuildInputs = [
+                pkgs.findutils
+                pkgs.gnugrep
+              ];
+            }
+            ''
+              set -eu
+
+              test -f ${./inventory/README.md}
+              test -f ${./inventory/homebrew-formulae.md}
+              test -f ${./inventory/homebrew-casks.md}
+              test -f ${./inventory/mas-apps.md}
+              test -f ${./inventory/shell.md}
+              test -f ${./inventory/editor.md}
+              test -f ${./inventory/ssh-gpg.md}
+              test -f ${./inventory/directories.md}
+              test -f ${./inventory/cloud-services.md}
+              test -f ${./inventory/licenses.md}
+              test -f ${./inventory/permissions.md}
+              test -f ${./inventory/intel-only-apps.md}
+              test -f ${./inventory/keyboard-input.md}
+              test -f ${./inventory/security-validation.md}
+              test -f ${./inventory/future-v2.md}
+
+              grep -q 'Personal Infrastructure' ${./inventory/README.md}
+              grep -q 'Workstation' ${./inventory/README.md}
+              grep -q 'Host Family' ${./inventory/README.md}
+              grep -q 'Host Name' ${./inventory/README.md}
+              grep -q 'Primary User' ${./inventory/README.md}
+              grep -q 'Primary Editor' ${./inventory/README.md}
+              grep -q 'Secret Store' ${./inventory/README.md}
+
+              grep -q 'private SSH keys' ${./inventory/security-validation.md}
+              grep -q 'API tokens' ${./inventory/security-validation.md}
+              grep -q 'Restic passwords' ${./inventory/security-validation.md}
+              grep -q 'raw secret-bearing shell files' ${./inventory/security-validation.md}
+              grep -q 'generated Karabiner backups' ${./inventory/security-validation.md}
+
+              grep -q 'Vaultwarden' ${./inventory/future-v2.md}
+              grep -q 'Nix installer' ${./inventory/future-v2.md}
+              grep -q 'Homebrew cleanup' ${./inventory/future-v2.md}
+              grep -q 'SSH key recovery' ${./inventory/future-v2.md}
+              grep -q 'project development shells' ${./inventory/future-v2.md}
+
+              ! find ${./inventory} -type f \
+                \( \
+                  -iname '.env' \
+                  -o -iname '.env.*' \
+                  -o -iname '*keychain*.json' \
+                  -o -iname '*keychain*.plist' \
+                  -o -iname '*vaultwarden*.csv' \
+                  -o -iname '*vaultwarden*.json' \
+                  -o -iname '*bitwarden*.csv' \
+                  -o -iname '*bitwarden*.json' \
+                  -o -iname '*1password*.csv' \
+                  -o -iname '*1password*.json' \
+                  -o -iname 'id_rsa' \
+                  -o -iname 'id_dsa' \
+                  -o -iname 'id_ecdsa' \
+                  -o -iname 'id_ed25519' \
+                  -o -iname '*.pem' \
+                \) | grep -q .
+
+              touch "$out"
+            '';
       };
     };
 }
