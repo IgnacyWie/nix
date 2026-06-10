@@ -4,32 +4,54 @@
   system.defaults = {
     dock = {
       autohide = true;
-      show-recents = false;
+      autohide-time-modifier = 0.0;
+      launchanim = false;
+      magnification = false;
       mru-spaces = false;
-      expose-group-apps = true;
+      orientation = "left";
+      show-recents = false;
+      showAppExposeGestureEnabled = true;
+      showDesktopGestureEnabled = true;
+      showMissionControlGestureEnabled = true;
+      tilesize = 67;
     };
 
     finder = {
       AppleShowAllExtensions = true;
-      AppleShowAllFiles = true;
+      AppleShowAllFiles = false;
       FXDefaultSearchScope = "SCcf";
       FXEnableExtensionChangeWarning = false;
       FXPreferredViewStyle = "clmv";
+      NewWindowTarget = "Home";
+      NewWindowTargetPath = "file:///Users/ignacywielogorski/";
+      ShowExternalHardDrivesOnDesktop = true;
+      ShowHardDrivesOnDesktop = true;
+      ShowMountedServersOnDesktop = true;
       ShowPathbar = true;
+      ShowRemovableMediaOnDesktop = true;
       ShowStatusBar = true;
+      _FXEnableColumnAutoSizing = true;
+      _FXShowPosixPathInTitle = true;
       _FXSortFoldersFirst = true;
+      _FXSortFoldersFirstOnDesktop = true;
     };
 
     NSGlobalDomain = {
+      AppleEnableSwipeNavigateWithScrolls = false;
+      AppleInterfaceStyle = "Dark";
       AppleShowAllExtensions = true;
       ApplePressAndHoldEnabled = false;
-      InitialKeyRepeat = 15;
+      InitialKeyRepeat = 30;
       KeyRepeat = 2;
+      NSAutomaticWindowAnimationsEnabled = false;
+      NSTableViewDefaultSizeMode = 2;
+      NSWindowResizeTime = 0.001;
+      NSWindowShouldDragOnGesture = true;
+      _HIHideMenuBar = false;
+      "com.apple.springing.enabled" = true;
     };
 
     screencapture = {
-      disable-shadow = true;
-      include-date = true;
       type = "png";
     };
 

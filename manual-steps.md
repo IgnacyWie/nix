@@ -89,6 +89,19 @@ Command/right Option mapping is managed in Karabiner-Elements at
 configured on first boot, open Karabiner-Elements and apply the configured
 `Default` profile before closing the restore drill.
 
+## Workstation Defaults
+
+Verify the nix-darwin Workstation Defaults after activation:
+
+- Dock is on the left and uses quick autohide.
+- Finder shows the expected path/status bars, desktop volumes, and home-folder
+  new-window target.
+- Dark mode and key-repeat behavior are active.
+- Screenshots use PNG format.
+
+Some macOS defaults, especially appearance and input-source changes, may require
+logging out and back in or restarting affected apps before they are visible.
+
 ## Rosetta 2
 
 Install Rosetta 2 only if an Intel-only app is required:

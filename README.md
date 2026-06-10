@@ -93,10 +93,12 @@ for the Gitleaks configuration, local scan command, and false-positive process.
 ## Workstation Defaults
 
 nix-darwin manages the first reviewed Workstation Defaults batch for `gamma`:
-Dock visibility behavior, Finder visibility/search defaults, global key-repeat
-and extension defaults, screenshot format behavior, and the native macOS
-input-source baseline. The selected input source is `DVORAK - QWERTY CMD`, with
-`Polish Pro` enabled as the secondary layout.
+stable Dock behavior including left-side quick autohide, Finder
+visibility/search defaults, global key-repeat and appearance defaults,
+screenshot format behavior, and the native macOS input-source baseline. The
+selected input source is `DVORAK - QWERTY CMD`, with `Polish Pro` enabled as the
+secondary layout. Privacy permissions, Rosetta 2, app-managed settings, and
+volatile Dock contents remain manual or app-owned.
 
 Before nix-darwin is installed globally, use the bootstrap wrapper:
 
