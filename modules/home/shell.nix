@@ -105,6 +105,7 @@ in
 
     initContent = ''
       unset MAILCHECK
+      setopt prompt_subst
 
       path=(''${path:#/opt/homebrew/opt/node@20/bin})
       path=(''${path:#$HOME/Library/pnpm})
@@ -117,6 +118,23 @@ in
       if [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]; then
         . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
       fi
+
+      autoload -Uz add-zsh-hook vcs_info
+      zstyle ':vcs_info:git:*' formats '%b'
+      zstyle ':vcs_info:git:*' actionformats '%b|%a'
+
+      gamma_prompt_precmd() {
+        vcs_info
+
+        if [ -n "$vcs_info_msg_0_" ]; then
+          gamma_git_prompt="%F{green}$vcs_info_msg_0_%f "
+        else
+          gamma_git_prompt=""
+        fi
+      }
+
+      add-zsh-hook precmd gamma_prompt_precmd
+      PROMPT='γ %~/ ''${gamma_git_prompt}'
 
       bindkey -s '^F' 'tmux-sessionizer\n'
       bindkey -s '^G' 'typst-smart-open\n'
