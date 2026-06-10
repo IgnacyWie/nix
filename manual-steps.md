@@ -71,12 +71,15 @@ application credentials.
 
 ## Keyboard
 
-Verify the `Dvorak-QWERTY` input source and the declarative Caps Lock to Escape
-remap after restore.
+Verify the `Dvorak-QWERTY` input source and the keyboard remaps after restore:
 
-The Caps Lock remap is managed by nix-darwin. If the input source is not managed
-declaratively yet, configure it in macOS System Settings and document any
-required manual action here before closing the restore drill.
+- Caps Lock to Escape.
+- Right Command and right Option mapping in Karabiner-Elements.
+
+Caps Lock remap is managed by nix-darwin. Right Command/right Option mapping is
+managed in Karabiner-Elements. If these are not configured on first boot, open
+Karabiner-Elements and apply the configured profile before closing the restore
+drill.
 
 ## Rosetta 2
 
@@ -117,7 +120,7 @@ Run this separately from the single-file Restic restore.
 4. Restore Restic credentials into Keychain.
 5. Authenticate GitHub CLI and SSH.
 6. Verify browser and App Store login.
-7. Verify `Dvorak-QWERTY` and the Caps Lock to Escape remap.
+7. Verify `Dvorak-QWERTY`, Caps Lock to Escape (nix-darwin), and right Command/right Option mapping in Karabiner-Elements.
 8. Grant required macOS permissions for Karabiner, yabai, skhd, and backup
    access.
 9. Restore a representative subset of data into a temporary path.
