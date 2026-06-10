@@ -81,7 +81,6 @@
 
       set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/
 
-      set -g @plugin 'christoomey/vim-tmux-navigator'
       set -g @plugin 'seebi/tmux-colors-solarized'
       set -g @plugin 'niksingh710/minimal-tmux-status'
 
@@ -92,7 +91,6 @@
       if-shell 'test -x ~/.tmux/plugins/tpm/tpm' 'run-shell ~/.tmux/plugins/tpm/tpm'
 
       bind-key -n C-h display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"
-      unbind -n C-l
 
       set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
       set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'

@@ -115,7 +115,6 @@
             grep -q "keybind = cmd+'=quit" ${ghosttyConfig}
             grep -q 'keybind = cmd+w=reload_config' ${ghosttyConfig}
 
-            grep -q "set -g @plugin 'christoomey/vim-tmux-navigator'" ${tmuxConfig}
             grep -q "set -g @plugin 'seebi/tmux-colors-solarized'" ${tmuxConfig}
             grep -q "set -g @plugin 'niksingh710/minimal-tmux-status'" ${tmuxConfig}
             grep -q 'set-environment -g TMUX_PLUGIN_MANAGER_PATH ~/.tmux/plugins/' ${tmuxConfig}

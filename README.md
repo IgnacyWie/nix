@@ -115,8 +115,8 @@ provider on `gamma`. The Homebrew Brewfile trusts only the required Koekeishiya
 formulae, `koekeishiya/formulae/yabai` and `koekeishiya/formulae/skhd`, rather
 than the whole tap. Home Manager also pins the TPM checkout at
 `~/.tmux/plugins/tpm`; TPM remains the v1 tmux plugin manager for
-`christoomey/vim-tmux-navigator`, `seebi/tmux-colors-solarized`, and
-`niksingh710/minimal-tmux-status`, using the old `~/.tmux/plugins/` plugin path.
+`seebi/tmux-colors-solarized` and `niksingh710/minimal-tmux-status`, using the
+old `~/.tmux/plugins/` plugin path.
 The Darwin PAM configuration enables Touch ID for sudo and reattaches sudo
 authentication to the user session so Touch ID also works inside tmux.
 
