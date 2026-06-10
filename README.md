@@ -137,9 +137,11 @@ appears active.
 
 Home Manager defines zsh functions for `codex` and `claude` that resolve the
 real executable with `whence -p` and run it under `caffeinate -dims`, forwarding
-all arguments unchanged. This keeps long-running interactive AI CLI sessions
-from sleeping the Mac without relying on recursive aliases or manual shell
-edits.
+all user-provided arguments after the configured permission-bypass flags. Codex
+uses `--dangerously-bypass-approvals-and-sandbox`; Claude uses
+`--dangerously-skip-permissions`. This keeps long-running interactive AI CLI
+sessions from sleeping the Mac and intentionally starts them without approval
+prompts.
 
 ## Managed Keybindings
 

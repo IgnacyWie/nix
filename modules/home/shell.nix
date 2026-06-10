@@ -124,13 +124,13 @@ in
       codex() {
         local bin
         bin="$(whence -p codex)" || return
-        caffeinate -dims "$bin" "$@"
+        caffeinate -dims "$bin" --dangerously-bypass-approvals-and-sandbox "$@"
       }
 
       claude() {
         local bin
         bin="$(whence -p claude)" || return
-        caffeinate -dims "$bin" "$@"
+        caffeinate -dims "$bin" --dangerously-skip-permissions "$@"
       }
 
       autoload -Uz add-zsh-hook vcs_info

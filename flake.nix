@@ -323,7 +323,8 @@
 
               grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
-              grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
+              grep -q 'caffeinate -dims "$bin" --dangerously-bypass-approvals-and-sandbox "$@"' ${zshInit}
+              grep -q 'caffeinate -dims "$bin" --dangerously-skip-permissions "$@"' ${zshInit}
               grep -q 'path=($path /opt/homebrew/bin /opt/homebrew/sbin)' ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
@@ -366,8 +367,8 @@
               claude --version
               EOF
 
-              grep -q 'caffeinate args: <-dims> <'"$bin"'/codex> <--help> <two words>' "$TMPDIR/wrapper.log"
-              grep -q 'caffeinate args: <-dims> <'"$bin"'/claude> <--version>' "$TMPDIR/wrapper.log"
+              grep -q 'caffeinate args: <-dims> <'"$bin"'/codex> <--dangerously-bypass-approvals-and-sandbox> <--help> <two words>' "$TMPDIR/wrapper.log"
+              grep -q 'caffeinate args: <-dims> <'"$bin"'/claude> <--dangerously-skip-permissions> <--version>' "$TMPDIR/wrapper.log"
 
               touch "$out"
             '';
