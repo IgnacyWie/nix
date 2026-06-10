@@ -263,7 +263,9 @@
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
             grep -q 'bind-key -n C-o display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
             grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
-            grep -q 'bind-key -n C-i display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"' ${tmuxConfig}
+            grep -q 'bind-key Y display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"' ${tmuxConfig}
+            grep -q 'bind-key T display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"' ${tmuxConfig}
+            ! grep -q 'bind-key -n C-i .*issue-picker' ${tmuxConfig}
             grep -q 'bind-key -n C-h if-shell' ${tmuxConfig}
             grep -q 'bind-key -n C-j if-shell' ${tmuxConfig}
             grep -q 'bind-key -n C-k if-shell' ${tmuxConfig}
@@ -291,7 +293,7 @@
             grep -q 'unbind-key -n C-k' ${tmuxConfig}
             grep -q 'unbind-key -n C-l' ${tmuxConfig}
             grep -q 'unbind-key -n C-\\\\' ${tmuxConfig}
-            ! grep -q 'git-branch-switcher' ${tmuxConfig}
+            ! grep -q 'bind-key -n C-h .*git-branch-switcher' ${tmuxConfig}
             test -x ${tpmSource}/tpm
 
             touch "$out"
@@ -320,10 +322,11 @@
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
+              grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
               grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
               grep -q 'tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${zshInit}
               grep -q "bindkey '\^O' gamma_dev_command_runner_widget" ${zshInit}
-              grep -q "bindkey -s '\^I' 'issue-picker\\\\n'" ${zshInit}
+              ! grep -q "bindkey -s '\^I' 'issue-picker" ${zshInit}
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"

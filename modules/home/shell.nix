@@ -148,7 +148,7 @@ in
       PROMPT='γ %~/ ''${gamma_git_prompt}'
 
       bindkey -s '^T' 'git-branch-switcher\n'
-      bindkey -s '^I' 'issue-picker\n'
+      bindkey -s '^Y' 'issue-picker\n'
       bindkey -s '^F' 'tmux-sessionizer\n'
       bindkey -s '^G' 'typst-smart-open\n'
 

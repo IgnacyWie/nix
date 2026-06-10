@@ -139,11 +139,13 @@ Karabiner. LazyVim's built-in defaults are inherited but not duplicated here.
 | --- | --- | --- |
 | `Ctrl-F` | zsh, tmux | Launch `tmux-sessionizer`; tmux opens it in a popup. |
 | `Ctrl-G` | zsh, tmux | Launch `typst-smart-open`; tmux opens it from `~/typst`. |
-| `Ctrl-I` | zsh, tmux | Launch `issue-picker`; tmux opens it in a popup. |
 | `Ctrl-O` | zsh, tmux | Launch `dev-command-runner`; tmux opens it in a popup. |
 | `Ctrl-T` | zsh | Launch `git-branch-switcher`. |
+| `Ctrl-Y` | zsh | Launch `issue-picker`; avoids the `Ctrl-I`/Tab terminal collision. |
 | tmux prefix `D` | tmux | Launch `dev-command-runner` in a popup. |
 | tmux prefix `f` | tmux | Launch `tmux-sessionizer` in a popup. |
+| tmux prefix `Y` | tmux | Launch `issue-picker` in a popup. |
+| tmux prefix `T` | tmux | Launch `git-branch-switcher` in a popup. |
 
 ### tmux
 
@@ -292,7 +294,8 @@ Home Manager manages `~/.local/scripts/git-branch-switcher`. Inside a Git
 repository, it uses `fzf` to select local and remote branches by recent commit
 date, shows a short commit-log preview, and switches to the selected branch.
 Selecting a remote branch creates a local tracking branch when one does not
-already exist. The zsh `Ctrl-T` binding launches this script.
+already exist. The zsh `Ctrl-T` binding launches this script, and tmux prefix
+`T` launches it in a popup from the current pane directory.
 
 Home Manager manages `~/.local/scripts/dev-command-runner`. From inside a
 project, it starts at the Git repository root when available, discovers useful
@@ -314,9 +317,10 @@ labels, assignees, URL, body, and comments when available. After selecting an
 issue, a second `fzf` action menu supports opening the issue in the browser,
 copying its URL with `pbcopy`, creating or switching to an
 `issue-<number>-<slugified-title>` branch, or starting a `codex` session with
-the issue URL as context. The zsh `Ctrl-I` binding launches this script outside
-tmux, and the tmux `Ctrl-I` binding launches it in a popup from the current pane
-directory.
+the issue URL as context. The zsh `Ctrl-Y` binding launches this script outside
+tmux, and tmux prefix `Y` launches it in a popup from the current pane
+directory. `Ctrl-I` is intentionally left unbound for this workflow because
+terminals encode Tab as `Ctrl-I`.
 
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst

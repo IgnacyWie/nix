@@ -39,7 +39,8 @@
       bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"
       bind-key -n C-o display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"
       bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"
-      bind-key -n C-i display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"
+      bind-key Y display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"
+      bind-key T display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"
 
       unbind-key -n C-h
       unbind-key -n C-j
