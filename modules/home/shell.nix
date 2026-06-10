@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -43,6 +44,28 @@ let
   };
 in
 {
+  home.packages = [
+    (pkgs.writeShellScriptBin "notify" ''
+      set -eu
+
+      sound="/System/Library/Sounds/Submarine.aiff"
+      assertions="$HOME/Library/DoNotDisturb/DB/Assertions.json"
+      dnd_active=0
+
+      if [ -r "$assertions" ] && /usr/bin/grep -q '"storeAssertionRecords"' "$assertions"; then
+        dnd_active=1
+      elif /usr/bin/defaults -currentHost read com.apple.notificationcenterui doNotDisturb 2>/dev/null | /usr/bin/grep -q '^1$'; then
+        dnd_active=1
+      fi
+
+      if [ "$dnd_active" = 1 ]; then
+        /usr/bin/afplay "$sound"
+      else
+        /usr/bin/afplay "$sound" -v 10
+      fi
+    '')
+  ];
+
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/.local/scripts"

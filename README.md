@@ -75,6 +75,13 @@ The first activation may stop if unmanaged files already exist in `/etc` or if
 files by moving them aside with a `.before-nix-darwin` suffix, then rerun the
 bootstrap wrapper.
 
+## Home Commands
+
+Home Manager provides a `notify` command for audible task completion alerts. It
+plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
+Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
+appears active.
+
 ## Recovery Contract
 
 - [backup.md](backup.md): Restic to Backblaze B2 scope, credential pattern,
