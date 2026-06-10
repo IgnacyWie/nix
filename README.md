@@ -82,6 +82,12 @@ plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
 Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
+Home Manager also manages `~/.local/scripts/tmux-sessionizer`. It selects a
+project under `~/Developer`, creates or switches to a named tmux session, and
+opens the first window as `codex` before adding the usual development, Git,
+database, and REST client windows. The zsh `Ctrl-F` binding and tmux prefix
+`f` binding both launch this script.
+
 ## Recovery Contract
 
 - [backup.md](backup.md): Restic to Backblaze B2 scope, credential pattern,

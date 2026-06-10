@@ -4,6 +4,7 @@
   imports = [
     ./backup.nix
     ./git.nix
+    ./scripts.nix
     ./shell.nix
     ./ssh.nix
     ./tmux.nix
