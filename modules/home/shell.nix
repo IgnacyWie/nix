@@ -67,6 +67,8 @@ in
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/.local/scripts"
+    "/opt/homebrew/bin"
+    "/opt/homebrew/sbin"
   ];
 
   home.sessionVariables = {
@@ -106,6 +108,7 @@ in
       unset MAILCHECK
       setopt prompt_subst
 
+      path=($path /opt/homebrew/bin /opt/homebrew/sbin)
       path=(''${path:#/opt/homebrew/opt/node@20/bin})
       path=(''${path:#$HOME/Library/pnpm})
       export PATH

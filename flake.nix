@@ -304,9 +304,12 @@
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
             zshInit = pkgs.writeText "zsh-init" homeConfig.programs.zsh.initContent;
             zshAliases = homeConfig.programs.zsh.shellAliases;
+            sessionPath = homeConfig.home.sessionPath;
           in
           assert !(builtins.hasAttr "codex" zshAliases);
           assert !(builtins.hasAttr "claude" zshAliases);
+          assert builtins.elem "/opt/homebrew/bin" sessionPath;
+          assert builtins.elem "/opt/homebrew/sbin" sessionPath;
           pkgs.runCommand "gamma-shell-caffeinate-wrappers-check"
             {
               nativeBuildInputs = [
@@ -321,6 +324,7 @@
               grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               grep -q 'caffeinate -dims "$bin" "$@"' ${zshInit}
+              grep -q 'path=($path /opt/homebrew/bin /opt/homebrew/sbin)' ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
               grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
@@ -353,7 +357,10 @@
               EOF
               chmod +x "$bin/claude"
 
-              PATH="$bin:${pkgs.coreutils}/bin:${pkgs.zsh}/bin" zsh -f <<EOF > "$TMPDIR/wrapper.log"
+              home="$TMPDIR/home"
+              mkdir -p "$home"
+
+              HOME="$home" PATH="$bin:${pkgs.coreutils}/bin:${pkgs.zsh}/bin" zsh -f <<EOF > "$TMPDIR/wrapper.log"
               source ${zshInit}
               codex --help 'two words'
               claude --version

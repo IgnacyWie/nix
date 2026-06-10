@@ -10,8 +10,11 @@ not be hidden until they are proven reliable.
    `ignacywielogorski`.
 2. Install Nix using the official macOS installer.
 3. Enable `flakes` and `nix-command`.
-4. Clone this repository to `~/nix`.
-5. When the flake exists, apply the host configuration:
+4. Install Homebrew for Apple Silicon if `/opt/homebrew/bin/brew` does not
+   already exist. The v1 configuration manages Homebrew packages, but does not
+   bootstrap Homebrew itself.
+5. Clone this repository to `~/nix`.
+6. When the flake exists, apply the host configuration:
 
 ```sh
 cd ~/nix

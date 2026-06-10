@@ -30,8 +30,10 @@ Homebrew activation installs declared GUI apps and formulae for `gamma`, but it
 does not auto-update, upgrade, clean up, or remove unlisted Homebrew-managed
 software during the v1 migration. Zen Browser and Raycast are installed only as
 apps; their profiles, settings, extensions, sessions, and internal state remain
-outside Nix. OrbStack is the Docker runtime and initial Docker CLI source of
-truth, so this flake does not add a competing Docker CLI.
+outside Nix. Home Manager adds `/opt/homebrew/bin` and `/opt/homebrew/sbin` to
+the shell path because `tmux`, `nvm`, `yabai`, and `skhd` are intentionally
+provided by Homebrew. OrbStack is the Docker runtime and initial Docker CLI
+source of truth, so this flake does not add a competing Docker CLI.
 
 ## Apply Flow
 
