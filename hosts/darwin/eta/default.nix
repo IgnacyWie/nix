@@ -15,6 +15,8 @@
     home = "/Users/ignacywielogorski";
   };
 
+  security.pam.services.sudo_local.enable = false;
+
   environment.systemPackages = with pkgs; [
     curl
     docker-compose
