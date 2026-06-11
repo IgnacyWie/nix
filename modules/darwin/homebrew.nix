@@ -42,6 +42,7 @@
     masApps = {
       Bitwarden = 1352778147;
       Flighty = 1358823008;
+      Amphetamine = 937984704;
       WhatsApp = 310633997;
     };
 
