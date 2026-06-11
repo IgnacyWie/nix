@@ -58,6 +58,9 @@ Recover these before relying on the workstation for daily development:
 - OrbStack runtime state and container data through its own backup or restore
   process. OrbStack remains the v1 Docker runtime and Docker CLI source of
   truth.
+- DisplayLink Manager may need to be launched once after installation, granted
+  Screen Recording permission, and restarted before external DisplayLink
+  displays are available.
 - App Store login for applications that cannot be installed through Nix or
   Homebrew.
 
@@ -142,6 +145,8 @@ Expected permission categories:
   narrow yabai sudoers rule recommended by the installed Koekeishiya formula
   rather than granting broad passwordless sudo.
 - skhd: Accessibility/Input Monitoring, if prompted.
+- DisplayLink Manager: Screen Recording. Reboot after the Homebrew cask
+  installation, then grant the permission if prompted and restart the app.
 - Backup tooling: Full Disk Access or selected folder access so Restic can read
   the protected backup scope.
 - Terminal or Ghostty: permissions needed to run backup, restore, development,

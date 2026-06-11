@@ -25,6 +25,7 @@
     casks = [
       "wispr-flow"
       "bitwarden"
+      "displaylink"
       "ghostty"
       "google-chrome"
       "karabiner-elements"
