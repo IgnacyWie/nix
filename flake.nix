@@ -393,6 +393,28 @@
               touch "$out"
             '';
 
+        gamma-claude-config =
+          pkgs.runCommand "gamma-claude-config-check"
+            {
+              nativeBuildInputs = [
+                pkgs.jq
+              ];
+            }
+            ''
+              set -eu
+
+              jq -e '
+                .hooks.PermissionRequest[0].matcher == "*" and
+                .hooks.PermissionRequest[0].hooks[0].type == "command" and
+                (.hooks.PermissionRequest[0].hooks[0].command | test("notify")) and
+                .hooks.Notification[0].matcher == "idle_prompt|elicitation_dialog" and
+                (.hooks.Notification[0].hooks[0].command | test("notify")) and
+                (.hooks.Stop[0].hooks[0].command | test("notify"))
+              ' ${./config/claude/settings.json} >/dev/null
+
+              touch "$out"
+            '';
+
         gamma-neovim-config =
           let
             homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;

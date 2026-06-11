@@ -175,6 +175,12 @@ that resolves the real executable with `whence -p` and runs it under
 long-running interactive AI CLI sessions from sleeping the Mac for up to one
 hour and intentionally starts Codex without approval or hook-trust prompts.
 
+Claude Code user settings are backed up under `config/claude`. Home Manager
+merges the tracked hook block into the mutable `~/.claude/settings.json` file on
+activation, preserving local MCP, plugin, theme, and other Claude-managed
+settings. The managed Claude hooks call `notify` on `Stop`, `PermissionRequest`,
+and selected `Notification` events.
+
 ### Primary Editor
 
 Home Manager manages Neovim as the primary editor and links the reviewed

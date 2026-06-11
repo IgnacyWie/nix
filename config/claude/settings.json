@@ -1,0 +1,68 @@
+{
+  "mcpServers": {
+    "things": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "things-mcp"
+      ]
+    }
+  },
+  "enabledPlugins": {
+    "ruflo-core@ruflo": true,
+    "ruflo-swarm@ruflo": true,
+    "ruflo-rag-memory@ruflo": true,
+    "ruflo-neural-trader@ruflo": true
+  },
+  "extraKnownMarketplaces": {
+    "ruflo": {
+      "source": {
+        "source": "github",
+        "repo": "ruvnet/ruflo"
+      }
+    }
+  },
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/zsh -lc 'notify'",
+            "timeout": 10,
+            "statusMessage": "Notifying for Claude permission request"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "idle_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/zsh -lc 'notify'",
+            "timeout": 10,
+            "statusMessage": "Notifying for Claude notification"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/zsh -lc 'notify'",
+            "timeout": 10,
+            "statusMessage": "Notifying Claude turn completion"
+          }
+        ]
+      }
+    ]
+  }
+}
