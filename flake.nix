@@ -69,6 +69,7 @@
                   ./modules/home/base.nix
                   ./modules/home/git.nix
                   ./modules/home/home-server.nix
+                  ./modules/home/home-server-backup.nix
                   ./modules/home/shell.nix
                 ];
                 personal = {
@@ -231,6 +232,77 @@
             grep -Fxq 'project=example' "$TMPDIR/inspect.txt"
             grep -Fxq "directory=$service_definitions/example" "$TMPDIR/inspect.txt"
             grep -Fxq "compose_file=$service_definitions/example/compose.yaml" "$TMPDIR/inspect.txt"
+
+            touch "$out"
+          '';
+
+        eta-backup-config =
+          let
+            etaConfig = etaConfiguration.config;
+            homeConfig = etaConfig.home-manager.users.ignacywielogorski;
+            agent = homeConfig.launchd.agents.eta-restic-backup;
+            expectedCalendarInterval = [
+              {
+                Day = null;
+                Hour = 3;
+                Minute = 0;
+                Month = null;
+                Weekday = null;
+              }
+            ];
+            expectedProgramArguments = [
+              program
+              "--scheduled"
+            ];
+            program = builtins.head agent.config.ProgramArguments;
+            backupExcludes = pkgs.writeText "expected-eta-backup-excludes" (
+              builtins.readFile ./eta-backup-excludes.txt
+            );
+          in
+          assert agent.enable;
+          assert agent.config.ProcessType == "Background";
+          assert agent.config.RunAtLoad == true;
+          assert agent.config.StartInterval == 21600;
+          assert agent.config.StartCalendarInterval == expectedCalendarInterval;
+          assert agent.config.ProgramArguments == expectedProgramArguments;
+          assert
+            agent.config.StandardOutPath
+            == "/Users/ignacywielogorski/Library/Logs/eta-restic-backup/launchd-stdout.log";
+          assert
+            agent.config.StandardErrorPath
+            == "/Users/ignacywielogorski/Library/Logs/eta-restic-backup/launchd-stderr.log";
+          assert !(builtins.hasAttr "gamma-restic-backup" homeConfig.launchd.agents);
+          pkgs.runCommand "eta-backup-config-check" { } ''
+            set -eu
+
+            test -x ${program}
+            test "$(basename ${program})" = "eta-restic-backup"
+            cmp ${backupExcludes} ${./eta-backup-excludes.txt}
+
+            grep -Fqx "export RESTIC_REPOSITORY=b2:eta-home-server-restic:eta" ${program}
+            grep -Fqx "B2_ACCOUNT_ID=\"\$(/usr/bin/security find-generic-password -a \"\$USER\" -s restic-eta-b2-account-id -w)\"" ${program}
+            grep -Fqx "B2_ACCOUNT_KEY=\"\$(/usr/bin/security find-generic-password -a \"\$USER\" -s restic-eta-b2-account-key -w)\"" ${program}
+            grep -Fqx "RESTIC_PASSWORD=\"\$(/usr/bin/security find-generic-password -a \"\$USER\" -s restic-eta-password -w)\"" ${program}
+            grep -Fqx "export B2_ACCOUNT_ID" ${program}
+            grep -Fqx "export B2_ACCOUNT_KEY" ${program}
+            grep -Fqx "export RESTIC_PASSWORD" ${program}
+
+            grep -Eq '^retry 3 300 backup restic backup "\$\{backup_args\[@\]\}" --exclude-file /nix/store/[a-z0-9]+-source/eta-backup-excludes\.txt$' ${program}
+            grep -Fqx "retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune" ${program}
+            grep -Fqx "    printf 'Last successful backup is less than 20 hours old; skipping scheduled catch-up.\n'" ${program}
+
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/Services" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/nix/services/eta" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/nix/backup.md" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/nix/manual-steps.md" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/nix/CONTEXT.md" ${program}
+            grep -Fqx "add_backup_path /Users/ignacywielogorski/nix/docs/adr" ${program}
+            grep -Fq "/Users/ignacywielogorski/Services/**/cache" ${./eta-backup-excludes.txt}
+            grep -Fq "/Users/ignacywielogorski/Services/**/tmp" ${./eta-backup-excludes.txt}
+            grep -Fq "/Users/ignacywielogorski/Services/**/logs" ${./eta-backup-excludes.txt}
+
+            ! grep -Eq "^(export )?(B2_ACCOUNT_ID|B2_ACCOUNT_KEY|RESTIC_PASSWORD)='[^$]" ${program}
+            ! grep -Eq "^(export )?(B2_ACCOUNT_ID|B2_ACCOUNT_KEY|RESTIC_PASSWORD)=\"[^$]" ${program}
 
             touch "$out"
           '';

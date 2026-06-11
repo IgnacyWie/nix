@@ -1,16 +1,16 @@
 # Backup Contract
 
-This document defines the v1 backup and restore contract for the `gamma`
-Workstation.
+This document defines separate v1 Restic backup contracts for the `gamma`
+Workstation and the `eta` Home Server.
 
-Nix rebuilds tools, declarative configuration, and selected application
-settings. Restic protects personal data, local project state, and recoverable
-application state that is not safely represented in Nix. A working restore
-requires both layers.
+Nix rebuilds tools, declarative configuration, and selected application or
+service definitions. Restic protects data and recovery material that is not
+safely represented in Nix. A working restore requires both layers.
 
-## Repository Target
+## `gamma` Workstation Backup Repository
 
-The backup target is a Restic repository stored in Backblaze B2.
+The `gamma` Workstation backup target is a Restic repository stored in Backblaze
+B2. It is distinct from the `eta` Home Server Backup Repository.
 
 Canonical repository shape:
 
@@ -114,12 +114,93 @@ restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
 
 Retention runs after a successful managed backup.
 
+## `eta` Home Server Backup Repository
+
+The `eta` Home Server Backup Repository is a separate Restic repository stored
+in Backblaze B2. It protects the Service Data Root and Home Server recovery
+material for v1; it does not replace the `gamma` Workstation backup contract.
+
+Canonical repository shape:
+
+```sh
+b2:eta-home-server-restic:eta
+```
+
+The B2 account id, B2 application key, and Restic password must stay outside
+Git. Because `eta` hosts Vaultwarden, keep the recoverable source of truth in
+the Bootstrap Secret Set: iCloud Keychain plus a second offline emergency copy.
+Suggested item name:
+
+```text
+eta Restic Backblaze B2
+```
+
+At runtime, Restic credentials are read from macOS Keychain. Use this
+service-name pattern:
+
+```text
+restic-eta-b2-account-id
+restic-eta-b2-account-key
+restic-eta-password
+```
+
+Expected runtime environment:
+
+```sh
+export RESTIC_REPOSITORY="b2:eta-home-server-restic:eta"
+export B2_ACCOUNT_ID="$(security find-generic-password -a "$USER" -s restic-eta-b2-account-id -w)"
+export B2_ACCOUNT_KEY="$(security find-generic-password -a "$USER" -s restic-eta-b2-account-key -w)"
+export RESTIC_PASSWORD="$(security find-generic-password -a "$USER" -s restic-eta-password -w)"
+```
+
+Do not commit exported values, generated environment files, Restic passwords,
+B2 keys, raw Keychain dumps, Vaultwarden exports, or Bootstrap Secret Set
+exports.
+
+## `eta` Backup Scope
+
+The v1 Home Server backup scope includes:
+
+- `~/Services` — the Service Data Root for durable service state and logical
+  database dumps.
+- `~/nix/services/eta` — Service Definitions and per-stack restore notes.
+- `~/nix/backup.md` — backup and restore contract.
+- `~/nix/manual-steps.md` — manual recovery checklist.
+- `~/nix/CONTEXT.md` — domain language for recovery decisions.
+- `~/nix/docs/adr` — accepted recovery architecture decisions.
+
+Generated caches, temporary directories, transcode scratch space, and runtime
+logs under `~/Services` are excluded by `eta-backup-excludes.txt`. Only exclude
+service data when it is reproducible, intentionally disposable, or explicitly
+not part of the Home Server Recovery Contract.
+
+## `eta` Schedule And Retention
+
+The intended v1 Home Server Backup Cadence is one successful automatic backup
+per day.
+
+The launchd agent starts at login, at 03:00 as the primary nightly run, and
+every 6 hours as a catch-up attempt. Scheduled runs skip when a successful
+backup marker is less than 20 hours old.
+
+Each managed run retries the backup up to 3 times with a 5 minute delay between
+attempts. Retention is retried up to 2 times after a successful backup.
+
+The Home Server Retention Policy is:
+
+```sh
+restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
+```
+
+Retention runs after a successful managed backup.
+
 ## Manual Backup
 
-After applying the Home Manager configuration, run:
+After applying the Home Manager configuration, run the relevant host command:
 
 ```sh
 gamma-restic-backup
+eta-restic-backup
 ```
 
 Check the repository after backup:

@@ -140,11 +140,34 @@ mlx_vlm.generate --help
 
 ## Backup Access
 
+### `gamma` Workstation
+
 1. Load Restic runtime environment from Keychain.
 2. Run `restic snapshots`.
 3. Complete the single-file restore drill from `backup.md`.
 4. Restore larger data sets only after verifying the snapshot id and destination
    path.
+
+### `eta` Home Server
+
+1. Create or recover the Backblaze B2 bucket for the Home Server Backup
+   Repository: `eta-home-server-restic`.
+2. Create a B2 application key with least-privilege access to that bucket.
+3. Store the B2 account id, B2 application key, Restic repository, and Restic
+   password in the Bootstrap Secret Set under `eta Restic Backblaze B2`.
+4. Add the runtime credentials to macOS Keychain using the service names from
+   `backup.md`:
+   `restic-eta-b2-account-id`, `restic-eta-b2-account-key`, and
+   `restic-eta-password`.
+5. Apply the `eta` configuration and initialize the Restic repository once if it
+   does not exist: `RESTIC_REPOSITORY=b2:eta-home-server-restic:eta restic init`
+   after loading credentials from Keychain.
+6. Run `eta-restic-backup` once manually and verify `restic snapshots` and
+   `restic check`.
+7. Confirm the launchd agent is loaded and writing logs under
+   `~/Library/Logs/eta-restic-backup`.
+8. Complete a restore drill for one file from `~/Services` and one recovery
+   document from `~/nix/services/eta` or `~/nix/backup.md`.
 
 ## Keyboard
 

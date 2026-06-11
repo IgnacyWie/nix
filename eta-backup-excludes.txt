@@ -1,0 +1,21 @@
+# Generated macOS metadata
+**/.DS_Store
+**/.Trash
+
+# Common generated dependency and build outputs in service definitions or bind mounts.
+**/node_modules
+**/.next
+**/dist
+**/build
+**/target
+
+# Disposable service caches under the Service Data Root.
+/Users/ignacywielogorski/Services/**/cache
+/Users/ignacywielogorski/Services/**/caches
+/Users/ignacywielogorski/Services/**/tmp
+/Users/ignacywielogorski/Services/**/temp
+/Users/ignacywielogorski/Services/**/transcode
+/Users/ignacywielogorski/Services/**/transcodes
+
+# Runtime logs are not part of the v1 Home Server restore contract.
+/Users/ignacywielogorski/Services/**/logs
