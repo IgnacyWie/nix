@@ -140,14 +140,18 @@
 
           test -x ${./scripts/eval-eta}
           test -x ${./scripts/build-eta}
+          test -x ${./scripts/apply-eta}
           grep -q 'eval-eta:' ${./Makefile}
           grep -q 'build-eta:' ${./Makefile}
+          grep -q 'apply-eta:' ${./Makefile}
           grep -q '.#darwinConfigurations.eta.system' ${./scripts/eval-eta}
           grep -q '.#darwinConfigurations.eta.system' ${./scripts/build-eta}
+          grep -q '.#eta' ${./scripts/apply-eta}
           ! grep -q 'darwin-rebuild switch' ${./scripts/build-eta}
-          ! grep -q 'apply-eta' ${./Makefile}
+          grep -q 'darwin-rebuild switch --flake .#eta' ${./scripts/apply-eta}
           grep -q 'make eval-eta' ${./README.md}
           grep -q 'make build-eta' ${./README.md}
+          grep -q 'make apply-eta' ${./README.md}
           grep -q 'without applying' ${./README.md}
 
           touch "$out"

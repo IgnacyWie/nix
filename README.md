@@ -92,6 +92,7 @@ make eval-gamma
 make build-gamma
 make eval-eta
 make build-eta
+make apply-eta
 make fmt
 make apply-gamma
 ```
@@ -105,6 +106,7 @@ same Nix invocation needed during the initial flake bootstrap:
 ./scripts/build-gamma
 ./scripts/eval-eta
 ./scripts/build-eta
+./scripts/apply-eta
 ./scripts/fmt
 ./scripts/apply-gamma
 ```
@@ -130,9 +132,13 @@ make eval-eta
 make build-eta
 ```
 
-There is no `apply-eta` target in this slice. `make build-eta` evaluates and
-builds `.#darwinConfigurations.eta.system` with `nix build --no-link`; it does
-not run `darwin-rebuild switch`.
+`make build-eta` evaluates and builds `.#darwinConfigurations.eta.system` with
+`nix build --no-link`; it does not run `darwin-rebuild switch`. Once the build
+output is reviewed on `eta`, apply the host with:
+
+```sh
+make apply-eta
+```
 
 ### Pre-Commit Checks
 

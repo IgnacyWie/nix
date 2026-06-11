@@ -2,7 +2,7 @@ SHELL := /bin/sh
 
 .DEFAULT_GOAL := help
 
-.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta apply-gamma bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook
+.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta apply-gamma apply-eta bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook
 
 help: ## Show available repo commands.
 	@awk 'BEGIN {FS = ":.*## "; printf "Available targets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -27,6 +27,9 @@ build-eta: ## Build the eta Darwin system closure without applying it.
 
 apply-gamma: ## Apply the gamma Darwin configuration using the installed darwin-rebuild.
 	./scripts/apply-gamma
+
+apply-eta: ## Apply the eta Darwin configuration using the installed darwin-rebuild.
+	./scripts/apply-eta
 
 bootstrap-apply-gamma: ## Apply gamma during first bootstrap through pinned nix-darwin.
 	./scripts/bootstrap-apply-gamma
