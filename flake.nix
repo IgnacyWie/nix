@@ -61,7 +61,10 @@
               useUserPackages = true;
               users.ignacywielogorski = {
                 imports = [
-                  ./modules/home
+                  ./modules/home/base.nix
+                  ./modules/home/git.nix
+                  ./modules/home/shell.nix
+                  ./modules/home/ssh.nix
                 ];
                 personal.hostPromptSymbol = "η";
               };

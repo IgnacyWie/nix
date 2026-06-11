@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./base.nix
     ./claude.nix
     ./codex.nix
     ./git.nix
@@ -13,12 +14,4 @@
     ./tmux.nix
     ./window-management.nix
   ];
-
-  home = {
-    username = "ignacywielogorski";
-    homeDirectory = "/Users/ignacywielogorski";
-    stateVersion = "25.05";
-  };
-
-  programs.home-manager.enable = true;
 }
