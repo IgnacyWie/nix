@@ -121,12 +121,6 @@ in
         . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
       fi
 
-      codex() {
-        local bin
-        bin="$(whence -p codex)" || return
-        caffeinate -dims -t 3600 "$bin" --dangerously-bypass-approvals-and-sandbox "$@"
-      }
-
       claude() {
         local bin
         bin="$(whence -p claude)" || return

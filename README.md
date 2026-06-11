@@ -159,18 +159,18 @@ plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
 Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
-Codex user configuration is backed up under `config/codex`. The active
-`~/.codex/hooks.json` uses the Home Manager `notify` command for Codex
-`Stop` and `PermissionRequest` lifecycle events, so completed turns and approval
-requests produce the same audible alert.
+Codex user configuration is backed up under `config/codex` and linked into
+`~/.codex` by Home Manager. The managed `hooks.json` uses the Home Manager
+`notify` command for Codex `Stop` and `PermissionRequest` lifecycle events, so
+completed turns and approval requests produce the same audible alert.
 
-Home Manager defines zsh functions for `codex` and `claude` that resolve the
-real executable with `whence -p` and run it under `caffeinate -dims -t 3600`,
-forwarding all user-provided arguments after the configured permission-bypass
-flags. Codex uses `--dangerously-bypass-approvals-and-sandbox`; Claude uses
-`--dangerously-skip-permissions`. This keeps long-running interactive AI CLI
-sessions from sleeping the Mac for up to one hour and intentionally starts them
-without approval prompts.
+Home Manager provides a deterministic `codex` wrapper that runs
+`/opt/homebrew/bin/codex` under `caffeinate -dims -t 3600` with
+`--dangerously-bypass-approvals-and-sandbox`. It also defines a zsh function for
+`claude` that resolves the real executable with `whence -p` and runs it under
+`caffeinate -dims -t 3600` with `--dangerously-skip-permissions`. This keeps
+long-running interactive AI CLI sessions from sleeping the Mac for up to one
+hour and intentionally starts them without approval prompts.
 
 ### Primary Editor
 

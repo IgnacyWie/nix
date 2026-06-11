@@ -320,6 +320,10 @@
             zshInit = pkgs.writeText "zsh-init" homeConfig.programs.zsh.initContent;
             zshAliases = homeConfig.programs.zsh.shellAliases;
             sessionPath = homeConfig.home.sessionPath;
+            homePackages = homeConfig.home.packages;
+            codexPackage = builtins.head (
+              builtins.filter (package: package.name or "" == "codex") homePackages
+            );
           in
           assert !(builtins.hasAttr "codex" zshAliases);
           assert !(builtins.hasAttr "claude" zshAliases);
@@ -336,9 +340,9 @@
             ''
               set -eu
 
-              grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
+              ! grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
-              grep -q 'caffeinate -dims -t 3600 "$bin" --dangerously-bypass-approvals-and-sandbox "$@"' ${zshInit}
+              ! grep -q 'caffeinate -dims -t 3600 "$bin" --dangerously-bypass-approvals-and-sandbox "$@"' ${zshInit}
               grep -q 'caffeinate -dims -t 3600 "$bin" --dangerously-skip-permissions "$@"' ${zshInit}
               grep -q 'path=($path /opt/homebrew/bin /opt/homebrew/sbin)' ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
@@ -347,6 +351,10 @@
               grep -q 'tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${zshInit}
               grep -q "bindkey '\^O' gamma_dev_command_runner_widget" ${zshInit}
               ! grep -q "bindkey -s '\^I' 'issue-picker" ${zshInit}
+
+              test -x ${codexPackage}/bin/codex
+              grep -q 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
+              grep -q 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox "$@"' ${codexPackage}/bin/codex
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"
@@ -361,12 +369,6 @@
               EOF
               chmod +x "$bin/caffeinate"
 
-              cat > "$bin/codex" <<'EOF'
-              #!${pkgs.runtimeShell}
-              printf 'real codex should be wrapped\n'
-              EOF
-              chmod +x "$bin/codex"
-
               cat > "$bin/claude" <<'EOF'
               #!${pkgs.runtimeShell}
               printf 'real claude should be wrapped\n'
@@ -378,11 +380,9 @@
 
               HOME="$home" PATH="$bin:${pkgs.coreutils}/bin:${pkgs.zsh}/bin" zsh -f <<EOF > "$TMPDIR/wrapper.log"
               source ${zshInit}
-              codex --help 'two words'
               claude --version
               EOF
 
-              grep -q 'caffeinate args: <-dims> <-t> <3600> <'"$bin"'/codex> <--dangerously-bypass-approvals-and-sandbox> <--help> <two words>' "$TMPDIR/wrapper.log"
               grep -q 'caffeinate args: <-dims> <-t> <3600> <'"$bin"'/claude> <--dangerously-skip-permissions> <--version>' "$TMPDIR/wrapper.log"
 
               touch "$out"

@@ -3,6 +3,7 @@
 {
   imports = [
     ./backup.nix
+    ./codex.nix
     ./git.nix
     ./ghostty.nix
     ./neovim.nix
