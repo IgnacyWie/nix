@@ -367,25 +367,17 @@
         esac
       }
 
-      is_long_running() {
-        case "$1" in
-          *" dev"|*" dev "*|*" watch"|*" watch "*|*" serve"|*" serve "*|*" server"|*" server "*|*" start"|*" start "*) return 0 ;;
-          *) return 1 ;;
-        esac
-      }
-
       run_selected_command() {
         local command=$1
 
-        if [[ -n "''${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
-          if is_long_running "$command"; then
-            tmux display-popup -E -d "$PROJECT_ROOT" -w 90% -h 80% "$command"
-          else
-            tmux display-popup -E -d "$PROJECT_ROOT" -w 90% -h 80% "$command; status=\$?; printf '\n[exit %s] Press Enter to close...' \"\$status\"; read -r _; exit \"\$status\""
-          fi
-        else
-          bash -c "$command"
+        if [[ -n "''${TMUX:-}" && -n "''${DEV_COMMAND_RUNNER_TARGET_PANE:-}" ]] && command -v tmux >/dev/null 2>&1; then
+          local quoted_root
+          printf -v quoted_root '%q' "$PROJECT_ROOT"
+          tmux send-keys -t "$DEV_COMMAND_RUNNER_TARGET_PANE" "cd $quoted_root && $command" C-m
+          return
         fi
+
+        bash -c "$command"
       }
 
       if [[ "''${1:-}" == "--preview" ]]; then

@@ -277,8 +277,8 @@
             grep -q 'bind-key -n C-f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
-            grep -q 'bind-key -n C-o display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
-            grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${tmuxConfig}
+            grep -q 'bind-key -n C-o display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE=' ${tmuxConfig}
+            grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE=' ${tmuxConfig}
             grep -q 'bind-key Y display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"' ${tmuxConfig}
             grep -q 'bind-key T display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/git-branch-switcher"' ${tmuxConfig}
             ! grep -q 'bind-key -n C-i .*issue-picker' ${tmuxConfig}
@@ -355,7 +355,7 @@
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
               grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
-              grep -q 'tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"' ${zshInit}
+              grep -q 'tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE=' ${zshInit}
               grep -q "bindkey '\^O' gamma_dev_command_runner_widget" ${zshInit}
               ! grep -q "bindkey -s '\^I' 'issue-picker" ${zshInit}
 
@@ -562,7 +562,8 @@
               grep -q 'package_manager()' ${devCommandRunner}
               grep -q 'pnpm-lock.yaml' ${devCommandRunner}
               grep -q 'git rev-parse --show-toplevel' ${devCommandRunner}
-              grep -q 'tmux display-popup -E -d "$PROJECT_ROOT" -w 90% -h 80%' ${devCommandRunner}
+              grep -q 'DEV_COMMAND_RUNNER_TARGET_PANE' ${devCommandRunner}
+              grep -q 'tmux send-keys -t "$DEV_COMMAND_RUNNER_TARGET_PANE"' ${devCommandRunner}
               grep -q 'backup snapshot> ' ${backupRestorePicker}
               grep -q 'backup file> ' ${backupRestorePicker}
               grep -q 'backup action> ' ${backupRestorePicker}
@@ -874,6 +875,19 @@
               grep -q -- '--bind=left-click:accept' "$TMPDIR/dev-fzf-args.log"
               grep -q "pwd=$TMPDIR/dev-project" "$TMPDIR/dev-command.log"
               grep -q 'args=run dev' "$TMPDIR/dev-command.log"
+
+              rm -f "$TMPDIR/dev-command.log"
+              : > "$TMPDIR/tmux.log"
+              cd "$TMPDIR/dev-project/subdir"
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \
+                TMPDIR="$TMPDIR" \
+                TMUX=1 \
+                DEV_COMMAND_RUNNER_TARGET_PANE="%1" \
+                FZF_SELECT="pnpm run dev" \
+                ${devCommandRunner}
+
+              test ! -e "$TMPDIR/dev-command.log"
+              grep -Fq "tmux send-keys -t %1 cd $TMPDIR/dev-project && pnpm run dev C-m" "$TMPDIR/tmux.log"
 
               rm -f "$TMPDIR/dev-command.log"
               PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gawk}/bin:${pkgs.git}/bin:${pkgs.gnugrep}/bin:${pkgs.gnused}/bin:${pkgs.jq}/bin" \

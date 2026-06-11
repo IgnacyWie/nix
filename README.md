@@ -229,7 +229,8 @@ context. JavaScript package scripts infer the package manager from lock files,
 preferring pnpm, then Yarn, Bun, npm lock files, and finally npm. The zsh and
 tmux binding is `Ctrl-O`; raw `Ctrl-D` is intentionally left to zsh for
 delete-char/EOF behavior. Inside tmux, `Ctrl-O` and prefix `D` launch the same
-runner in a 90% by 80% popup from the current pane directory.
+runner in a 90% by 80% popup from the current pane directory, then send the
+selected command back to the original pane so it runs in the main window.
 
 Home Manager manages `~/.local/scripts/issue-picker`. Inside a GitHub-backed
 Git repository, it detects the current `owner/repo` from the local Git remote,

@@ -207,7 +207,7 @@ in
         zle -I
 
         if [[ -n "''${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
-          tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/dev-command-runner"
+          tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE='#{pane_id}' ~/.local/scripts/dev-command-runner"
           zle reset-prompt
         else
           BUFFER="dev-command-runner"
