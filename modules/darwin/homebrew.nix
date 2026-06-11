@@ -23,6 +23,7 @@
     ];
 
     casks = [
+      "wispr-flow"
       "bitwarden"
       "ghostty"
       "google-chrome"
