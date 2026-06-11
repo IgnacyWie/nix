@@ -108,10 +108,21 @@ in
       unset MAILCHECK
       setopt prompt_subst
 
-      path=($path /opt/homebrew/bin /opt/homebrew/sbin)
+      path=(
+        /etc/profiles/per-user/$USER/bin
+        /run/current-system/sw/bin
+        $path
+        /opt/homebrew/bin
+        /opt/homebrew/sbin
+      )
       path=(''${path:#/opt/homebrew/opt/node@20/bin})
       path=(''${path:#$HOME/Library/pnpm})
+      typeset -U path
       export PATH
+
+      codex() {
+        /etc/profiles/per-user/$USER/bin/codex "$@"
+      }
 
       if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
         . "/opt/homebrew/opt/nvm/nvm.sh"

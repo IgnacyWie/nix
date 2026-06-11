@@ -340,11 +340,16 @@
             ''
               set -eu
 
+              grep -Fq 'codex() {' ${zshInit}
+              grep -Fq '/etc/profiles/per-user/$USER/bin/codex "$@"' ${zshInit}
               ! grep -q 'bin="$(whence -p codex)" || return' ${zshInit}
               grep -q 'bin="$(whence -p claude)" || return' ${zshInit}
               ! grep -q 'caffeinate -dims -t 3600 "$bin" --dangerously-bypass-approvals-and-sandbox "$@"' ${zshInit}
               grep -q 'caffeinate -dims -t 3600 "$bin" --dangerously-skip-permissions "$@"' ${zshInit}
-              grep -q 'path=($path /opt/homebrew/bin /opt/homebrew/sbin)' ${zshInit}
+              grep -Fq '/etc/profiles/per-user/$USER/bin' ${zshInit}
+              grep -Fq '/run/current-system/sw/bin' ${zshInit}
+              grep -Fq '/opt/homebrew/bin' ${zshInit}
+              grep -Fq 'typeset -U path' ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
               grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
@@ -353,8 +358,8 @@
               ! grep -q "bindkey -s '\^I' 'issue-picker" ${zshInit}
 
               test -x ${codexPackage}/bin/codex
-              grep -q 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
-              grep -q 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
+              grep -Fq 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
+              grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"
@@ -383,7 +388,7 @@
               claude --version
               EOF
 
-              grep -q 'caffeinate args: <-dims> <-t> <3600> <'"$bin"'/claude> <--dangerously-skip-permissions> <--version>' "$TMPDIR/wrapper.log"
+              grep -Eq 'caffeinate args: <-dims> <-t> <3600> <.*/claude> <--dangerously-skip-permissions> <--version>' "$TMPDIR/wrapper.log"
 
               touch "$out"
             '';
