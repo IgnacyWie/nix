@@ -2,10 +2,8 @@
  :profiles {
             :Default {
                       :default true
-                      :sim 50
                       :delay 300
                       :alone 300
-                      :held 500
                       }
             }
 
@@ -18,12 +16,27 @@
              :open "open -a '%s'"
              }
 
+ :applications {
+                :zathura ["^org\\.zathura$" "^org\\.galeon\\.zathura$"]
+                }
+
+ :froms {
+         :command-quote {:key :quote :modi :command}
+         }
+
+ :tos {
+       :control-q {:key :q :modi :control}
+       }
+
  :main [
+        {
+         :des "Map Command + ' to Ctrl+Q only in Zathura" :rules [[:command-quote :control-q :zathura]]
+         },
         {
          :des "Easier Numbers" :rules [[:!Qq :1], [:!Qw :2], [:!Qe :3], [:!Qr :4], [:!Qt :5], [:!Qy :6], [:!Qu :7], [:!Qi :8], [:!Qo :9], [:!Qp :0]]
          },
         {
-         :des "Easier Pane Switching" :rules [[:!Eq :!E1], [:!Ew :!E2], [:!Ee :!E3], [:!Er :!E4], [:!Et :!E5], [:!Ey :!E6], [:!Eu :!E7], [:!Ei :!E8], [:!Eo :!E9], [:!Ep :!E0]]
+         :des "Easier Pane Switching" :rules [[:!Eq :!E1], [:!Ew :!E2], [:!Ee :!E3], [:!Er :!E4], [:!Et :!E5], [:!Ey :!E6], [:!Eu :!E7], [:!Ei :!E8]]
          },
         {
          :des "Make the ± great again" :rules [[:non_us_backslash :fn]]
@@ -32,9 +45,6 @@
          ;; Implement that with layer
          :des "Easier Pane Sending" :rules [[:!ERq :!RE1], [:!ERw :!RE2], [:!ERe :!RE3], [:!ERr :!RE4], [:!ERt :!RE5], [:!ERy :!RE6], [:!ERu :!RE7], [:!ERi :!RE8], [:!ERo :!RE9], [:!ERp :!RE0]]
          },
-        {
-         :des "Easier Function Keys" :rules [[:!Oq :display_brightness_decrement], [:!Ow :display_brightness_increment], [:!Oe :mission_control], [:!Or :f4], [:!Ot :f5], [:!Oy :f6], [:!Ou :rewind], [:!Oi :play_or_pause], [:!Oo :f9], [:!Op :mute], [:!Oopen_bracket :volume_decrement], [:!Oclose_bracket :volume_increment]]
-        },
         {
          :des "Eject Button" :rules [[:eject "open /Users/ignacywielogorski/Downloads"]]
         },

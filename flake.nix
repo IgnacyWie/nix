@@ -983,7 +983,8 @@
             homebrewCasks = gammaConfiguration.config.homebrew.casks;
             homebrewCaskNames = builtins.map (cask: cask.name) homebrewCasks;
             karabinerEdn = homeConfig.xdg.configFile."karabiner.edn".source;
-            karabinerConfig = homeConfig.xdg.configFile."karabiner/karabiner.json".source;
+            karabinerConfig = ./config/karabiner/karabiner.json;
+            karabinerActivation = pkgs.writeText "generate-karabiner-json-activation" homeConfig.home.activation.generateKarabinerJson.data;
             karabinerGermanLetters =
               homeConfig.xdg.configFile."karabiner/assets/complex_modifications/1709730136.json".source;
             karabinerZathura =
@@ -1015,9 +1016,12 @@
               test -x ${yabaiConfig}
               test ! -e ${./config/karabiner}/automatic_backups
 
+              grep -q 'GOKU_EDN_CONFIG_FILE=' ${karabinerActivation}
+              grep -q '/opt/homebrew/bin/goku' ${karabinerActivation}
+              grep -q 'install -m 0644' ${karabinerActivation}
               jq -e '.profiles[] | select(.name == "Default" and .selected == true)' ${karabinerConfig} > /dev/null
               jq -e '.profiles[] | select(.name == "Minecraft")' ${karabinerConfig} > /dev/null
-              grep -q '"keyboard_type_v2": "iso"' ${karabinerConfig}
+              jq -e '.profiles[] | select(.name == "Default").virtual_hid_keyboard.keyboard_type_v2 == "iso"' ${karabinerConfig} > /dev/null
               grep -q "Map Command + ' to Ctrl+Q only in Zathura" ${karabinerConfig}
               grep -q 'Easier Numbers' ${karabinerConfig}
               grep -q 'Easier Pane Switching' ${karabinerConfig}

@@ -269,12 +269,14 @@ Karabiner's Goku source at `~/.config/karabiner.edn`, generated Karabiner JSON
 at `~/.config/karabiner/karabiner.json` plus intentional complex modifications,
 skhd at `~/.config/skhd/skhdrc`, and yabai at `~/.config/yabai/yabairc`.
 Homebrew remains the v1 app and daemon provider for Goku, Karabiner-Elements,
-yabai, and skhd. `make check-karabiner-edn` runs Goku in an isolated temporary
-home and compares its output with the tracked generated JSON. The migrated yabai
-config keeps the current scripting-addition load commands and Dock restart
-signal, but fresh restores still require the manual macOS approvals and
-sudoers/SIP review documented in `manual-steps.md`. Karabiner automatic backups
-are intentionally not tracked.
+yabai, and skhd. During Home Manager activation, the checked-in Karabiner JSON is
+used as a bootstrap seed and Goku regenerates `~/.config/karabiner/karabiner.json`
+from `~/.config/karabiner.edn`. `make check-karabiner-edn` runs the same
+generation path in an isolated temporary home and compares its output with the
+tracked generated JSON. The migrated yabai config keeps the current
+scripting-addition load commands and Dock restart signal, but fresh restores
+still require the manual macOS approvals and sudoers/SIP review documented in
+`manual-steps.md`. Karabiner automatic backups are intentionally not tracked.
 
 ## Managed Keybindings
 
