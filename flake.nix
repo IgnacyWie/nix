@@ -202,24 +202,35 @@
             set -eu
 
             test -x ${etaService}
+            test -d ${./services/eta}
+            grep -Fq 'Service Definition Layout' ${./services/eta/README.md}
             grep -Fq 'eta-service: Service Control Commands run authoritatively on eta.' ${etaService}
-            grep -Fq 'service_root="''${ETA_SERVICE_ROOT:-$HOME/Services}"' ${etaService}
-            grep -Fq 'find "$service_root" -mindepth 1 -maxdepth 1 -type d' ${etaService}
-            grep -Fq 'docker-compose --project-directory "$stack_dir" --file "$compose_file" up -d "$@"' ${etaService}
-            grep -Fq 'docker-compose --project-directory "$stack_dir" --file "$compose_file" down "$@"' ${etaService}
+            grep -Fq 'service_definition_root="''${ETA_SERVICE_DEFINITION_ROOT:-$HOME/nix/services/eta}"' ${etaService}
+            grep -Fq 'find "$service_definition_root" -mindepth 1 -maxdepth 1 -type d' ${etaService}
+            grep -Fq 'inspect_stack()' ${etaService}
+            grep -Fq 'docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" up -d "$@"' ${etaService}
+            grep -Fq 'docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" down "$@"' ${etaService}
 
             home="$TMPDIR/home"
-            mkdir -p "$home"
+            service_definitions="$TMPDIR/services/eta"
+            mkdir -p "$home" "$service_definitions"
             HOME="$home" ${etaService} --help > "$TMPDIR/help.txt"
             grep -Fq 'Service Control Commands run authoritatively on eta.' "$TMPDIR/help.txt"
+            grep -Fq 'directories under ~/nix/services/eta' "$TMPDIR/help.txt"
 
-            HOME="$home" ${etaService} list > "$TMPDIR/list.txt"
+            HOME="$home" ETA_SERVICE_DEFINITION_ROOT="$service_definitions" ${etaService} list > "$TMPDIR/list.txt"
             test ! -s "$TMPDIR/list.txt"
 
-            mkdir -p "$home/Services/example"
-            touch "$home/Services/example/compose.yaml"
-            HOME="$home" ${etaService} list > "$TMPDIR/list-with-stack.txt"
+            mkdir -p "$service_definitions/example"
+            touch "$service_definitions/example/compose.yaml"
+            HOME="$home" ETA_SERVICE_DEFINITION_ROOT="$service_definitions" ${etaService} list > "$TMPDIR/list-with-stack.txt"
             grep -Fxq 'example' "$TMPDIR/list-with-stack.txt"
+
+            HOME="$home" ETA_SERVICE_DEFINITION_ROOT="$service_definitions" ${etaService} inspect example > "$TMPDIR/inspect.txt"
+            grep -Fxq 'stack=example' "$TMPDIR/inspect.txt"
+            grep -Fxq 'project=example' "$TMPDIR/inspect.txt"
+            grep -Fxq "directory=$service_definitions/example" "$TMPDIR/inspect.txt"
+            grep -Fxq "compose_file=$service_definitions/example/compose.yaml" "$TMPDIR/inspect.txt"
 
             touch "$out"
           '';
@@ -600,6 +611,7 @@
 
             ${pkgs.bash}/bin/bash ${etaService} --help > "$TMPDIR/eta-service-help.txt"
             grep -Fq 'Service Control Commands run authoritatively on eta.' "$TMPDIR/eta-service-help.txt"
+            grep -Fq 'eta-service inspect <stack>' "$TMPDIR/eta-service-help.txt"
 
             touch "$out"
           '';

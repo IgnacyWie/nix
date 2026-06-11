@@ -61,8 +61,8 @@ source of truth, so this flake does not add a competing Docker CLI.
 - User: `ignacywielogorski`
 - Platform: `aarch64-darwin`
 - Service data root: `~/Services`
-- Container runtime: OrbStack, with future service definitions under
-  `services/eta/<stack>/`
+- Service Definition Layout: `~/nix/services/eta/<stack>/`
+- Container runtime: OrbStack
 
 The current `eta` slice is a buildable host skeleton. It sets the Host Name,
 Primary User, shared Home Manager Host Shell Baseline with the `η` Host Prompt
@@ -73,6 +73,13 @@ paths, and interactive UI workflows are enabled explicitly for `gamma` rather
 than inherited by `eta`. The `eta` slice intentionally does not define launchd
 jobs for service stacks or start live containers.
 
+Home Server Service Definitions live in this repository under
+`services/eta/<stack>/`. Each stack is a separate Compose project named after
+the stack directory, so stacks can be inspected, started, stopped, and restored
+independently. Durable service state remains outside the checkout under
+`~/Services`; Compose definitions should mount explicit per-stack paths there
+and stack documentation should describe restore expectations.
+
 The canonical SSH Host Alias for the Home Server is `eta`, pointing at the
 Tailscale identity `eta.sparrow-pomano.ts.net` as user `ignacywielogorski`.
 `gamma` provides managed convenience wrappers for remote Home Server operations:
@@ -80,12 +87,18 @@ Tailscale identity `eta.sparrow-pomano.ts.net` as user `ignacywielogorski`.
 ```sh
 eta-shell
 eta-service list
+eta-service inspect <stack>
 eta-service <stack> <command> [args...]
 ```
 
 `eta-service` on `gamma` delegates over SSH to the managed `eta-service` command
 on `eta`. Service Control Commands run authoritatively on `eta`; `gamma` only
 provides shortcuts and does not own Home Server service state.
+
+On `eta`, `eta-service list` and `eta-service inspect <stack>` only read
+`~/nix/services/eta` and do not require Docker, OrbStack, or live containers.
+Startup remains explicit through commands such as `eta-service <stack> up`; the
+flake does not configure launchd autostart for all stacks.
 
 ## Repository Workflow
 

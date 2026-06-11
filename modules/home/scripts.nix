@@ -27,6 +27,7 @@
 
       Usage:
         eta-service list
+        eta-service inspect <stack>
         eta-service <stack> <command> [args...]
 
       This gamma wrapper does not own Home Server state. It delegates to the

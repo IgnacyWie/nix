@@ -7,11 +7,12 @@
 
 let
   serviceDataRoot = "${config.home.homeDirectory}/Services";
+  serviceDefinitionRoot = "${config.home.homeDirectory}/nix/services/eta";
 
   etaService = pkgs.writeShellScript "eta-service" ''
     set -euo pipefail
 
-    service_root="''${ETA_SERVICE_ROOT:-$HOME/Services}"
+    service_definition_root="''${ETA_SERVICE_DEFINITION_ROOT:-$HOME/nix/services/eta}"
 
     usage() {
       cat <<'USAGE'
@@ -19,6 +20,7 @@ let
 
     Usage:
       eta-service list
+      eta-service inspect <stack>
       eta-service <stack> config
       eta-service <stack> ps
       eta-service <stack> logs [args...]
@@ -29,8 +31,9 @@ let
       eta-service <stack> up [args...]
       eta-service <stack> down [args...]
 
-    Service stacks are directories under ~/Services that contain compose.yaml,
-    compose.yml, docker-compose.yaml, or docker-compose.yml.
+    Service stacks are directories under ~/nix/services/eta that contain
+    compose.yaml, compose.yml, docker-compose.yaml, or docker-compose.yml.
+    Use ETA_SERVICE_DEFINITION_ROOT to inspect another checkout.
     USAGE
     }
 
@@ -48,15 +51,37 @@ let
     }
 
     list_stacks() {
-      if [[ ! -d "$service_root" ]]; then
+      if [[ ! -d "$service_definition_root" ]]; then
         return 0
       fi
 
-      find "$service_root" -mindepth 1 -maxdepth 1 -type d | sort | while read -r stack_dir; do
+      find "$service_definition_root" -mindepth 1 -maxdepth 1 -type d | sort | while read -r stack_dir; do
         if find_compose_file "$stack_dir" >/dev/null; then
           basename "$stack_dir"
         fi
       done
+    }
+
+    inspect_stack() {
+      local stack=$1
+      local stack_dir="$service_definition_root/$stack"
+      if [[ ! -d "$stack_dir" ]]; then
+        printf 'eta-service: unknown stack: %s\n' "$stack" >&2
+        printf 'Known stacks:\n' >&2
+        list_stacks >&2
+        exit 1
+      fi
+
+      local compose_file
+      if ! compose_file=$(find_compose_file "$stack_dir"); then
+        printf 'eta-service: %s has no Compose file\n' "$stack_dir" >&2
+        exit 1
+      fi
+
+      printf 'stack=%s\n' "$stack"
+      printf 'project=%s\n' "$stack"
+      printf 'directory=%s\n' "$stack_dir"
+      printf 'compose_file=%s\n' "$compose_file"
     }
 
     run_compose() {
@@ -64,7 +89,7 @@ let
       local command=$2
       shift 2
 
-      local stack_dir="$service_root/$stack"
+      local stack_dir="$service_definition_root/$stack"
       if [[ ! -d "$stack_dir" ]]; then
         printf 'eta-service: unknown stack: %s\n' "$stack" >&2
         printf 'Known stacks:\n' >&2
@@ -80,28 +105,28 @@ let
 
       case "$command" in
         config)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" config "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" config "$@"
           ;;
         ps)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" ps "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" ps "$@"
           ;;
         logs)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" logs "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" logs "$@"
           ;;
         pull)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" pull "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" pull "$@"
           ;;
         restart)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" restart "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" restart "$@"
           ;;
         start | up)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" up -d "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" up -d "$@"
           ;;
         stop)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" stop "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" stop "$@"
           ;;
         down)
-          exec docker-compose --project-directory "$stack_dir" --file "$compose_file" down "$@"
+          exec docker-compose --project-name "$stack" --project-directory "$stack_dir" --file "$compose_file" down "$@"
           ;;
         *)
           usage >&2
@@ -117,6 +142,14 @@ let
       list)
         list_stacks
         ;;
+      inspect)
+        if [[ $# -ne 2 ]]; then
+          usage >&2
+          exit 64
+        fi
+
+        inspect_stack "$2"
+        ;;
       *)
         if [[ $# -lt 2 ]]; then
           usage >&2
@@ -131,6 +164,7 @@ in
 {
   home.activation.createHomeServerDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p ${lib.escapeShellArg serviceDataRoot}
+    run mkdir -p ${lib.escapeShellArg serviceDefinitionRoot}
   '';
 
   home.file.".local/bin/eta-service" = {
