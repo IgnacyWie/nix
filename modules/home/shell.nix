@@ -8,13 +8,21 @@
 let
   homeDirectory = config.home.homeDirectory;
 
+  tmuxGhostty = pkgs.tmux.overrideAttrs (_old: {
+    version = "3.3a";
+    src = pkgs.fetchurl {
+      url = "https://github.com/tmux/tmux/releases/download/3.3a/tmux-3.3a.tar.gz";
+      hash = "sha256-5P00eEO9B3LE9I1t3mJbCxCbejgP8V2yHpfBGk3N+T8=";
+    };
+  });
+
   tmuxWrapper = pkgs.writeShellScript "tmux-wrapper" ''
     set -eu
 
-    tmux_bin="/opt/homebrew/bin/tmux"
+    tmux_bin="${tmuxGhostty}/bin/tmux"
 
     if [ ! -x "$tmux_bin" ]; then
-      printf 'tmux wrapper: expected Homebrew tmux at %s\n' "$tmux_bin" >&2
+      printf 'tmux wrapper: expected pinned tmux at %s\n' "$tmux_bin" >&2
       exit 127
     fi
 

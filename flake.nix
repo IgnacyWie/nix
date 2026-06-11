@@ -363,7 +363,7 @@
               grep -Fq 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
               grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
               test -x ${tmuxWrapper}
-              grep -Fq 'tmux_bin="/opt/homebrew/bin/tmux"' ${tmuxWrapper}
+              grep -Fq 'tmux-3.3a/bin/tmux' ${tmuxWrapper}
               grep -Fq '/usr/bin/open -na Ghostty.app --args --term=xterm-256color -e "$tmux_bin" "$@"' ${tmuxWrapper}
 
               bin="$TMPDIR/bin"
@@ -499,7 +499,7 @@
             packageNames = builtins.map (package: package.name or "") systemPackages;
           in
           assert builtins.elem "mas" homebrewBrewNames;
-          assert builtins.elem "tmux" homebrewBrewNames;
+          assert !(builtins.elem "tmux" homebrewBrewNames);
           assert builtins.elem "goku" homebrewBrewNames;
           assert builtins.elem "bitwarden" homebrewCaskNames;
           assert builtins.elem "tailscale-app" homebrewCaskNames;

@@ -19,7 +19,6 @@
       "goku"
       "mas"
       "nvm"
-      "tmux"
     ];
 
     casks = [

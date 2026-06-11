@@ -263,8 +263,9 @@ confirmation. It does not restore directly over original paths in v1; see
 
 ### tmux Configuration
 
-Home Manager manages tmux configuration while Homebrew remains the tmux binary
-provider on `gamma`. The Homebrew Brewfile trusts only the required Koekeishiya
+Home Manager manages tmux configuration and a pinned `tmux 3.3a` wrapper at
+`~/.local/bin/tmux` because newer `tmux 3.6` builds fail to attach clients in
+Ghostty on `gamma`. The Homebrew Brewfile trusts only the required Koekeishiya
 formulae, `koekeishiya/formulae/yabai` and `koekeishiya/formulae/skhd`, rather
 than the whole tap. Home Manager also pins the TPM checkout at
 `~/.tmux/plugins/tpm`; TPM remains the v1 tmux plugin manager for
