@@ -7,6 +7,9 @@ Homebrew `masApps` for the `gamma` Workstation:
 
 - `Flighty` (`1358823008`): flight tracker app. Account, subscription, iCloud,
   trip, and notification state remain outside Nix.
+- `WhatsApp` (`310633997`): messaging app installed as WhatsApp Messenger from
+  the App Store. Account pairing, message history, and notification state remain
+  outside Nix.
 
 ## Restore Validation
 

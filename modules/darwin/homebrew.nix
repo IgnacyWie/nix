@@ -31,14 +31,14 @@
       "orbstack"
       "raycast"
       "sf-symbols"
-      "tailscale"
-      "whatsapp"
+      "tailscale-app"
       "zen"
       "firefox@developer-edition"
     ];
 
     masApps = {
       Flighty = 1358823008;
+      WhatsApp = 310633997;
     };
 
     extraConfig = ''

@@ -470,8 +470,9 @@
           assert builtins.elem "tmux" homebrewBrewNames;
           assert builtins.elem "goku" homebrewBrewNames;
           assert builtins.elem "bitwarden" homebrewCaskNames;
-          assert builtins.elem "tailscale" homebrewCaskNames;
+          assert builtins.elem "tailscale-app" homebrewCaskNames;
           assert homebrewMasApps.Flighty == 1358823008;
+          assert homebrewMasApps.WhatsApp == 310633997;
           assert builtins.any (name: builtins.match ".*chafa.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*bat.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*fzf.*" name != null) packageNames;
@@ -1025,16 +1026,11 @@
               jq -e '.profiles[] | select(.name == "Minecraft")' ${karabinerConfig} > /dev/null
               jq -e '.profiles[] | select(.name == "Default").virtual_hid_keyboard.keyboard_type_v2 == "iso"' ${karabinerConfig} > /dev/null
               grep -q "Map Command + ' to Ctrl+Q only in Zathura" ${karabinerConfig}
-              grep -q 'Easier Numbers' ${karabinerConfig}
               grep -q 'Easier Pane Switching' ${karabinerConfig}
-              grep -q 'Make the' ${karabinerConfig}
               grep -q 'Easier Pane Sending' ${karabinerConfig}
               grep -q 'Display Brightness simlayer' ${karabinerConfig}
-              grep -q 'Finder Key ~' ${karabinerConfig}
-              grep -q 'App Key ;' ${karabinerConfig}
               grep -q ':profiles' ${karabinerEdn}
               grep -q ':Default' ${karabinerEdn}
-              grep -q 'Easier Numbers' ${karabinerEdn}
               grep -q 'German' ${karabinerGermanLetters}
               grep -q 'Zathura Cmd' ${karabinerZathura}
 

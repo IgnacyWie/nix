@@ -33,65 +33,17 @@
          :des "Map Command + ' to Ctrl+Q only in Zathura" :rules [[:command-quote :control-q :zathura]]
          },
         {
-         :des "Easier Numbers" :rules [[:!Qq :1], [:!Qw :2], [:!Qe :3], [:!Qr :4], [:!Qt :5], [:!Qy :6], [:!Qu :7], [:!Qi :8], [:!Qo :9], [:!Qp :0]]
-         },
-        {
          :des "Easier Pane Switching" :rules [[:!Eq :!E1], [:!Ew :!E2], [:!Ee :!E3], [:!Er :!E4], [:!Et :!E5], [:!Ey :!E6], [:!Eu :!E7], [:!Ei :!E8]]
-         },
-        {
-         :des "Make the ± great again" :rules [[:non_us_backslash :fn]]
          },
         {
          ;; Implement that with layer
          :des "Easier Pane Sending" :rules [[:!ERq :!RE1], [:!ERw :!RE2], [:!ERe :!RE3], [:!ERr :!RE4], [:!ERt :!RE5], [:!ERy :!RE6], [:!ERu :!RE7], [:!ERi :!RE8], [:!ERo :!RE9], [:!ERp :!RE0]]
          },
-        {
-         :des "Eject Button" :rules [[:eject "open /Users/ignacywielogorski/Downloads"]]
-        },
         {:des "Display Brightness simlayer"
         :rules [
            [[:q :w] :display_brightness_decrement],
            [[:q :e] :display_brightness_increment]
         ]}
-        {:des "Finder Key ~"
-        :rules [
-            ;; c - Code
-            [[:grave_accent_and_tilde :i] "open ~/Developer"],
-            ;; h - Home
-            [[:grave_accent_and_tilde :j] "open ~"],
-            ;; d - Downloads
-            [[:grave_accent_and_tilde :h] "open ~/Downloads/"],
-            ;; p - Pictures
-            [[:grave_accent_and_tilde :r] "open ~/Pictures/"],
-            ;; b - Biurko
-            [[:grave_accent_and_tilde :n] "open ~/Desktop/"],
-            ;; a - Applications
-            [[:grave_accent_and_tilde :a] "open /Applications/"],
-        ]}
-        {
-         :des "App Key ;" :rules [
-            ;; s - safari
-            [:semicolon [:open "Safari"] :app-mode],
-            ;; n - Netflix
-            [:l "open https://netflix.com" :app-mode],
-            ;; y - YouTube
-            [:t "open https://youtube.com" :app-mode],
-            ;; i - IDU
-            [:g "open https://s19.idu.edu.pl" :app-mode],
-            ;; c - code editor
-            [:i [:open "Zed"] :app-mode],
-            ;; t - terminal
-            [:k [:open "iTerm"] :app-mode],
-            ;; p - preferences
-            [:r [:open "preferences"] :app-mode],
-            ;; n - notes
-            [:l [:open "Notes"] :app-mode],
-            ;; m - messages
-            [:m [:open "Messages"] :app-mode],
-            ;; l - list
-            [:p [:open "Things3"] :app-mode],
-          ]
-        }
 ]}
 
 ;; !  | means mandatory
