@@ -31,6 +31,7 @@
       "karabiner-elements"
       "loom"
       "orbstack"
+      "pearcleaner"
       "raycast"
       "sf-symbols"
       "tailscale-app"
