@@ -18,26 +18,31 @@
 
     brews = [
       "goku"
+      # Goku depends on joker, but Homebrew bundle cleanup can try to remove
+      # an old tapped joker keg before it has reconciled Goku's dependency.
+      # Keep joker explicit so apply-gamma cleanup stays dependency-safe.
+      "joker"
       "mas"
       "nvm"
     ];
 
     casks = [
       "wispr-flow"
-      "displaylink"
+      "monitorcontrol" # Tool for controlling external monitor brightness, contrast, and volume. Useful for my 49 Inch LG Ultrawide.
+      "displaylink" # Tool for using DisplayLink USB graphics adapters. Required for my 49 Inch LG Ultrawide.
       "ghostty"
       "google-chrome"
       "karabiner-elements"
-      "keka"
+      "keka" # Faster and more powerful alternative to the built-in Archive Utility for extracting compressed files.
       "loom"
-      "orbstack"
+      "orbstack" # Docker alternative for Apple Silicon, with better performance and native support for Apple Silicon.
       "pearcleaner"
       "raycast"
       "sf-symbols"
       "tailscale-app"
       "zen"
       "firefox@developer-edition"
-      "onlyoffice"
+      "onlyoffice" # Open-source office suite, good for editing documents created in Microsoft Office.
     ];
 
     masApps = {
