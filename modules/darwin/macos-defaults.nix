@@ -58,7 +58,7 @@
 
     universalaccess = {
       reduceMotion = true;
-      reduceTransparency = true;
+      reduceTransparency = false;
     };
 
     trackpad = {

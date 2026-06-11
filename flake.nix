@@ -136,7 +136,7 @@
           assert defaults.NSGlobalDomain._HIHideMenuBar == false;
           assert defaults.NSGlobalDomain."com.apple.springing.enabled" == true;
           assert defaults.universalaccess.reduceMotion == true;
-          assert defaults.universalaccess.reduceTransparency == true;
+          assert defaults.universalaccess.reduceTransparency == false;
           assert defaults.trackpad.Clicking == true;
           assert defaults.trackpad.ForceSuppressed == true;
           assert defaults.trackpad.TrackpadRightClick == true;
