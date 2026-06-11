@@ -394,6 +394,7 @@
             --prompt='dev command> ' \
             --delimiter=$'\t' \
             --with-nth=1,2 \
+            --bind='left-click:accept' \
             --preview="$0 --preview {}"
       ); then
         exit 0

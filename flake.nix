@@ -775,6 +775,7 @@
 
               cat > "$bin/fzf" <<'EOF'
               #!${pkgs.runtimeShell}
+              printf '%s\n' "$*" > "$TMPDIR/dev-fzf-args.log"
               cat > "$TMPDIR/dev-fzf-list.log"
               if [ "''${FZF_CANCEL:-0}" = 1 ]; then
                 exit 130
@@ -802,6 +803,7 @@
               grep -q $'Makefile\tmake test' "$TMPDIR/dev-fzf-list.log"
               grep -q $'nix\tnix flake check' "$TMPDIR/dev-fzf-list.log"
               grep -q $'scripts\t./scripts/check' "$TMPDIR/dev-fzf-list.log"
+              grep -q -- '--bind=left-click:accept' "$TMPDIR/dev-fzf-args.log"
               grep -q "pwd=$TMPDIR/dev-project" "$TMPDIR/dev-command.log"
               grep -q 'args=run dev' "$TMPDIR/dev-command.log"
 
