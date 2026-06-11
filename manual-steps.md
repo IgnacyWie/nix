@@ -24,6 +24,48 @@ sudo darwin-rebuild switch --flake .#gamma
 
 Review build output before switching system-changing configuration.
 
+## Homebrew Cleanup
+
+The `gamma` Homebrew baseline is authoritative: nix-darwin activation installs
+declared entries and zaps unlisted Homebrew casks during cleanup.
+
+Before applying a change that removes Homebrew entries, preview the cleanup:
+
+```sh
+cd ~/nix
+make homebrew-cleanup-preview
+```
+
+Manual action is expected when Homebrew cannot inspect or remove old local
+state safely:
+
+- If Homebrew prints `Refusing to load ... from untrusted tap`, review the tap
+  and trust only the exact cask or formula that Homebrew names, then rerun the
+  preview. For example:
+
+  ```sh
+  brew trust --cask nikitabobko/tap/aerospace
+  brew trust --formula michaelroosz/ssh/libsk-libfido2
+  ```
+
+- If Homebrew prints `Refusing to untap ... because it contains the following
+  installed formulae or casks`, decide whether each listed package belongs in
+  the workstation baseline. If it does, add it to
+  `modules/darwin/homebrew.nix`. If it does not, uninstall it manually and rerun
+  the preview. For example:
+
+  ```sh
+  brew uninstall --formula heroku
+  ```
+
+- If Homebrew asks whether to proceed with cleanup, answer only after reviewing
+  the `Would uninstall` and `Would untap` lists. `make apply-gamma` runs the
+  same cleanup through nix-darwin with cask zapping enabled.
+
+The trust commands above do not add those packages to the desired baseline;
+they only let Homebrew load old tap metadata so cleanup can remove unlisted
+packages.
+
 ## Secret Recovery
 
 1. Sign in to Vaultwarden.

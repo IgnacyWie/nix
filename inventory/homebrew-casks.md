@@ -30,5 +30,7 @@ for the `gamma` Workstation:
 ## Sanitization Notes
 
 This file is not raw `brew list --cask` output. Additional local casks should be
-reviewed before being added. Browser profiles, exported application settings,
-license files, and sync tokens must not be committed as inventory.
+reviewed before being added. Unlisted casks are zapped by the Homebrew cleanup
+phase after any required manual trust decisions for old taps. Browser profiles,
+exported application settings, license files, and sync tokens must not be
+committed as inventory.

@@ -2,10 +2,10 @@
 
 ## Reviewed Baseline
 
-The v1 Workstation keeps Homebrew enabled through nix-darwin, but Homebrew is
-non-authoritative. Activation installs declared formulae and trusted tap
-formulae without auto-updating, upgrading, cleaning up, or removing unlisted
-packages.
+The v1 Workstation keeps Homebrew enabled through nix-darwin. The declared
+formulae below are the intended baseline; activation installs them without
+auto-updating or upgrading, and the Homebrew cleanup phase removes unlisted
+Homebrew packages.
 
 Declared formulae:
 
@@ -30,6 +30,6 @@ installed through Nix system packages instead of Homebrew formulae.
 ## Sanitization Notes
 
 This file is not raw `brew leaves` output. Unlisted Homebrew formulae are not
-implicitly desired state. Before tightening cleanup, compare current local
-formulae against this file and migrate only tools that belong in the Personal
-Infrastructure baseline.
+implicitly desired state. If cleanup reports an unlisted formula that should
+survive, add it to `modules/darwin/homebrew.nix` and document why it belongs in
+the Personal Infrastructure baseline.
