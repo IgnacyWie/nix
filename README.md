@@ -188,8 +188,9 @@ LazyVim-based configuration from `config/nvim` to `~/.config/nvim`. The
 migration keeps the existing LazyVim extras, plugin lock file, Solarized Osaka
 theme, Copilot and Avante plugin specs, Typst preview binding, tmux navigation,
 Neo-tree-on-right workflow, Molten/Quarto/Jupytext notebook workflow,
-JavaScript snippets, and Polish diacritic insert-mode mappings. Local plugin
-auth state and provider credentials remain outside the repository.
+JavaScript snippets, Python and pytest tooling, and Polish diacritic
+insert-mode mappings. Local plugin auth state and provider credentials remain
+outside the repository.
 
 ### Terminal
 

@@ -15,6 +15,7 @@ The migrated editor inventory includes:
 - tmux navigation integration.
 - Neo-tree-on-right workflow.
 - Molten, Quarto, and Jupytext notebook workflow.
+- Python and pytest tooling.
 - JavaScript snippets.
 - Polish diacritic insert-mode mappings.
 

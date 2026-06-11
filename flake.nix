@@ -437,6 +437,7 @@
           assert builtins.any (name: builtins.match ".*nil.*" name != null) homePackageNames;
           assert builtins.any (name: builtins.match ".*nodejs.*" name != null) homePackageNames;
           assert builtins.any (name: builtins.match ".*python.*" name != null) homePackageNames;
+          assert builtins.any (name: builtins.match ".*pytest.*" name != null) homePackageNames;
           assert builtins.any (name: builtins.match ".*stylua.*" name != null) homePackageNames;
           assert builtins.any (name: builtins.match ".*tree-sitter.*" name != null) homePackageNames;
           pkgs.runCommand "gamma-neovim-config-check" { } ''

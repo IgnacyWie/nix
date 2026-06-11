@@ -8,6 +8,7 @@
     nil
     nodejs_24
     python3
+    python3Packages.pytest
     stylua
     tree-sitter
   ];
