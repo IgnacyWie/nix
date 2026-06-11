@@ -61,6 +61,10 @@
         exit 0
       fi
 
+      has_tty() {
+        [[ -t 0 && -t 1 ]]
+      }
+
       selected_name=$(basename "$selected" | tr . _)
       tmux_running=$(pgrep tmux)
 
@@ -84,7 +88,11 @@
         tmux new-window -t $selected_name -n "rest" -c "$selected"
         tmux send-keys -t $selected_name:5 "posting" C-m
 
-        tmux attach -t $selected_name
+        if has_tty; then
+          tmux attach -t $selected_name
+        else
+          printf 'Created tmux session %s. Attach from a terminal with: tmux attach -t %s\n' "$selected_name" "$selected_name" >&2
+        fi
         exit 0
       fi
 
@@ -109,10 +117,12 @@
         tmux send-keys -t $selected_name:5 "posting" C-m
       fi
 
-      if [[ -z $TMUX ]]; then
+      if [[ -z $TMUX ]] && has_tty; then
         tmux attach -t $selected_name
-      else
+      elif [[ -n $TMUX ]]; then
         tmux switch-client -t $selected_name
+      else
+        printf 'Prepared tmux session %s. Attach from a terminal with: tmux attach -t %s\n' "$selected_name" "$selected_name" >&2
       fi
     '';
   };
@@ -736,8 +746,10 @@
 
       if [[ -n "$TMUX" ]]; then
         tmux switch-client -t "$SESSION_NAME"
-      else
+      elif [[ -t 0 && -t 1 ]]; then
         tmux -2 attach-session -t "$SESSION_NAME"
+      else
+        printf 'Created tmux session %s. Attach from a terminal with: tmux attach -t %s\n' "$SESSION_NAME" "$SESSION_NAME" >&2
       fi
     '';
   };

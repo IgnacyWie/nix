@@ -197,7 +197,9 @@ Home Manager manages Ghostty at `~/.config/ghostty/config`. The migrated
 configuration keeps the existing Tango Dark theme, MesloLGS Nerd Font Mono,
 window padding, tab-style titlebar, close behavior, and Dvorak-QWERTY
 command-key workaround bindings for copy, paste, surface, tab, window, quit,
-and reload actions.
+and reload actions. Ghostty advertises `TERM=xterm-256color` for compatibility
+with tmux and SSH-to-localhost workflows instead of the newer
+`TERM=xterm-ghostty` default.
 
 ### Workflow Scripts
 

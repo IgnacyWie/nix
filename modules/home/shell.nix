@@ -8,6 +8,30 @@
 let
   homeDirectory = config.home.homeDirectory;
 
+  tmuxWrapper = pkgs.writeShellScript "tmux-wrapper" ''
+    set -eu
+
+    tmux_bin="/opt/homebrew/bin/tmux"
+
+    if [ ! -x "$tmux_bin" ]; then
+      printf 'tmux wrapper: expected Homebrew tmux at %s\n' "$tmux_bin" >&2
+      exit 127
+    fi
+
+    command="''${1:-}"
+
+    case "$command" in
+      "" | a | attach | attach-session | new | new-session)
+        if [ ! -t 0 ] || [ ! -t 1 ]; then
+          /usr/bin/open -na Ghostty.app --args --term=xterm-256color -e "$tmux_bin" "$@"
+          exit 0
+        fi
+        ;;
+    esac
+
+    exec "$tmux_bin" "$@"
+  '';
+
   shellNavigationAliases = {
     b = "brew";
     downloads = "cd ~/Downloads";
@@ -42,6 +66,12 @@ let
   };
 in
 {
+  home.file.".local/bin/tmux" = {
+    executable = true;
+    force = true;
+    source = tmuxWrapper;
+  };
+
   home.packages = [
     (pkgs.writeShellScriptBin "notify" ''
       set -eu

@@ -13,8 +13,10 @@ Declared formulae:
   `karabiner.edn` source and producing Karabiner JSON.
 - `nvm`: kept in Homebrew because the shell workflow depends on Homebrew's
   sourced `nvm.sh`.
-- `tmux`: kept in Homebrew for v1 because the existing TPM workflow and terminal
-  behavior were migrated around that binary.
+- `tmux`: kept in Homebrew for v1 because the existing TPM workflow and
+  terminal behavior were migrated around that binary. Ghostty is configured to
+  advertise `TERM=xterm-256color` to avoid `xterm-ghostty` compatibility issues
+  when attaching tmux clients locally or through SSH-to-localhost workflows.
 - `koekeishiya/formulae/yabai`: installed through trusted formula syntax.
 - `koekeishiya/formulae/skhd`: installed through trusted formula syntax.
 

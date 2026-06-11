@@ -7,6 +7,7 @@
     theme = iTerm2 Tango Dark
     font-family = MesloLGS Nerd Font Mono
     font-size = 19
+    term = xterm-256color
 
     # Add some nice looking padding
     window-padding-x = 8

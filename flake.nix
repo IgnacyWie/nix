@@ -265,6 +265,7 @@
 
             grep -q 'theme = iTerm2 Tango Dark' ${ghosttyConfig}
             grep -q 'font-family = MesloLGS Nerd Font Mono' ${ghosttyConfig}
+            grep -q 'term = xterm-256color' ${ghosttyConfig}
             grep -q 'keybind = cmd+j=copy_to_clipboard' ${ghosttyConfig}
             grep -q 'keybind = cmd+k=paste_from_clipboard' ${ghosttyConfig}
             grep -q 'keybind = cmd+,=close_surface' ${ghosttyConfig}
@@ -324,6 +325,7 @@
             codexPackage = builtins.head (
               builtins.filter (package: package.name or "" == "codex") homePackages
             );
+            tmuxWrapper = homeConfig.home.file.".local/bin/tmux".source;
           in
           assert !(builtins.hasAttr "codex" zshAliases);
           assert !(builtins.hasAttr "claude" zshAliases);
@@ -360,6 +362,9 @@
               test -x ${codexPackage}/bin/codex
               grep -Fq 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
               grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
+              test -x ${tmuxWrapper}
+              grep -Fq 'tmux_bin="/opt/homebrew/bin/tmux"' ${tmuxWrapper}
+              grep -Fq '/usr/bin/open -na Ghostty.app --args --term=xterm-256color -e "$tmux_bin" "$@"' ${tmuxWrapper}
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"
@@ -606,6 +611,17 @@
               grep -q 'send-keys -t example-project:4 lazysql C-m' "$TMPDIR/tmux.log"
               grep -q 'switch-client -t example-project' "$TMPDIR/tmux.log"
 
+              : > "$TMPDIR/tmux.log"
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:${pkgs.zsh}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                env -u TMUX ${tmuxSessionizer} 2> "$TMPDIR/sessionizer-notty.err"
+
+              grep -q 'Prepared tmux session example-project' "$TMPDIR/sessionizer-notty.err"
+              grep -q 'new-session -ds example-project -c' "$TMPDIR/tmux.log"
+              ! grep -q 'attach' "$TMPDIR/tmux.log"
+              ! grep -q 'switch-client' "$TMPDIR/tmux.log"
+
               cat > "$bin/fzf" <<'EOF'
               #!${pkgs.runtimeShell}
               printf 'feature/git-branch-switcher\n'
@@ -756,6 +772,24 @@
               grep -q 'title: "issue-10-check"' "$home/typst/issue-10-check.typ"
               grep -q 'new-session -d -s typst_' "$TMPDIR/tmux.log"
               grep -q "nvim 'issue-10-check.typ'" "$TMPDIR/tmux.log"
+
+              cat > "$bin/fzf" <<'EOF'
+              #!${pkgs.runtimeShell}
+              printf 'issue-11-check\n'
+              EOF
+              chmod +x "$bin/fzf"
+
+              : > "$TMPDIR/tmux.log"
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:${pkgs.zsh}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                env -u TMUX zsh -f ${typstSmartOpen} 2> "$TMPDIR/typst-notty.err"
+
+              grep -q 'Created tmux session typst_' "$TMPDIR/typst-notty.err"
+              grep -q 'new-session -d -s typst_' "$TMPDIR/tmux.log"
+              grep -q "nvim 'issue-11-check.typ'" "$TMPDIR/tmux.log"
+              ! grep -q 'attach-session' "$TMPDIR/tmux.log"
+              ! grep -q 'switch-client' "$TMPDIR/tmux.log"
 
               rm -rf "$TMPDIR/dev-project" "$TMPDIR/dev-command.log" "$TMPDIR/dev-fzf-list.log"
               mkdir -p "$TMPDIR/dev-project/subdir" "$TMPDIR/dev-project/scripts"
