@@ -28,6 +28,7 @@
       "ghostty"
       "google-chrome"
       "karabiner-elements"
+      "keka"
       "loom"
       "orbstack"
       "pearcleaner"

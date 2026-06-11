@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./default-apps.nix
     ./homebrew.nix
     ./macos-defaults.nix
   ];

@@ -14,6 +14,8 @@ for the `gamma` Workstation:
   extensions, sessions, and account state remain outside Nix.
 - `karabiner-elements`: app and driver provider for keyboard remaps. Desired
   config is managed through Home Manager.
+- `keka`: archive utility. Keka is configured as the default opener for common
+  archive formats during nix-darwin activation.
 - `loom`: screen recording app. Account state and recordings remain outside
   Nix.
 - `orbstack`: v1 Docker runtime and Docker CLI source of truth. Runtime state

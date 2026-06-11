@@ -495,6 +495,8 @@
             homebrewCasks = gammaConfiguration.config.homebrew.casks;
             homebrewCaskNames = builtins.map (cask: cask.name) homebrewCasks;
             homebrewMasApps = gammaConfiguration.config.homebrew.masApps;
+            defaultAppsModule = ./modules/darwin/default-apps.nix;
+            defaultAppsActivation = pkgs.writeText "default-apps-activation" gammaConfiguration.config.system.activationScripts.postActivation.text;
             systemPackages = gammaConfiguration.config.environment.systemPackages;
             packageNames = builtins.map (package: package.name or "") systemPackages;
           in
@@ -502,6 +504,7 @@
           assert !(builtins.elem "tmux" homebrewBrewNames);
           assert builtins.elem "goku" homebrewBrewNames;
           assert builtins.elem "bitwarden" homebrewCaskNames;
+          assert builtins.elem "keka" homebrewCaskNames;
           assert builtins.elem "tailscale-app" homebrewCaskNames;
           assert homebrewMasApps.Flighty == 1358823008;
           assert homebrewMasApps.WhatsApp == 310633997;
@@ -566,6 +569,9 @@
               grep -q 'restore-to-review-dir' ${backupRestorePicker}
               grep -q 'Type restore to run this command' ${backupRestorePicker}
               ! grep -q 'restore-original-path' ${backupRestorePicker}
+              grep -q 'com.aone.keka' ${defaultAppsModule}
+              grep -q '/bin/duti' ${defaultAppsActivation}
+              grep -q 'keka-archive-defaults.duti' ${defaultAppsActivation}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
