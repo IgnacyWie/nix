@@ -1,0 +1,135 @@
+model = "gpt-5.5"
+model_reasoning_effort = "medium"
+personality = "pragmatic"
+notify = ["/Users/ignacywielogorski/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+service_tier = "default"
+
+[projects."/Users/ignacywielogorski/Developer/envista"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/inspecto-lsp"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/hackathon-elevenlabs-3-12-25"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/tennis_betting_ml"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/asari-syncer"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/ignacywie.dev"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/gpss-app"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/ball-escape"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/expozycia-landing"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/websitemantai"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/asai-labs-landing-page"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/data-challenge-group-23"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/vibe-in-motion"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/exponata-form"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Downloads/green-team-website 3"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/exponata-face-blurrer"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/nix"]
+trust_level = "trusted"
+
+[projects."/Users/ignacywielogorski/Developer/agent-loop-workflow"]
+trust_level = "trusted"
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
+fast_default_opt_out = true
+
+[notice.model_migrations]
+"gpt-5.1-codex-max" = "gpt-5.4"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[features]
+js_repl = false
+hooks = true
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/Users/ignacywielogorski/.codex"
+CODEX_HOME = "/Users/ignacywielogorski/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "72614174f4dad67a58d46a3ac759cffb45c92fa48a293af4c4ea35102ba391ba"
+BROWSER_USE_AVAILABLE_BACKENDS = "iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.608.12217"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
+
+[desktop]
+ambient-suggestions-enabled = false
+conversationDetailMode = "STEPS_COMMANDS"
+
+[desktop.open-in-target-preferences]
+global = "iterm2"
+
+[desktop.open-in-target-preferences.perPath]
+"/Users/ignacywielogorski/Developer/exponata-form" = "iterm2"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-06-10T10:17:29Z"
+source_type = "local"
+source = "/Users/ignacywielogorski/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-06-10T10:34:31Z"
+source_type = "local"
+source = "/Users/ignacywielogorski/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-remaining", "five-hour-limit", "model", "project-name", "weekly-limit", "used-tokens"]

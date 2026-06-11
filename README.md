@@ -159,6 +159,11 @@ plays `/System/Library/Sounds/Submarine.aiff` at boosted volume when Focus/Do
 Not Disturb is inactive, and avoids the volume boost when Focus/Do Not Disturb
 appears active.
 
+Codex user configuration is backed up under `config/codex`. The active
+`~/.codex/hooks.json` uses the Home Manager `notify` command for Codex
+`Stop` and `PermissionRequest` lifecycle events, so completed turns and approval
+requests produce the same audible alert.
+
 Home Manager defines zsh functions for `codex` and `claude` that resolve the
 real executable with `whence -p` and run it under `caffeinate -dims -t 3600`,
 forwarding all user-provided arguments after the configured permission-bypass

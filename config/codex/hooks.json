@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/zsh -lc 'notify'",
+            "timeout": 10,
+            "statusMessage": "Notifying for permission request"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/zsh -lc 'notify'",
+            "timeout": 10,
+            "statusMessage": "Notifying turn completion"
+          }
+        ]
+      }
+    ]
+  }
+}
