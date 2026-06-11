@@ -13,11 +13,23 @@ Declared formulae:
   `karabiner.edn` source and producing Karabiner JSON.
 - `nvm`: kept in Homebrew because the shell workflow depends on Homebrew's
   sourced `nvm.sh`.
+- `homebrew-zathura/zathura/zathura`: PDF viewer kept in Homebrew because the
+  v1 desktop setup already has Zathura-specific Karabiner handling.
+- `homebrew-zathura/zathura/zathura-pdf-poppler`: PDF backend plugin for
+  Zathura. Activation keeps the required plugin symlink in Zathura's plugin
+  directory.
+- `homebrew-zathura/zathura/girara`: Zathura interface library from the same
+  tap, declared explicitly so Homebrew cleanup keeps the runtime library
+  closure intact.
+- `homebrew-zathura/zathura/synctex`: trusted explicitly because the Zathura
+  formula references it as an optional dependency from the same tap.
 - `koekeishiya/formulae/yabai`: installed through trusted formula syntax.
 - `koekeishiya/formulae/skhd`: installed through trusted formula syntax.
 
 Declared tap:
 
+- `homebrew-zathura/zathura`: used only for Zathura, its PDF plugin, and the
+  related trusted formulae required by that tap.
 - `koekeishiya/formulae`: used only for the required yabai and skhd formulae.
 - `yqrashawn/goku`: used only for the GokuRakuJoudo formula.
 

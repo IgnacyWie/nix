@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 {
   homebrew = {
@@ -11,6 +11,7 @@
     };
 
     taps = [
+      "homebrew-zathura/zathura"
       "koekeishiya/formulae"
       "yqrashawn/goku"
     ];
@@ -45,8 +46,22 @@
     };
 
     extraConfig = ''
+      brew "homebrew-zathura/zathura/girara", trusted: true
+      brew "homebrew-zathura/zathura/synctex", trusted: true
+      brew "homebrew-zathura/zathura/zathura", trusted: true
+      brew "homebrew-zathura/zathura/zathura-pdf-poppler", trusted: true
       brew "koekeishiya/formulae/yabai", trusted: true
       brew "koekeishiya/formulae/skhd", trusted: true
     '';
   };
+
+  system.activationScripts.postActivation.text = lib.mkAfter ''
+    zathura_prefix="/opt/homebrew/opt/zathura"
+    zathura_poppler_plugin="/opt/homebrew/opt/zathura-pdf-poppler/libpdf-poppler.dylib"
+
+    if [ -e "$zathura_poppler_plugin" ]; then
+      mkdir -p "$zathura_prefix/lib/zathura"
+      ln -sfn "$zathura_poppler_plugin" "$zathura_prefix/lib/zathura/libpdf-poppler.dylib"
+    fi
+  '';
 }
