@@ -62,7 +62,7 @@
     };
 
     trackpad = {
-      Clicking = true;
+      Clicking = false;
       ForceSuppressed = true;
       TrackpadRightClick = true;
       TrackpadFourFingerHorizSwipeGesture = 0;
