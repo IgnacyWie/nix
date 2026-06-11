@@ -53,6 +53,23 @@ source of truth, so this flake does not add a competing Docker CLI.
 - Keyboard remap: Caps Lock to Escape (nix-darwin); right Command and right
   Option are remapped using Karabiner-Elements
 
+## Home Server
+
+### eta
+
+- Role: macOS Home Server
+- User: `ignacywielogorski`
+- Platform: `aarch64-darwin`
+- Service data root: `~/Services`
+- Container runtime: OrbStack, with future service definitions under
+  `services/eta/<stack>/`
+
+The current `eta` slice is a buildable host skeleton. It sets the Host Name,
+Primary User, shared Home Manager shell baseline with the `η` prompt identity,
+and baseline Home Server tools such as Git, jq, Restic, Tailscale, and Docker
+Compose. It intentionally does not define launchd jobs for service stacks or
+start live containers.
+
 ## Repository Workflow
 
 ### Apply Flow
@@ -73,6 +90,8 @@ make
 make check
 make eval-gamma
 make build-gamma
+make eval-eta
+make build-eta
 make fmt
 make apply-gamma
 ```
@@ -84,6 +103,8 @@ same Nix invocation needed during the initial flake bootstrap:
 ./scripts/check
 ./scripts/eval-gamma
 ./scripts/build-gamma
+./scripts/eval-eta
+./scripts/build-eta
 ./scripts/fmt
 ./scripts/apply-gamma
 ```
@@ -99,6 +120,19 @@ configuration is applied if the current Nix daemon still reads the broken
 `/etc/ssl/certs/ca-certificates.crt` path while downloading formatter
 dependencies. The Darwin baseline sets `nix.settings.ssl-cert-file` to
 `/etc/ssl/cert.pem` so future rebuilds use the macOS CA bundle.
+
+Validate the `eta` Home Server skeleton without applying system-changing
+changes:
+
+```sh
+make check
+make eval-eta
+make build-eta
+```
+
+There is no `apply-eta` target in this slice. `make build-eta` evaluates and
+builds `.#darwinConfigurations.eta.system` with `nix build --no-link`; it does
+not run `darwin-rebuild switch`.
 
 ### Pre-Commit Checks
 

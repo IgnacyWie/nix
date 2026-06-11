@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
+
+. "${SCRIPT_DIR}/nix-env.sh"
+
+cd "${REPO_ROOT}"
+
+echo "Evaluating eta Darwin system output..."
+"${NIX_BIN}" ${NIX_FLAKE_FLAGS} eval --raw .#darwinConfigurations.eta.system >/dev/null
+
+echo "Building eta Darwin system closure..."
+exec "${NIX_BIN}" ${NIX_FLAKE_FLAGS} build --no-link .#darwinConfigurations.eta.system

@@ -37,13 +37,41 @@
               backupFileExtension = "before-home-manager";
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.ignacywielogorski = import ./modules/home;
+              users.ignacywielogorski = {
+                imports = [
+                  ./modules/home
+                  ./modules/home/backup.nix
+                ];
+              };
+            };
+          }
+        ];
+      };
+      etaConfiguration = nix-darwin.lib.darwinSystem {
+        inherit system;
+
+        modules = [
+          ./hosts/darwin/eta
+          ./modules/darwin
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              backupFileExtension = "before-home-manager";
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.ignacywielogorski = {
+                imports = [
+                  ./modules/home
+                ];
+                personal.hostPromptSymbol = "η";
+              };
             };
           }
         ];
       };
     in
     {
+      darwinConfigurations.eta = etaConfiguration;
       darwinConfigurations.gamma = gammaConfiguration;
 
       formatter.${system} = pkgs.writeShellApplication {
@@ -58,6 +86,70 @@
       };
 
       checks.${system} = {
+        eta-host-skeleton =
+          let
+            etaConfig = etaConfiguration.config;
+          in
+          assert etaConfig.networking.hostName == "eta";
+          assert etaConfig.networking.computerName == "eta";
+          assert etaConfig.system.primaryUser == "ignacywielogorski";
+          assert etaConfig.nixpkgs.hostPlatform.system == "aarch64-darwin";
+          assert etaConfig.home-manager.users.ignacywielogorski.home.username == "ignacywielogorski";
+          assert
+            etaConfig.home-manager.users.ignacywielogorski.home.homeDirectory == "/Users/ignacywielogorski";
+          pkgs.runCommand "eta-host-skeleton-check" { } ''
+            set -eu
+            touch "$out"
+          '';
+
+        eta-home-server-baseline =
+          let
+            etaConfig = etaConfiguration.config;
+            homeConfig = etaConfig.home-manager.users.ignacywielogorski;
+            packageNames = builtins.map (package: package.name or "") etaConfig.environment.systemPackages;
+            zshInit = pkgs.writeText "eta-zsh-init" homeConfig.programs.zsh.initContent;
+            homeLaunchAgentNames = builtins.attrNames homeConfig.launchd.agents;
+            systemLaunchDaemonNames = builtins.attrNames etaConfig.launchd.daemons;
+            systemLaunchAgentNames = builtins.attrNames etaConfig.launchd.agents;
+            liveContainerJobNames = builtins.filter (
+              name: builtins.match ".*(docker|compose|orbstack|service-stack).*" name != null
+            ) (homeLaunchAgentNames ++ systemLaunchDaemonNames ++ systemLaunchAgentNames);
+          in
+          assert builtins.any (name: builtins.match ".*curl.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*docker-compose.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
+          assert !(builtins.hasAttr "gamma-restic-backup" homeConfig.launchd.agents);
+          assert liveContainerJobNames == [ ];
+          pkgs.runCommand "eta-home-server-baseline-check" { } ''
+            set -eu
+
+            grep -Fq "PROMPT='η %~/ " ${zshInit}
+            ! grep -q 'gamma-restic-backup' ${zshInit}
+
+            touch "$out"
+          '';
+
+        eta-repo-workflow = pkgs.runCommand "eta-repo-workflow-check" { } ''
+          set -eu
+
+          test -x ${./scripts/eval-eta}
+          test -x ${./scripts/build-eta}
+          grep -q 'eval-eta:' ${./Makefile}
+          grep -q 'build-eta:' ${./Makefile}
+          grep -q '.#darwinConfigurations.eta.system' ${./scripts/eval-eta}
+          grep -q '.#darwinConfigurations.eta.system' ${./scripts/build-eta}
+          ! grep -q 'darwin-rebuild switch' ${./scripts/build-eta}
+          ! grep -q 'apply-eta' ${./Makefile}
+          grep -q 'make eval-eta' ${./README.md}
+          grep -q 'make build-eta' ${./README.md}
+          grep -q 'without applying' ${./README.md}
+
+          touch "$out"
+        '';
+
         gamma-pam-config =
           let
             pamConfig = pkgs.writeText "sudo-local-pam" gammaConfiguration.config.security.pam.services.sudo_local.text;

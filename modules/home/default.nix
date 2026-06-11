@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ./backup.nix
     ./claude.nix
     ./codex.nix
     ./git.nix
