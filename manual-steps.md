@@ -88,7 +88,9 @@ restore:
 
 The input-source baseline and Caps Lock remap are managed by nix-darwin. Right
 Command/right Option mapping is managed in Karabiner-Elements at
-`~/.config/karabiner/karabiner.json`. If the Karabiner mappings are not
+`~/.config/karabiner/karabiner.json`, generated from the tracked
+`config/karabiner.edn` Goku source. Use `make check-karabiner-edn` to compare
+the current Goku output with the tracked JSON. If the Karabiner mappings are not
 configured on first boot, open Karabiner-Elements and apply the configured
 `Default` profile before closing the restore drill.
 

@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
+GOKU_BIN="${GOKU_BIN:-goku}"
+
+if ! command -v "${GOKU_BIN}" >/dev/null 2>&1; then
+  printf 'error: goku is not installed or not on PATH\n' >&2
+  printf 'hint: apply the gamma Homebrew config or run: brew install yqrashawn/goku/goku\n' >&2
+  exit 1
+fi
+
+TMP_HOME="$(mktemp -d)"
+cleanup() {
+  rm -rf "${TMP_HOME}"
+}
+trap cleanup EXIT INT TERM
+
+mkdir -p "${TMP_HOME}/.config/karabiner"
+cp "${REPO_ROOT}/config/karabiner/karabiner.json" \
+  "${TMP_HOME}/.config/karabiner/karabiner.json"
+
+HOME="${TMP_HOME}" \
+  GOKU_EDN_CONFIG_FILE="${REPO_ROOT}/config/karabiner.edn" \
+  "${GOKU_BIN}" >/dev/null
+
+if cmp -s \
+  "${REPO_ROOT}/config/karabiner/karabiner.json" \
+  "${TMP_HOME}/.config/karabiner/karabiner.json"; then
+  printf 'config/karabiner.edn matches config/karabiner/karabiner.json\n'
+  exit 0
+fi
+
+printf 'config/karabiner.edn generates different Karabiner JSON:\n' >&2
+CANDIDATE_JSON="$(mktemp "${TMPDIR:-/tmp}/karabiner.goku.XXXXXX.json")"
+cp "${TMP_HOME}/.config/karabiner/karabiner.json" "${CANDIDATE_JSON}"
+printf '  generated candidate: %s\n' "${CANDIDATE_JSON}" >&2
+printf '  inspect with: diff -u config/karabiner/karabiner.json %s\n' "${CANDIDATE_JSON}" >&2
+exit 1

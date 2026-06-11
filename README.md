@@ -265,13 +265,16 @@ authentication to the user session so Touch ID also works inside tmux.
 ### Keyboard and Window Management
 
 Home Manager manages the v1 keyboard and window-management configuration:
-Karabiner at `~/.config/karabiner/karabiner.json` plus intentional complex
-modifications, skhd at `~/.config/skhd/skhdrc`, and yabai at
-`~/.config/yabai/yabairc`. Homebrew remains the v1 app and daemon provider for
-Karabiner-Elements, yabai, and skhd. The migrated yabai config keeps the current
-scripting-addition load commands and Dock restart signal, but fresh restores
-still require the manual macOS approvals and sudoers/SIP review documented in
-`manual-steps.md`. Karabiner automatic backups are intentionally not tracked.
+Karabiner's Goku source at `~/.config/karabiner.edn`, generated Karabiner JSON
+at `~/.config/karabiner/karabiner.json` plus intentional complex modifications,
+skhd at `~/.config/skhd/skhdrc`, and yabai at `~/.config/yabai/yabairc`.
+Homebrew remains the v1 app and daemon provider for Goku, Karabiner-Elements,
+yabai, and skhd. `make check-karabiner-edn` runs Goku in an isolated temporary
+home and compares its output with the tracked generated JSON. The migrated yabai
+config keeps the current scripting-addition load commands and Dock restart
+signal, but fresh restores still require the manual macOS approvals and
+sudoers/SIP review documented in `manual-steps.md`. Karabiner automatic backups
+are intentionally not tracked.
 
 ## Managed Keybindings
 

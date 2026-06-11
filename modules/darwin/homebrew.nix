@@ -12,9 +12,11 @@
 
     taps = [
       "koekeishiya/formulae"
+      "yqrashawn/goku"
     ];
 
     brews = [
+      "goku"
       "mas"
       "nvm"
       "tmux"

@@ -468,6 +468,7 @@
           in
           assert builtins.elem "mas" homebrewBrewNames;
           assert builtins.elem "tmux" homebrewBrewNames;
+          assert builtins.elem "goku" homebrewBrewNames;
           assert builtins.elem "bitwarden" homebrewCaskNames;
           assert builtins.elem "tailscale" homebrewCaskNames;
           assert homebrewMasApps.Flighty == 1358823008;
@@ -981,6 +982,7 @@
             homebrewBrewfile = pkgs.writeText "Brewfile" gammaConfiguration.config.homebrew.brewfile;
             homebrewCasks = gammaConfiguration.config.homebrew.casks;
             homebrewCaskNames = builtins.map (cask: cask.name) homebrewCasks;
+            karabinerEdn = homeConfig.xdg.configFile."karabiner.edn".source;
             karabinerConfig = homeConfig.xdg.configFile."karabiner/karabiner.json".source;
             karabinerGermanLetters =
               homeConfig.xdg.configFile."karabiner/assets/complex_modifications/1709730136.json".source;
@@ -1006,6 +1008,7 @@
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
               test -r ${karabinerConfig}
+              test -r ${karabinerEdn}
               test -r ${karabinerGermanLetters}
               test -r ${karabinerZathura}
               test -r ${skhdConfig}
@@ -1023,6 +1026,9 @@
               grep -q 'Display Brightness simlayer' ${karabinerConfig}
               grep -q 'Finder Key ~' ${karabinerConfig}
               grep -q 'App Key ;' ${karabinerConfig}
+              grep -q ':profiles' ${karabinerEdn}
+              grep -q ':Default' ${karabinerEdn}
+              grep -q 'Easier Numbers' ${karabinerEdn}
               grep -q 'German' ${karabinerGermanLetters}
               grep -q 'Zathura Cmd' ${karabinerZathura}
 

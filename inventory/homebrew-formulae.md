@@ -9,6 +9,8 @@ packages.
 
 Declared formulae:
 
+- `goku`: GokuRakuJoudo generator for maintaining the editable
+  `karabiner.edn` source and producing Karabiner JSON.
 - `nvm`: kept in Homebrew because the shell workflow depends on Homebrew's
   sourced `nvm.sh`.
 - `tmux`: kept in Homebrew for v1 because the existing TPM workflow and terminal
@@ -19,6 +21,7 @@ Declared formulae:
 Declared tap:
 
 - `koekeishiya/formulae`: used only for the required yabai and skhd formulae.
+- `yqrashawn/goku`: used only for the GokuRakuJoudo formula.
 
 Reviewed CLI tools such as `age`, `bitwarden-cli`, `gnupg`, `helm`, `httpie`,
 `k9s`, `kubectl`, `kustomize`, `openssh`, `pinentry_mac`, and `sops` are

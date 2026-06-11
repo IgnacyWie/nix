@@ -2,6 +2,7 @@
 
 {
   xdg.configFile = {
+    "karabiner.edn".source = ../../config/karabiner.edn;
     "karabiner/karabiner.json".source = ../../config/karabiner/karabiner.json;
     "karabiner/assets/complex_modifications/1709730136.json".source =
       ../../config/karabiner/assets/complex_modifications/1709730136.json;
