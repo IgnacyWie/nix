@@ -862,8 +862,10 @@
               grep -q 'Type restore to run this command' ${backupRestorePicker}
               ! grep -q 'restore-original-path' ${backupRestorePicker}
               grep -q 'com.aone.keka' ${defaultAppsModule}
+              grep -q 'asc.onlyoffice.ONLYOFFICE' ${defaultAppsModule}
               grep -q '/bin/duti' ${defaultAppsActivation}
               grep -q 'keka-archive-defaults.duti' ${defaultAppsActivation}
+              grep -q 'onlyoffice-document-defaults.duti' ${defaultAppsActivation}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 
