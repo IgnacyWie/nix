@@ -44,4 +44,6 @@ or manual restore configuration.
   remap findings.
 - [security-validation.md](security-validation.md): validation steps for secret
   and sensitive-file handling.
+- [eta-docker-orbstack.md](eta-docker-orbstack.md): sanitized Docker and
+  OrbStack findings for the `eta` Home Server migration.
 - [future-v2.md](future-v2.md): explicitly deferred v2 work.

@@ -4,6 +4,11 @@
 !.env.example
 !.env.*.example
 
+# Raw machine inventory can include secrets, private URLs, labels, and paths.
+.local/
+raw-inventory/
+inventory/raw/
+
 secrets/
 secret/
 credentials/

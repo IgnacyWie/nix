@@ -2,7 +2,7 @@ SHELL := /bin/sh
 
 .DEFAULT_GOAL := help
 
-.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta apply-gamma apply-eta bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook
+.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta apply-gamma apply-eta bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook collect-eta-docker-orbstack-inventory
 
 help: ## Show available repo commands.
 	@awk 'BEGIN {FS = ":.*## "; printf "Available targets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -42,3 +42,6 @@ check-karabiner-edn: ## Compare Goku output from config/karabiner.edn with track
 
 install-pre-commit-hook: ## Configure this clone to use repository Git hooks.
 	./scripts/install-pre-commit-hook
+
+collect-eta-docker-orbstack-inventory: ## Collect raw local Docker/OrbStack inventory from eta without committing it.
+	./scripts/collect-eta-docker-orbstack-inventory

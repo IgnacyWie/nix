@@ -1,0 +1,149 @@
+#!/bin/sh
+set -eu
+
+HOST=${ETA_INVENTORY_HOST:-eta}
+STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+OUTDIR=${ETA_INVENTORY_DIR:-.local/inventory/eta/docker-orbstack-${STAMP}}
+
+mkdir -p "${OUTDIR}"
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/host.txt" 2>&1 <<'REMOTE'
+set -eu
+printf 'date_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+printf 'hostname=%s\n' "$(hostname)"
+uname -a
+printf '\nwhoami=%s\n' "$(whoami)"
+printf 'home=%s\n' "${HOME}"
+printf '\ncommand paths:\n'
+command -v docker || true
+command -v orb || true
+command -v orbctl || true
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/docker-version.txt" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  docker version || true
+  printf '\n--- docker info ---\n'
+  docker info || true
+  printf '\n--- docker contexts ---\n'
+  docker context ls || true
+else
+  echo 'docker command not found'
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/orbstack.txt" 2>&1 <<'REMOTE'
+set -eu
+if command -v orb >/dev/null 2>&1; then
+  orb version || orb --version || true
+  printf '\n--- orb list ---\n'
+  orb list || true
+elif command -v orbctl >/dev/null 2>&1; then
+  orbctl version || orbctl --version || true
+  printf '\n--- orbctl list ---\n'
+  orbctl list || true
+else
+  echo 'orb/orbctl command not found'
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/containers.jsonl" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  docker ps -a --no-trunc --format '{{json .}}' || true
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/container-inspect.json" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  ids=$(docker ps -aq || true)
+  if [ -n "${ids}" ]; then
+    docker container inspect ${ids}
+  else
+    printf '[]\n'
+  fi
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/container-env-keys.tsv" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  for id in $(docker ps -aq || true); do
+    name=$(docker inspect --format '{{.Name}}' "${id}" | sed 's#^/##')
+    docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "${id}" \
+      | sed 's/=.*//' \
+      | awk -v name="${name}" 'NF { print name "\t" $0 }'
+  done
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/container-mounts.jsonl" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  for id in $(docker ps -aq || true); do
+    docker inspect --format '{"name":"{{.Name}}","mounts":{{json .Mounts}},"labels":{{json .Config.Labels}}}' "${id}" \
+      | sed 's#"name":"/#"name":"#'
+  done
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/networks.jsonl" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  docker network ls --no-trunc --format '{{json .}}' || true
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/network-inspect.json" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  ids=$(docker network ls -q || true)
+  if [ -n "${ids}" ]; then
+    docker network inspect ${ids}
+  else
+    printf '[]\n'
+  fi
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/volumes.jsonl" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  docker volume ls --format '{{json .}}' || true
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/volume-inspect.json" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1; then
+  ids=$(docker volume ls -q || true)
+  if [ -n "${ids}" ]; then
+    docker volume inspect ${ids}
+  else
+    printf '[]\n'
+  fi
+fi
+REMOTE
+
+ssh "${HOST}" 'sh -s' >"${OUTDIR}/compose-projects.json" 2>&1 <<'REMOTE'
+set -eu
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  docker compose ls --all --format json || true
+else
+  printf '[]\n'
+fi
+REMOTE
+
+cat >"${OUTDIR}/README.txt" <<EOF
+Raw Docker/OrbStack inventory for eta collected from ${HOST} at ${STAMP}.
+
+This directory is intentionally local-only and may contain secrets, internal URLs,
+private paths, labels, environment values, and obsolete settings. Do not commit it.
+Review it with docs/eta-docker-orbstack-inventory.md, then manually copy only
+sanitized findings into inventory/eta-docker-orbstack.md or Service Definitions.
+EOF
+
+printf 'Wrote raw inventory to %s\n' "${OUTDIR}"
+printf 'Do not commit raw inventory. Sanitize through docs/eta-docker-orbstack-inventory.md.\n'
