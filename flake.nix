@@ -354,7 +354,7 @@
 
               test -x ${codexPackage}/bin/codex
               grep -q 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
-              grep -q 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox "$@"' ${codexPackage}/bin/codex
+              grep -q 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
 
               bin="$TMPDIR/bin"
               mkdir -p "$bin"

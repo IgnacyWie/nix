@@ -13,5 +13,7 @@ Not tracked:
 - `history.jsonl`
 - logs, caches, session files, and SQLite state
 
-After restoring `config.toml` or `hooks.json` into `~/.codex`, review new or
-changed hooks with `/hooks` so Codex can trust their current definitions.
+Home Manager installs `config.toml` as a mutable copy rather than a symlink so
+Codex can persist local state such as hook trust. The deterministic `codex`
+wrapper also passes `--dangerously-bypass-hook-trust` for these repo-owned
+hooks.
