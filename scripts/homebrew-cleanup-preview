@@ -6,6 +6,7 @@ tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
 brewfile="$tmpdir/Brewfile"
+cleanup_output="$tmpdir/homebrew-cleanup-preview.out"
 
 cd "$repo_root"
 nix eval --raw .#darwinConfigurations.gamma.config.homebrew.brewfile > "$brewfile"
@@ -14,9 +15,12 @@ printf 'Using evaluated gamma Brewfile: %s\n\n' "$brewfile"
 
 set +e
 printf 'n\n' |
-  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle cleanup --file "$brewfile" --zap "$@"
+  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle cleanup --file "$brewfile" --zap "$@" \
+    > "$cleanup_output" 2>&1
 status=$?
 set -e
+
+cat "$cleanup_output"
 
 cat <<'EOF'
 
@@ -36,5 +40,26 @@ Manual cleanup notes:
 - Once the preview shows only removals you accept, run make apply-gamma. The
   nix-darwin Homebrew activation is configured with cleanup = "zap".
 EOF
+
+if grep -Eq 'Refusing to|tap formula is not trusted|from untrusted tap' "$cleanup_output"; then
+  cat <<'EOF'
+
+Preview verdict: manual action is still required before applying.
+Resolve the Homebrew trust, dependency, or installed-package blocker above, then
+rerun this preview.
+EOF
+elif grep -Eq '^Would uninstall|^Would untap|^Would `brew cleanup`' "$cleanup_output"; then
+  cat <<'EOF'
+
+Preview verdict: no manual blocker was detected in this preview output.
+The remaining entries are the cleanup plan. Run `make apply-gamma` to apply the
+nix-darwin Homebrew zap cleanup.
+EOF
+else
+  cat <<'EOF'
+
+Preview verdict: no Homebrew cleanup actions were detected.
+EOF
+fi
 
 printf '\nHomebrew cleanup preview exited with status %s.\n' "$status"

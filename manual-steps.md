@@ -45,11 +45,13 @@ state safely:
 
 - If Homebrew prints `Refusing to load ... from untrusted tap`, review the tap
   and trust only the exact cask or formula that Homebrew names, then rerun the
-  preview. For example:
+  preview. If Homebrew prints `tap formula is not trusted`, use the same narrow
+  formula trust command. For example:
 
   ```sh
   brew trust --cask nikitabobko/tap/aerospace
   brew trust --formula michaelroosz/ssh/libsk-libfido2
+  brew trust --formula ignacywie/tap/agent-loop-workflow
   ```
 
 - If Homebrew prints `Refusing to untap ... because it contains the following
