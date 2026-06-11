@@ -115,6 +115,25 @@ Recover these before relying on the workstation for daily development:
 Never commit private SSH keys, exported browser profiles, GitHub tokens, or raw
 application credentials.
 
+## User-Installed CLI Tools
+
+Some CLI tools are installed into `~/.local/bin` as user-level tools until they
+are promoted into the declarative workstation baseline.
+
+Install or update `mlx-vlm` with `uv`:
+
+```sh
+uv tool install mlx-vlm
+```
+
+Verify the installed entrypoints:
+
+```sh
+uv tool list | rg -A8 '^mlx-vlm'
+command -v mlx_vlm.generate
+mlx_vlm.generate --help
+```
+
 ## Backup Access
 
 1. Load Restic runtime environment from Keychain.

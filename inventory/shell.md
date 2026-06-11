@@ -15,6 +15,15 @@ Workstation:
   `caffeinate` for up to one hour with their permission-bypass flags enabled.
 - removal of stale Homebrew Node and pnpm shim paths before shell startup.
 
+## User-Installed Tools
+
+These tools are intentionally installed under `~/.local/bin` instead of being
+managed by Nix in the v1 baseline:
+
+- `mlx-vlm` is installed with `uv tool install mlx-vlm`. It provides
+  `mlx_vlm.generate`, `mlx_vlm.chat`, `mlx_vlm.chat_ui`, `mlx_vlm.convert`, and
+  `mlx_vlm.server` for local MLX vision-language workflows.
+
 ## Sensitive Findings
 
 Do not commit raw shell profiles, exported `.env` files, shell history, API
