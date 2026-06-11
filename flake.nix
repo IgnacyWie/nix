@@ -42,6 +42,11 @@
                   ./modules/home
                   ./modules/home/backup.nix
                 ];
+                personal = {
+                  hostName = "gamma";
+                  hostPromptSymbol = "γ";
+                  shell.enableWorkstationIntegrations = true;
+                };
               };
             };
           }
@@ -65,7 +70,11 @@
                   ./modules/home/git.nix
                   ./modules/home/shell.nix
                 ];
-                personal.hostPromptSymbol = "η";
+                personal = {
+                  hostName = "eta";
+                  hostPromptSymbol = "η";
+                  shell.enableWorkstationIntegrations = false;
+                };
               };
             };
           }
@@ -110,6 +119,9 @@
             homeConfig = etaConfig.home-manager.users.ignacywielogorski;
             packageNames = builtins.map (package: package.name or "") etaConfig.environment.systemPackages;
             zshInit = pkgs.writeText "eta-zsh-init" homeConfig.programs.zsh.initContent;
+            zshAliases = homeConfig.programs.zsh.shellAliases;
+            sessionPath = homeConfig.home.sessionPath;
+            sessionVariables = homeConfig.home.sessionVariables;
             homeLaunchAgentNames = builtins.attrNames homeConfig.launchd.agents;
             systemLaunchDaemonNames = builtins.attrNames etaConfig.launchd.daemons;
             systemLaunchAgentNames = builtins.attrNames etaConfig.launchd.agents;
@@ -124,12 +136,35 @@
           assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
           assert !(builtins.hasAttr "gamma-restic-backup" homeConfig.launchd.agents);
+          assert homeConfig.personal.hostName == "eta";
+          assert homeConfig.personal.hostPromptSymbol == "η";
+          assert !homeConfig.personal.shell.enableWorkstationIntegrations;
+          assert builtins.hasAttr "nix-apply-eta" zshAliases;
+          assert builtins.hasAttr "nix-build-eta" zshAliases;
+          assert builtins.hasAttr "nix-eval-eta" zshAliases;
+          assert !(builtins.hasAttr "nix-apply-gamma" zshAliases);
+          assert !(builtins.hasAttr "developer" zshAliases);
+          assert !(builtins.hasAttr "deploy" zshAliases);
+          assert !(builtins.hasAttr "tailscale" zshAliases);
+          assert !(builtins.elem "/opt/homebrew/bin" sessionPath);
+          assert !(builtins.elem "/opt/homebrew/sbin" sessionPath);
+          assert !(builtins.hasAttr "NVM_DIR" sessionVariables);
+          assert !(builtins.hasAttr ".local/bin/tmux" homeConfig.home.file);
           assert liveContainerJobNames == [ ];
           pkgs.runCommand "eta-home-server-baseline-check" { } ''
             set -eu
 
             grep -Fq "PROMPT='η %~/ " ${zshInit}
+            grep -Fq 'host_shell_prompt_precmd()' ${zshInit}
+            grep -Fq 'add-zsh-hook precmd host_shell_prompt_precmd' ${zshInit}
+            ! grep -Fq "PROMPT='γ %~/ " ${zshInit}
             ! grep -q 'gamma-restic-backup' ${zshInit}
+            ! grep -Fq '/opt/homebrew/bin' ${zshInit}
+            ! grep -Fq 'codex() {' ${zshInit}
+            ! grep -Fq 'claude() {' ${zshInit}
+            ! grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
+            ! grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
+            ! grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
 
             touch "$out"
           '';
@@ -425,6 +460,16 @@
             );
             tmuxWrapper = homeConfig.home.file.".local/bin/tmux".source;
           in
+          assert homeConfig.personal.hostName == "gamma";
+          assert homeConfig.personal.hostPromptSymbol == "γ";
+          assert homeConfig.personal.shell.enableWorkstationIntegrations;
+          assert builtins.hasAttr "nix-apply-gamma" zshAliases;
+          assert builtins.hasAttr "nix-build-gamma" zshAliases;
+          assert builtins.hasAttr "nix-eval-gamma" zshAliases;
+          assert !(builtins.hasAttr "nix-apply-eta" zshAliases);
+          assert builtins.hasAttr "developer" zshAliases;
+          assert builtins.hasAttr "deploy" zshAliases;
+          assert builtins.hasAttr "tailscale" zshAliases;
           assert !(builtins.hasAttr "codex" zshAliases);
           assert !(builtins.hasAttr "claude" zshAliases);
           assert builtins.elem "/opt/homebrew/bin" sessionPath;
@@ -450,6 +495,8 @@
               grep -Fq '/run/current-system/sw/bin' ${zshInit}
               grep -Fq '/opt/homebrew/bin' ${zshInit}
               grep -Fq 'typeset -U path' ${zshInit}
+              grep -Fq "PROMPT='γ %~/ " ${zshInit}
+              ! grep -Fq "PROMPT='η %~/ " ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
               grep -q 'gamma_dev_command_runner_widget()' ${zshInit}

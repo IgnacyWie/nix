@@ -65,10 +65,13 @@ source of truth, so this flake does not add a competing Docker CLI.
   `services/eta/<stack>/`
 
 The current `eta` slice is a buildable host skeleton. It sets the Host Name,
-Primary User, shared Home Manager shell baseline with the `η` prompt identity,
-and baseline Home Server tools such as Git, jq, Restic, Tailscale, and Docker
-Compose. It intentionally does not define launchd jobs for service stacks or
-start live containers.
+Primary User, shared Home Manager Host Shell Baseline with the `η` Host Prompt
+Symbol, and baseline Home Server tools such as Git, jq, Restic, Tailscale, and
+Docker Compose. The same Host Shell Baseline preserves the `γ` Host Prompt
+Symbol for the `gamma` Workstation, while workstation-only aliases, Homebrew
+paths, and interactive UI workflows are enabled explicitly for `gamma` rather
+than inherited by `eta`. The `eta` slice intentionally does not define launchd
+jobs for service stacks or start live containers.
 
 ## Repository Workflow
 

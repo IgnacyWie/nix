@@ -7,7 +7,9 @@
 
 let
   homeDirectory = config.home.homeDirectory;
+  hostName = config.personal.hostName;
   hostPromptSymbol = config.personal.hostPromptSymbol;
+  workstationIntegrationsEnabled = config.personal.shell.enableWorkstationIntegrations;
 
   tmuxGhostty = pkgs.tmux.overrideAttrs (_old: {
     version = "3.3a";
@@ -57,9 +59,13 @@ let
   };
 
   nixAliases = {
-    nix-apply-gamma = "~/nix/scripts/apply-gamma";
     nix-check = "~/nix/scripts/check";
     nix-fmt = "~/nix/scripts/fmt";
+  }
+  // {
+    "nix-apply-${hostName}" = "~/nix/scripts/apply-${hostName}";
+    "nix-build-${hostName}" = "~/nix/scripts/build-${hostName}";
+    "nix-eval-${hostName}" = "~/nix/scripts/eval-${hostName}";
   };
 
   projectAliases = {
@@ -75,158 +81,193 @@ let
   };
 in
 {
-  options.personal.hostPromptSymbol = lib.mkOption {
-    type = lib.types.str;
-    default = "γ";
-    description = "Short host identity shown in the managed shell prompt.";
+  options.personal = {
+    hostName = lib.mkOption {
+      type = lib.types.str;
+      default = "gamma";
+      description = "Host name used by host-aware managed shell helpers.";
+    };
+
+    hostPromptSymbol = lib.mkOption {
+      type = lib.types.str;
+      default = "γ";
+      description = "Short host identity shown in the managed shell prompt.";
+    };
+
+    shell.enableWorkstationIntegrations = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable workstation-only aliases, paths, and interactive shell workflows.";
+    };
   };
 
-  config = {
-    home.file.".local/bin/tmux" = {
-      executable = true;
-      force = true;
-      source = tmuxWrapper;
-    };
+  config = lib.mkMerge [
+    {
+      home.packages = [
+        (pkgs.writeShellScriptBin "notify" ''
+          set -eu
 
-    home.packages = [
-      (pkgs.writeShellScriptBin "notify" ''
-        set -eu
+          sound="/System/Library/Sounds/Submarine.aiff"
+          assertions="$HOME/Library/DoNotDisturb/DB/Assertions.json"
+          dnd_active=0
 
-        sound="/System/Library/Sounds/Submarine.aiff"
-        assertions="$HOME/Library/DoNotDisturb/DB/Assertions.json"
-        dnd_active=0
+          if [ -r "$assertions" ] && /usr/bin/grep -q '"storeAssertionRecords"' "$assertions"; then
+            dnd_active=1
+          elif /usr/bin/defaults -currentHost read com.apple.notificationcenterui doNotDisturb 2>/dev/null | /usr/bin/grep -q '^1$'; then
+            dnd_active=1
+          fi
 
-        if [ -r "$assertions" ] && /usr/bin/grep -q '"storeAssertionRecords"' "$assertions"; then
-          dnd_active=1
-        elif /usr/bin/defaults -currentHost read com.apple.notificationcenterui doNotDisturb 2>/dev/null | /usr/bin/grep -q '^1$'; then
-          dnd_active=1
-        fi
+          if [ "$dnd_active" = 1 ]; then
+            /usr/bin/afplay "$sound"
+          else
+            /usr/bin/afplay "$sound" -v 10
+          fi
+        '')
+      ];
 
-        if [ "$dnd_active" = 1 ]; then
-          /usr/bin/afplay "$sound"
-        else
-          /usr/bin/afplay "$sound" -v 10
-        fi
-      '')
-    ];
+      home.sessionPath = [
+        "$HOME/.local/bin"
+        "$HOME/.local/scripts"
+      ];
 
-    home.sessionPath = [
-      "$HOME/.local/bin"
-      "$HOME/.local/scripts"
-      "/opt/homebrew/bin"
-      "/opt/homebrew/sbin"
-    ];
-
-    home.sessionVariables = {
-      LANG = "en_US.UTF-8";
-      LANGUAGE = "en_US.UTF-8";
-      LC_ALL = "en_US.UTF-8";
-      NVM_DIR = "$HOME/.nvm";
-    };
-
-    home.activation.createWorkstationDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Developer"}
-      run mkdir -p ${lib.escapeShellArg "${homeDirectory}/typst"}
-      run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Pictures/Screenshots"}
-      run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.nvm"}
-      run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/bin"}
-      run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/scripts"}
-    '';
-
-    programs.zsh = {
-      enable = true;
-      enableCompletion = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
-
-      history = {
-        size = 50000;
-        save = 50000;
-        share = true;
-        ignoreDups = true;
-        ignoreSpace = true;
-        extended = true;
+      home.sessionVariables = {
+        LANG = "en_US.UTF-8";
+        LANGUAGE = "en_US.UTF-8";
+        LC_ALL = "en_US.UTF-8";
       };
 
-      shellAliases = shellNavigationAliases // gitAliases // nixAliases // projectAliases;
-
-      initContent = ''
-        unset MAILCHECK
-        setopt prompt_subst
-
-        path=(
-          /etc/profiles/per-user/$USER/bin
-          /run/current-system/sw/bin
-          $path
-          /opt/homebrew/bin
-          /opt/homebrew/sbin
-        )
-        path=(''${path:#/opt/homebrew/opt/node@20/bin})
-        path=(''${path:#$HOME/Library/pnpm})
-        typeset -U path
-        export PATH
-
-        codex() {
-          /etc/profiles/per-user/$USER/bin/codex "$@"
-        }
-
-        if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
-          . "/opt/homebrew/opt/nvm/nvm.sh"
-        fi
-
-        if [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]; then
-          . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-        fi
-
-        claude() {
-          local bin
-          bin="$(whence -p claude)" || return
-          caffeinate -dims -t 3600 "$bin" --dangerously-skip-permissions "$@"
-        }
-
-        autoload -Uz add-zsh-hook vcs_info
-        zstyle ':vcs_info:git:*' formats '%b'
-        zstyle ':vcs_info:git:*' actionformats '%b|%a'
-
-        gamma_prompt_precmd() {
-          vcs_info
-
-          if [ -n "$vcs_info_msg_0_" ]; then
-            local gamma_git_dirty=""
-            if [ -n "$(git status --porcelain --untracked-files=normal 2>/dev/null)" ]; then
-              gamma_git_dirty="*"
-            fi
-
-            gamma_git_prompt="%F{green}$vcs_info_msg_0_$gamma_git_dirty%f "
-          else
-            gamma_git_prompt=""
-          fi
-        }
-
-        add-zsh-hook precmd gamma_prompt_precmd
-        PROMPT='${hostPromptSymbol} %~/ ''${gamma_git_prompt}'
-
-        bindkey -s '^T' 'git-branch-switcher\n'
-        bindkey -s '^Y' 'issue-picker\n'
-        bindkey -s '^F' 'tmux-sessionizer\n'
-        bindkey -s '^G' 'typst-smart-open\n'
-
-        gamma_dev_command_runner_widget() {
-          zle -I
-
-          if [[ -n "''${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
-            tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE='#{pane_id}' ~/.local/scripts/dev-command-runner"
-            zle reset-prompt
-          else
-            BUFFER="dev-command-runner"
-            CURSOR=''${#BUFFER}
-            zle accept-line
-          fi
-        }
-
-        zle -N gamma_dev_command_runner_widget
-        bindkey '^O' gamma_dev_command_runner_widget
+      home.activation.createShellDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/bin"}
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/scripts"}
       '';
-    };
-  };
+
+      programs.zsh = {
+        enable = true;
+        enableCompletion = true;
+        autosuggestion.enable = true;
+        syntaxHighlighting.enable = true;
+
+        history = {
+          size = 50000;
+          save = 50000;
+          share = true;
+          ignoreDups = true;
+          ignoreSpace = true;
+          extended = true;
+        };
+
+        shellAliases =
+          gitAliases
+          // nixAliases
+          // lib.optionalAttrs workstationIntegrationsEnabled (shellNavigationAliases // projectAliases);
+
+        initContent = ''
+          unset MAILCHECK
+          setopt prompt_subst
+
+          path=(
+            /etc/profiles/per-user/$USER/bin
+            /run/current-system/sw/bin
+            $path
+          )
+          typeset -U path
+          export PATH
+
+          autoload -Uz add-zsh-hook vcs_info
+          zstyle ':vcs_info:git:*' formats '%b'
+          zstyle ':vcs_info:git:*' actionformats '%b|%a'
+
+          host_shell_prompt_precmd() {
+            vcs_info
+
+            if [ -n "$vcs_info_msg_0_" ]; then
+              local host_shell_git_dirty=""
+              if [ -n "$(git status --porcelain --untracked-files=normal 2>/dev/null)" ]; then
+                host_shell_git_dirty="*"
+              fi
+
+              host_shell_git_prompt="%F{green}$vcs_info_msg_0_$host_shell_git_dirty%f "
+            else
+              host_shell_git_prompt=""
+            fi
+          }
+
+          add-zsh-hook precmd host_shell_prompt_precmd
+          PROMPT='${hostPromptSymbol} %~/ ''${host_shell_git_prompt}'
+        ''
+        + lib.optionalString workstationIntegrationsEnabled ''
+
+          path=(
+            $path
+            /opt/homebrew/bin
+            /opt/homebrew/sbin
+          )
+          path=(''${path:#/opt/homebrew/opt/node@20/bin})
+          path=(''${path:#$HOME/Library/pnpm})
+          typeset -U path
+          export PATH
+
+          codex() {
+            /etc/profiles/per-user/$USER/bin/codex "$@"
+          }
+
+          if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
+            . "/opt/homebrew/opt/nvm/nvm.sh"
+          fi
+
+          if [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]; then
+            . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+          fi
+
+          claude() {
+            local bin
+            bin="$(whence -p claude)" || return
+            caffeinate -dims -t 3600 "$bin" --dangerously-skip-permissions "$@"
+          }
+
+          bindkey -s '^T' 'git-branch-switcher\n'
+          bindkey -s '^Y' 'issue-picker\n'
+          bindkey -s '^F' 'tmux-sessionizer\n'
+          bindkey -s '^G' 'typst-smart-open\n'
+
+          gamma_dev_command_runner_widget() {
+            zle -I
+
+            if [[ -n "''${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
+              tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE='#{pane_id}' ~/.local/scripts/dev-command-runner"
+              zle reset-prompt
+            else
+              BUFFER="dev-command-runner"
+              CURSOR=''${#BUFFER}
+              zle accept-line
+            fi
+          }
+
+          zle -N gamma_dev_command_runner_widget
+          bindkey '^O' gamma_dev_command_runner_widget
+        '';
+      };
+    }
+    (lib.mkIf workstationIntegrationsEnabled {
+      home.file.".local/bin/tmux" = {
+        executable = true;
+        force = true;
+        source = tmuxWrapper;
+      };
+
+      home.sessionPath = [
+        "/opt/homebrew/bin"
+        "/opt/homebrew/sbin"
+      ];
+
+      home.sessionVariables.NVM_DIR = "$HOME/.nvm";
+
+      home.activation.createWorkstationDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Developer"}
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/typst"}
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Pictures/Screenshots"}
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.nvm"}
+      '';
+    })
+  ];
 }
