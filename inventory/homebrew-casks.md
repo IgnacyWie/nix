@@ -5,8 +5,6 @@
 The following GUI applications are installed through nix-darwin Homebrew casks
 for the `gamma` Workstation:
 
-- `bitwarden`: desktop password manager client, including use with Vaultwarden
-  servers. Vault contents and server configuration remain outside Nix.
 - `firefox@developer-edition`: secondary development browser. Profiles,
   extensions, sessions, and account state remain outside Nix.
 - `ghostty`: terminal app. Configuration is managed by Home Manager.

@@ -5,6 +5,8 @@
 The following App Store applications are installed through nix-darwin
 Homebrew `masApps` for the `gamma` Workstation:
 
+- `Bitwarden` (`1352778147`): password manager client. Vault login, account
+  state, and browser extension configuration remain outside Nix.
 - `Flighty` (`1358823008`): flight tracker app. Account, subscription, iCloud,
   trip, and notification state remain outside Nix.
 - `WhatsApp` (`310633997`): messaging app installed as WhatsApp Messenger from

@@ -24,7 +24,6 @@
 
     casks = [
       "wispr-flow"
-      "bitwarden"
       "displaylink"
       "ghostty"
       "google-chrome"
@@ -41,6 +40,7 @@
     ];
 
     masApps = {
+      Bitwarden = 1352778147;
       Flighty = 1358823008;
       WhatsApp = 310633997;
     };

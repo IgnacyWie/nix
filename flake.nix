@@ -504,9 +504,9 @@
           assert builtins.elem "mas" homebrewBrewNames;
           assert !(builtins.elem "tmux" homebrewBrewNames);
           assert builtins.elem "goku" homebrewBrewNames;
-          assert builtins.elem "bitwarden" homebrewCaskNames;
           assert builtins.elem "keka" homebrewCaskNames;
           assert builtins.elem "tailscale-app" homebrewCaskNames;
+          assert homebrewMasApps.Bitwarden == 1352778147;
           assert homebrewMasApps.Flighty == 1358823008;
           assert homebrewMasApps.WhatsApp == 310633997;
           assert builtins.any (name: builtins.match ".*chafa.*" name != null) packageNames;
