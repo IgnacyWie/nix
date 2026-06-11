@@ -68,6 +68,7 @@
                 imports = [
                   ./modules/home/base.nix
                   ./modules/home/git.nix
+                  ./modules/home/home-server.nix
                   ./modules/home/shell.nix
                 ];
                 personal = {
@@ -190,6 +191,38 @@
 
           touch "$out"
         '';
+
+        eta-service-control-command =
+          let
+            etaConfig = etaConfiguration.config;
+            homeConfig = etaConfig.home-manager.users.ignacywielogorski;
+            etaService = homeConfig.home.file.".local/bin/eta-service".source;
+          in
+          pkgs.runCommand "eta-service-control-command-check" { } ''
+            set -eu
+
+            test -x ${etaService}
+            grep -Fq 'eta-service: Service Control Commands run authoritatively on eta.' ${etaService}
+            grep -Fq 'service_root="''${ETA_SERVICE_ROOT:-$HOME/Services}"' ${etaService}
+            grep -Fq 'find "$service_root" -mindepth 1 -maxdepth 1 -type d' ${etaService}
+            grep -Fq 'docker-compose --project-directory "$stack_dir" --file "$compose_file" up -d "$@"' ${etaService}
+            grep -Fq 'docker-compose --project-directory "$stack_dir" --file "$compose_file" down "$@"' ${etaService}
+
+            home="$TMPDIR/home"
+            mkdir -p "$home"
+            HOME="$home" ${etaService} --help > "$TMPDIR/help.txt"
+            grep -Fq 'Service Control Commands run authoritatively on eta.' "$TMPDIR/help.txt"
+
+            HOME="$home" ${etaService} list > "$TMPDIR/list.txt"
+            test ! -s "$TMPDIR/list.txt"
+
+            mkdir -p "$home/Services/example"
+            touch "$home/Services/example/compose.yaml"
+            HOME="$home" ${etaService} list > "$TMPDIR/list-with-stack.txt"
+            grep -Fxq 'example' "$TMPDIR/list-with-stack.txt"
+
+            touch "$out"
+          '';
 
         gamma-pam-config =
           let
@@ -542,6 +575,34 @@
 
               touch "$out"
             '';
+
+        gamma-eta-remote-access =
+          let
+            homeConfig = gammaConfiguration.config.home-manager.users.ignacywielogorski;
+            sshSettings = homeConfig.programs.ssh.settings;
+            zshAliases = homeConfig.programs.zsh.shellAliases;
+            etaShell = pkgs.writeText "eta-shell" homeConfig.home.file.".local/scripts/eta-shell".text;
+            etaService = pkgs.writeText "eta-service" homeConfig.home.file.".local/scripts/eta-service".text;
+          in
+          assert builtins.hasAttr "eta" sshSettings;
+          assert sshSettings.eta.data.HostName == "eta.sparrow-pomano.ts.net";
+          assert sshSettings.eta.data.User == "ignacywielogorski";
+          assert !(builtins.hasAttr "mini" sshSettings);
+          assert zshAliases.sm == "ssh eta";
+          pkgs.runCommand "gamma-eta-remote-access-check" { } ''
+            set -eu
+
+            grep -Fq 'exec ssh eta "$@"' ${etaShell}
+            grep -Fq 'eta-service: invoke eta Service Control Commands over SSH.' ${etaService}
+            grep -Fq 'Service Control Commands run authoritatively on eta.' ${etaService}
+            grep -Fq 'canonical SSH Host Alias eta' ${etaService}
+            grep -Fq 'exec ssh eta -- eta-service "$@"' ${etaService}
+
+            ${pkgs.bash}/bin/bash ${etaService} --help > "$TMPDIR/eta-service-help.txt"
+            grep -Fq 'Service Control Commands run authoritatively on eta.' "$TMPDIR/eta-service-help.txt"
+
+            touch "$out"
+          '';
 
         gamma-claude-config =
           pkgs.runCommand "gamma-claude-config-check"

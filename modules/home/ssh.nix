@@ -61,11 +61,6 @@ in
         User = "ignacywielogorski";
       };
 
-      mini = {
-        HostName = "eta.sparrow-pomano.ts.net";
-        User = "ignacywielogorski";
-      };
-
       mycard = {
         HostName = "mycard.sparrow-pomano.ts.net";
         User = "mycard";

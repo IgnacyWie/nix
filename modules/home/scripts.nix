@@ -1,6 +1,50 @@
 { ... }:
 
 {
+  home.file.".local/scripts/eta-shell" = {
+    executable = true;
+    force = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      exec ssh eta "$@"
+    '';
+  };
+
+  home.file.".local/scripts/eta-service" = {
+    executable = true;
+    force = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      usage() {
+        cat <<'USAGE'
+      eta-service: invoke eta Service Control Commands over SSH.
+
+      Service Control Commands run authoritatively on eta.
+
+      Usage:
+        eta-service list
+        eta-service <stack> <command> [args...]
+
+      This gamma wrapper does not own Home Server state. It delegates to the
+      managed eta-service command on the canonical SSH Host Alias eta.
+      USAGE
+      }
+
+      case "''${1:-}" in
+        "" | -h | --help)
+          usage
+          exit 0
+          ;;
+      esac
+
+      exec ssh eta -- eta-service "$@"
+    '';
+  };
+
   home.file."typst/academic-template.typ" = {
     source = ../../assets/typst/academic-template.typ;
     force = true;

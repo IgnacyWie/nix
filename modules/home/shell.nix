@@ -73,7 +73,7 @@ let
     dev = "pnpm run dev";
     revdojo = "./revisiondojo.sh";
     ruflo = "npx ruflo@latest";
-    sm = "ssh mini";
+    sm = "ssh eta";
     tc = "typst compile";
     tw = "typst watch";
     wallet-compile = "cd ~/Developer/Imported/GymPass/backend && npm run dev";

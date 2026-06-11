@@ -98,6 +98,10 @@ Recover these before relying on the workstation for daily development:
 - GitHub CLI authentication with `gh auth login`.
 - SSH keys from the Secret Store or another documented recovery source.
 - SSH key permissions and agent behavior.
+- Tailscale Enrollment for `eta`. Tailscale may be installed by Nix, but joining
+  the trusted tailnet remains a manual recovery step. Do not expect `ssh eta` or
+  `eta-service` from `gamma` to work until `eta` is enrolled and visible at
+  `eta.sparrow-pomano.ts.net`.
 - Browser login for Zen Browser or the current default browser.
 - Zen Browser profiles, settings, extensions, and sessions through browser sync,
   backup restore, or manual login. Nix only installs the app in v1.

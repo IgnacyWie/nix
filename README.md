@@ -73,6 +73,20 @@ paths, and interactive UI workflows are enabled explicitly for `gamma` rather
 than inherited by `eta`. The `eta` slice intentionally does not define launchd
 jobs for service stacks or start live containers.
 
+The canonical SSH Host Alias for the Home Server is `eta`, pointing at the
+Tailscale identity `eta.sparrow-pomano.ts.net` as user `ignacywielogorski`.
+`gamma` provides managed convenience wrappers for remote Home Server operations:
+
+```sh
+eta-shell
+eta-service list
+eta-service <stack> <command> [args...]
+```
+
+`eta-service` on `gamma` delegates over SSH to the managed `eta-service` command
+on `eta`. Service Control Commands run authoritatively on `eta`; `gamma` only
+provides shortcuts and does not own Home Server service state.
+
 ## Repository Workflow
 
 ### Apply Flow
