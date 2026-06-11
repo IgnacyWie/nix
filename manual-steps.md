@@ -36,6 +36,10 @@ cd ~/nix
 make homebrew-cleanup-preview
 ```
 
+The preview helper answers `n` to Homebrew's cleanup prompt automatically. It
+should show `Would uninstall`, `Would untap`, and `Would remove` output only; it
+must not uninstall anything.
+
 Manual action is expected when Homebrew cannot inspect or remove old local
 state safely:
 

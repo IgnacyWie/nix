@@ -13,13 +13,16 @@ nix eval --raw .#darwinConfigurations.gamma.config.homebrew.brewfile > "$brewfil
 printf 'Using evaluated gamma Brewfile: %s\n\n' "$brewfile"
 
 set +e
-HOMEBREW_NO_AUTO_UPDATE=1 brew bundle cleanup --file "$brewfile" --zap "$@"
+printf 'n\n' |
+  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle cleanup --file "$brewfile" --zap "$@"
 status=$?
 set -e
 
 cat <<'EOF'
 
 Manual cleanup notes:
+- This command always answers "n" to Homebrew's cleanup prompt. It is a preview
+  helper, not an apply helper.
 - Homebrew exits non-zero when cleanup would remove packages. That is expected
   in preview mode and does not mean the repo evaluation failed.
 - "Refusing to load ... from untrusted tap" means Homebrew needs an explicit
