@@ -37,6 +37,7 @@
       "tailscale-app"
       "zen"
       "firefox@developer-edition"
+      "onlyoffice"
     ];
 
     masApps = {
