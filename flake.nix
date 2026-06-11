@@ -52,7 +52,7 @@
 
         modules = [
           ./hosts/darwin/eta
-          ./modules/darwin
+          ./modules/darwin/base.nix
           home-manager.darwinModules.home-manager
           {
             home-manager = {

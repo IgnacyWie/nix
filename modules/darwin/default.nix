@@ -2,29 +2,11 @@
 
 {
   imports = [
+    ./base.nix
     ./default-apps.nix
     ./homebrew.nix
     ./macos-defaults.nix
   ];
-
-  fonts.packages = [
-    pkgs.nerd-fonts.meslo-lg
-  ];
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-
-  nix.settings.ssl-cert-file = "/etc/ssl/cert.pem";
-
-  nix.settings.trusted-users = [
-    "root"
-    "@admin"
-    "ignacywielogorski"
-  ];
-
-  programs.zsh.enable = true;
 
   security.pam.services.sudo_local = {
     reattach = true;
@@ -35,6 +17,4 @@
     enableKeyMapping = true;
     remapCapsLockToEscape = true;
   };
-
-  system.stateVersion = 6;
 }
