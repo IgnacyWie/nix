@@ -34,7 +34,11 @@ services:
     volumes:
       - ${HOME}/Services/data/immich/model-cache:/cache
     healthcheck:
-      disable: false
+      test: ["CMD-SHELL", "python3 -c \"import sys, urllib.request; response = urllib.request.urlopen('http://127.0.0.1:3003/ping', timeout=2); sys.exit(0 if response.status == 200 else 1)\""]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - internal
 
