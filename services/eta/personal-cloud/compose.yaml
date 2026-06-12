@@ -1,0 +1,33 @@
+services:
+  copyparty:
+    image: copyparty/ac:latest
+    container_name: copyparty
+    restart: unless-stopped
+    user: ${COPYPARTY_USER:-501:20}
+    command: ["--xff-src=lan"]
+    environment:
+      LD_PRELOAD: /usr/lib/libmimalloc-secure.so.NOPE
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ${HOME}/Services/data/personal-cloud/config:/cfg:z
+      - ${HOME}/Services/data/personal-cloud/storage:/w:z
+    networks:
+      - ingress
+    stop_grace_period: 15s
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q 127.0.0.1:3923/?reset=/._"]
+      interval: 1m
+      timeout: 2s
+      retries: 5
+      start_period: 15s
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.personal-cloud.entrypoints: websecure
+      traefik.http.routers.personal-cloud.rule: Host(`${PERSONAL_CLOUD_HOST}`)
+      traefik.http.routers.personal-cloud.tls: "true"
+      traefik.http.services.personal-cloud.loadbalancer.server.port: "3923"
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true

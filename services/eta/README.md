@@ -44,4 +44,23 @@ containers are available.
 - `linkding` — Tier 1 bookmark Service Stack. Durable Service State:
   `~/Services/data/linkding`; online SQLite restore artifact:
   `~/Services/dumps/linkding/linkding.sqlite3`.
+- `immich` — Tier 1 photos and videos Service Stack. Durable Service State:
+  `~/Services/data/immich`; online Postgres artifact:
+  `~/Services/dumps/immich/immich.dump`.
+- `paperless` — Tier 1 documents Service Stack. Durable Service State:
+  `~/Services/data/paperless`; online SQLite artifact:
+  `~/Services/dumps/paperless/paperless.sqlite3`.
+- `home-assistant` — Tier 1 home automation Service Stack with Matter Server.
+  Durable Service State: `~/Services/data/home-assistant` and
+  `~/Services/data/matter-server`; online SQLite artifact:
+  `~/Services/dumps/home-assistant/home-assistant_v2.db`.
+- `baikal` — Tier 1 CalDAV/CardDAV Service Stack. Durable Service State:
+  `~/Services/data/baikal`; online SQLite artifact:
+  `~/Services/dumps/baikal/db.sqlite`.
+- `dawarich` — Tier 1 location history Service Stack. Durable Service State:
+  `~/Services/data/dawarich`; online Postgres artifact:
+  `~/Services/dumps/dawarich/dawarich.dump`.
+- `personal-cloud` — Tier 1 Copyparty-backed Personal Cloud Service Stack.
+  Durable Service State: `~/Services/data/personal-cloud`; no separate logical
+  database dump is required.
 

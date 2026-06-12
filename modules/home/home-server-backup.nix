@@ -106,25 +106,74 @@ let
         done
       }
 
-      create_linkding_sqlite_dump() {
-        source_db="$HOME/Services/data/linkding/db.sqlite3"
-        dump_dir="$HOME/Services/dumps/linkding"
-        dump_db="$dump_dir/linkding.sqlite3"
+      create_sqlite_dump() {
+        description="$1"
+        source_db="$2"
+        dump_db="$3"
 
         if [ ! -f "$source_db" ]; then
-          printf 'Skipping Linkding SQLite dump; missing database: %s\n' "$source_db" >&2
+          printf 'Skipping %s SQLite dump; missing database: %s\n' "$description" "$source_db" >&2
           return 0
         fi
 
+        dump_dir="$(dirname "$dump_db")"
         mkdir -p "$dump_dir"
         tmp_db="$dump_db.tmp"
         rm -f "$tmp_db"
         sqlite3 "$source_db" ".backup '$tmp_db'"
         mv "$tmp_db" "$dump_db"
-        printf 'Created Linkding SQLite dump: %s\n' "$dump_db"
+        printf 'Created %s SQLite dump: %s\n' "$description" "$dump_db"
       }
 
-      create_linkding_sqlite_dump
+      create_postgres_dump() {
+        description="$1"
+        container="$2"
+        dump_path="$3"
+
+        if ! command -v docker >/dev/null 2>&1; then
+          printf 'Skipping %s Postgres dump; docker command is unavailable.\n' "$description" >&2
+          return 0
+        fi
+
+        if ! docker container inspect "$container" >/dev/null 2>&1; then
+          printf 'Skipping %s Postgres dump; missing container: %s\n' "$description" "$container" >&2
+          return 0
+        fi
+
+        dump_dir="$(dirname "$dump_path")"
+        mkdir -p "$dump_dir"
+        tmp_dump="$dump_path.tmp"
+        rm -f "$tmp_dump"
+        if docker exec "$container" sh -lc 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > "$tmp_dump"; then
+          mv "$tmp_dump" "$dump_path"
+          printf 'Created %s Postgres dump: %s\n' "$description" "$dump_path"
+        else
+          rm -f "$tmp_dump"
+          printf 'Skipping %s Postgres dump; pg_dump failed.\n' "$description" >&2
+          return 0
+        fi
+      }
+
+      create_logical_dumps() {
+        create_sqlite_dump Linkding \
+          "$HOME/Services/data/linkding/db.sqlite3" \
+          "$HOME/Services/dumps/linkding/linkding.sqlite3"
+        create_sqlite_dump Paperless \
+          "$HOME/Services/data/paperless/data/db.sqlite3" \
+          "$HOME/Services/dumps/paperless/paperless.sqlite3"
+        create_sqlite_dump HomeAssistant \
+          "$HOME/Services/data/home-assistant/config/home-assistant_v2.db" \
+          "$HOME/Services/dumps/home-assistant/home-assistant_v2.db"
+        create_sqlite_dump Baikal \
+          "$HOME/Services/data/baikal/specific/db/db.sqlite" \
+          "$HOME/Services/dumps/baikal/db.sqlite"
+        create_postgres_dump Immich immich_postgres \
+          "$HOME/Services/dumps/immich/immich.dump"
+        create_postgres_dump Dawarich dawarich_db \
+          "$HOME/Services/dumps/dawarich/dawarich.dump"
+      }
+
+      create_logical_dumps
       retry 3 300 backup restic backup "''${backup_args[@]}" --exclude-file ${lib.escapeShellArg ../../eta-backup-excludes.txt}
       touch "$success_marker"
       retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune

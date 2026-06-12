@@ -162,13 +162,15 @@ exports.
 The v1 Home Server backup scope includes:
 
 - `~/Services` — the Service Data Root for durable service state and logical
-  database dumps, including Vaultwarden SQLite Keystone Data Store material at
-  `~/Services/data/vaultwarden`, Linkding Durable Service State at
-  `~/Services/data/linkding`, and the Linkding online SQLite restore artifact at
-  `~/Services/dumps/linkding/linkding.sqlite3`.
+  database dumps, including Vaultwarden SQLite Keystone Data Store material,
+  Linkding Durable Service State, and Tier 1 state for Immich, Paperless, Home
+  Assistant with Matter Server, Baikal, Dawarich, and Personal Cloud under
+  `~/Services/data`, plus online dump artifacts under `~/Services/dumps` where
+  documented by each stack.
 - `~/nix/services/eta` — Service Definitions, the shared Tier 1 migration
-  template, and per-stack restore notes, including `services/eta/vaultwarden`
-  and `services/eta/linkding` recovery instructions and env examples.
+  template, and per-stack restore notes, including `services/eta/vaultwarden`,
+  `services/eta/linkding`, env examples, and restore drills for all migrated
+  Tier 1 Service Stacks.
 - `~/nix/backup.md` — backup and restore contract.
 - `~/nix/manual-steps.md` — manual recovery checklist.
 - `~/nix/CONTEXT.md` — domain language for recovery decisions.
@@ -374,6 +376,33 @@ Procedure:
 Success means the Corrective Migration fixed Linkding Durable Service State
 under the Service Data Root while preserving its domain and Ingress Layer
 settings.
+
+### Remaining Tier 1 Service Stack Restore Drills
+
+Frequency: after migrating each stack, then after major service, Restic, or
+Ingress Layer changes.
+
+Procedure:
+
+1. Restore Vaultwarden first unless the stack README explicitly says the
+   Bootstrap Secret Set is enough.
+2. Follow the stack-specific restore drill in:
+   - `services/eta/immich/README.md`
+   - `services/eta/paperless/README.md`
+   - `services/eta/home-assistant/README.md`
+   - `services/eta/baikal/README.md`
+   - `services/eta/dawarich/README.md`
+   - `services/eta/personal-cloud/README.md`
+3. For Immich and Dawarich, verify the Postgres Logical Database Dump can be
+   used with `pg_restore` if raw database state is unavailable.
+4. For Paperless, Home Assistant, and Baikal, verify the SQLite dump artifact can
+   replace the live SQLite database if raw state is unavailable.
+5. For Personal Cloud, verify representative file upload and download because no
+   separate database artifact is required.
+
+Success means each migrated Tier 1 Service Stack satisfies the Home Server
+Recovery Contract independently and proves database-native restore artifacts
+where applicable.
 
 ### Fresh-User Rebuild Drill
 
