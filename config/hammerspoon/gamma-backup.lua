@@ -8,6 +8,7 @@ local backupCommand = "/etc/profiles/per-user/" .. user .. "/bin/gamma-restic-ba
 local restorePicker = home .. "/.local/scripts/backup-restore-picker"
 local backupDoc = home .. "/nix/backup.md"
 local iconDir = home .. "/Library/Caches/Hammerspoon/gamma-backup-icons"
+local iconCacheVersion = "v2"
 
 local runningTask = nil
 
@@ -76,11 +77,20 @@ let representation = NSBitmapImageRep(
 )!
 representation.size = size
 
+let sourceSize = configured.size
+let scale = min(size.width / sourceSize.width, size.height / sourceSize.height)
+let drawSize = NSSize(width: sourceSize.width * scale, height: sourceSize.height * scale)
+let drawOrigin = NSPoint(
+  x: (size.width - drawSize.width) / 2,
+  y: (size.height - drawSize.height) / 2
+)
+let drawRect = NSRect(origin: drawOrigin, size: drawSize)
+
 NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: representation)
 NSColor.clear.setFill()
 NSRect(origin: .zero, size: size).fill()
-configured.draw(in: NSRect(origin: .zero, size: size), from: .zero, operation: .sourceOver, fraction: 1.0)
+configured.draw(in: drawRect, from: NSRect(origin: .zero, size: sourceSize), operation: .sourceOver, fraction: 1.0)
 NSGraphicsContext.restoreGraphicsState()
 
 guard let data = representation.representation(using: .png, properties: [:]) else {
@@ -122,7 +132,7 @@ end
 local function renderSystemSymbol(name)
   ensureDirectory(iconDir)
 
-  local iconPath = iconDir .. "/" .. name:gsub("[^A-Za-z0-9_.-]", "_") .. ".png"
+  local iconPath = iconDir .. "/" .. iconCacheVersion .. "-" .. name:gsub("[^A-Za-z0-9_.-]", "_") .. ".png"
   if not fileModifiedAt(iconPath) then
     local rendererPath = iconDir .. "/render-sf-symbol.swift"
     if writeFile(rendererPath, sfSymbolRenderer) then
