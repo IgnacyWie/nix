@@ -289,6 +289,7 @@
 
             grep -Eq '^retry 3 300 backup restic backup "\$\{backup_args\[@\]\}" --exclude-file /nix/store/[a-z0-9]+-source/eta-backup-excludes\.txt$' ${program}
             grep -Fqx "retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune" ${program}
+            grep -Fqx '    "$@" && return 0' ${program}
             grep -Fqx "    printf 'Last successful backup is less than 20 hours old; skipping scheduled catch-up.\n'" ${program}
 
             grep -Fqx "add_backup_path /Users/ignacywielogorski/Services" ${program}
@@ -525,6 +526,7 @@
 
             grep -Eq '^retry 3 300 backup restic backup "\$\{backup_args\[@\]\}" --exclude-file /nix/store/[a-z0-9]+-source/backup-excludes\.txt$' ${program}
             grep -Fqx "retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune" ${program}
+            grep -Fqx '    "$@" && return 0' ${program}
             grep -Fqx "    printf 'Last successful backup is less than 20 hours old; skipping scheduled catch-up.\n'" ${program}
 
             grep -Fqx "add_backup_path /Users/ignacywielogorski/Documents" ${program}

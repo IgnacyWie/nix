@@ -94,9 +94,7 @@ let
         attempt=1
         while true; do
           printf 'Starting %s attempt %s/%s.\n' "$description" "$attempt" "$attempts"
-          if "$@"; then
-            return 0
-          fi
+          "$@" && return 0
 
           status="$?"
           if [ "$attempt" -ge "$attempts" ]; then
