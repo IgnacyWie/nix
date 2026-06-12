@@ -18,6 +18,12 @@ host networking for discovery, mDNS, IPv6, and device access. `hass-proxy` joins
 `proxy-network` so Traefik can route:
 
 ```text
+https://homeassistant.mac.wie.dev
+```
+
+The legacy alias remains accepted during migration:
+
+```text
 https://hass.mac.wie.dev
 ```
 
@@ -44,7 +50,8 @@ cp .env.example .env
 chmod 600 .env
 ```
 
-Required values are `HOME_ASSISTANT_HOST` and `TZ`. Secrets, long-lived access
+Required values are `HOME_ASSISTANT_HOST`, `HOME_ASSISTANT_LEGACY_HOST`, and
+`TZ`. Secrets, long-lived access
 tokens, integration credentials, and recovery codes are recovered from
 Vaultwarden or the Home Assistant config backup. Never commit `.env`, tokens, or
 Home Assistant exports containing private household data.
@@ -80,7 +87,8 @@ The Home Server Backup Repository includes:
    `config/home-assistant_v2.db` before startup.
 6. Recreate `.env` from `.env.example` and Vaultwarden values.
 7. Start with `eta-service home-assistant up`.
-8. Verify Traefik access, login, automations, one representative integration,
+8. Verify Traefik access at `https://homeassistant.mac.wie.dev`, login,
+   automations, one representative integration,
    and Matter device visibility if Matter is in use.
 
 Success means Home Assistant and Matter Server can recover configuration,

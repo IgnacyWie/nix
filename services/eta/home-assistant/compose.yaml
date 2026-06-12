@@ -26,7 +26,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.hass.entrypoints: websecure
-      traefik.http.routers.hass.rule: Host(`${HOME_ASSISTANT_HOST}`)
+      traefik.http.routers.hass.rule: Host(`${HOME_ASSISTANT_HOST}`) || Host(`${HOME_ASSISTANT_LEGACY_HOST:-hass.mac.wie.dev}`)
       traefik.http.routers.hass.tls: "true"
       traefik.http.services.hass.loadbalancer.server.port: "8123"
 
