@@ -7,6 +7,7 @@
     ./codex.nix
     ./git.nix
     ./ghostty.nix
+    ./hammerspoon.nix
     ./neovim.nix
     ./scripts.nix
     ./shell.nix

@@ -32,6 +32,7 @@
       "displaylink" # Tool for using DisplayLink USB graphics adapters. Required for my 49 Inch LG Ultrawide.
       "ghostty"
       "google-chrome"
+      "hammerspoon"
       "karabiner-elements"
       "keka" # Faster and more powerful alternative to the built-in Archive Utility for extracting compressed files.
       "loom"

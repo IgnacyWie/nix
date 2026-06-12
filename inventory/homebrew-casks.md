@@ -10,6 +10,8 @@ for the `gamma` Workstation:
 - `ghostty`: terminal app. Configuration is managed by Home Manager.
 - `google-chrome`: Chromium-family browser for compatibility testing. Profiles,
   extensions, sessions, and account state remain outside Nix.
+- `hammerspoon`: menu bar automation host for the Gamma Restic Backup status
+  item. Configuration is managed by Home Manager.
 - `karabiner-elements`: app and driver provider for keyboard remaps. Desired
   config is managed through Home Manager.
 - `keka`: archive utility. Keka is configured as the default opener for common
