@@ -287,6 +287,11 @@
             grep -Fqx "export B2_ACCOUNT_KEY" ${program}
             grep -Fqx "export RESTIC_PASSWORD" ${program}
 
+            grep -Fqx 'create_linkding_sqlite_dump() {' ${program}
+            grep -Fqx '  source_db="$HOME/Services/data/linkding/db.sqlite3"' ${program}
+            grep -Fqx '  dump_db="$dump_dir/linkding.sqlite3"' ${program}
+            grep -Fq 'sqlite3 "$source_db" ".backup' ${program}
+            grep -Fqx 'create_linkding_sqlite_dump' ${program}
             grep -Eq '^retry 3 300 backup restic backup "\$\{backup_args\[@\]\}" --exclude-file /nix/store/[a-z0-9]+-source/eta-backup-excludes\.txt$' ${program}
             grep -Fqx "retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune" ${program}
             grep -Fqx '    "$@" && return 0' ${program}
@@ -345,6 +350,45 @@
           grep -Fq 'do not add Postgres' ${./manual-steps.md}
 
           ! grep -R 'sDuTLX' ${./services/eta/vaultwarden}
+
+          touch "$out"
+        '';
+
+        eta-linkding-service-stack = pkgs.runCommand "eta-linkding-service-stack-check" { } ''
+          set -eu
+
+          test -f ${./services/eta/linkding/compose.yaml}
+          test -f ${./services/eta/linkding/.env.example}
+          test -f ${./services/eta/linkding/README.md}
+
+          grep -Fq 'image: sissbruecker/linkding:1.45.0' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'container_name: linkding' ${./services/eta/linkding/compose.yaml}
+          grep -Fq -- '- ''${HOME}/Services/data/linkding:/etc/linkding/data' ${./services/eta/linkding/compose.yaml}
+          ! grep -Fq '/etc/linkding/data"' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'name: proxy-network' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'external: true' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'traefik.http.routers.linkding.rule: Host(`''${LINKDING_HOST}`)' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'traefik.http.routers.linkding.tls.certresolver: myresolver' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'traefik.http.routers.linkding.tls.domains[0].main: mac.wie.dev' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'traefik.http.routers.linkding.tls.domains[0].sans: "*.mac.wie.dev"' ${./services/eta/linkding/compose.yaml}
+          grep -Fq 'LINKDING_HOST=bookmarks.mac.wie.dev' ${./services/eta/linkding/.env.example}
+          grep -Fq 'LINKDING_CSRF_TRUSTED_ORIGINS=https://bookmarks.mac.wie.dev' ${./services/eta/linkding/.env.example}
+          grep -Fq 'LINKDING_SUPERUSER_PASSWORD=set-me' ${./services/eta/linkding/.env.example}
+          grep -Fq 'Do not commit .env or real secrets.' ${./services/eta/linkding/.env.example}
+
+          grep -Fq 'Corrective Migration' ${./services/eta/linkding/README.md}
+          grep -Fq '~/Services/data/linkding' ${./services/eta/linkding/README.md}
+          grep -Fq '~/Services/dumps/linkding/linkding.sqlite3' ${./services/eta/linkding/README.md}
+          grep -Fq 'bookmarks.mac.wie.dev' ${./services/eta/linkding/README.md}
+          grep -Fq 'eta-service linkding up' ${./services/eta/linkding/README.md}
+          grep -Fq 'verify the bookmark still exists' ${./services/eta/linkding/README.md}
+
+          grep -Fq 'Linkding Durable Service State' ${./backup.md}
+          grep -Fq 'Linkding Corrective Migration Restore Drill' ${./backup.md}
+          grep -Fq 'services/eta/linkding' ${./backup.md}
+          grep -Fq '`eta` Home Server Linkding Recovery' ${./manual-steps.md}
+
+          ! grep -R 'freemason' ${./services/eta/linkding}
 
           touch "$out"
         '';

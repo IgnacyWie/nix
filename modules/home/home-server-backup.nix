@@ -34,6 +34,7 @@ let
     runtimeInputs = [
       pkgs.coreutils
       pkgs.restic
+      pkgs.sqlite
     ];
     text = ''
       set -eu
@@ -105,6 +106,25 @@ let
         done
       }
 
+      create_linkding_sqlite_dump() {
+        source_db="$HOME/Services/data/linkding/db.sqlite3"
+        dump_dir="$HOME/Services/dumps/linkding"
+        dump_db="$dump_dir/linkding.sqlite3"
+
+        if [ ! -f "$source_db" ]; then
+          printf 'Skipping Linkding SQLite dump; missing database: %s\n' "$source_db" >&2
+          return 0
+        fi
+
+        mkdir -p "$dump_dir"
+        tmp_db="$dump_db.tmp"
+        rm -f "$tmp_db"
+        sqlite3 "$source_db" ".backup '$tmp_db'"
+        mv "$tmp_db" "$dump_db"
+        printf 'Created Linkding SQLite dump: %s\n' "$dump_db"
+      }
+
+      create_linkding_sqlite_dump
       retry 3 300 backup restic backup "''${backup_args[@]}" --exclude-file ${lib.escapeShellArg ../../eta-backup-excludes.txt}
       touch "$success_marker"
       retry 2 300 retention restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune

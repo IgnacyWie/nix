@@ -36,4 +36,7 @@ containers are available.
 
 - `vaultwarden` — Keystone Service. Durable Service State:
   `~/Services/data/vaultwarden`; v1 Keystone Data Store: SQLite.
+- `linkding` — Tier 1 bookmark Service Stack. Durable Service State:
+  `~/Services/data/linkding`; online SQLite restore artifact:
+  `~/Services/dumps/linkding/linkding.sqlite3`.
 

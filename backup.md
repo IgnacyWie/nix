@@ -163,9 +163,12 @@ The v1 Home Server backup scope includes:
 
 - `~/Services` — the Service Data Root for durable service state and logical
   database dumps, including Vaultwarden SQLite Keystone Data Store material at
-  `~/Services/data/vaultwarden`.
+  `~/Services/data/vaultwarden`, Linkding Durable Service State at
+  `~/Services/data/linkding`, and the Linkding online SQLite restore artifact at
+  `~/Services/dumps/linkding/linkding.sqlite3`.
 - `~/nix/services/eta` — Service Definitions and per-stack restore notes,
-  including `services/eta/vaultwarden` recovery instructions and env examples.
+  including `services/eta/vaultwarden` and `services/eta/linkding` recovery
+  instructions and env examples.
 - `~/nix/backup.md` — backup and restore contract.
 - `~/nix/manual-steps.md` — manual recovery checklist.
 - `~/nix/CONTEXT.md` — domain language for recovery decisions.
@@ -346,6 +349,31 @@ Procedure:
 Success means the Keystone Service recovery path works with the v1 SQLite data
 directory and Bootstrap Secret Set, without Postgres and without making
 Vaultwarden the only recovery source for `eta`.
+
+### Linkding Corrective Migration Restore Drill
+
+Frequency: after migrating Linkding, then after major Linkding, Restic, or
+Ingress Layer changes.
+
+Procedure:
+
+1. Restore Vaultwarden first and recover Linkding credentials from it.
+2. Restore `/Users/ignacywielogorski/Services/data/linkding` and
+   `/Users/ignacywielogorski/Services/dumps/linkding/linkding.sqlite3` from the
+   Home Server Backup Repository into a review directory under `~/Restores`.
+3. Recreate `~/nix/services/eta/linkding/.env` from the committed
+   `.env.example` and Vaultwarden values.
+4. For a real restore, place the reviewed data at `~/Services/data/linkding`.
+   If the live database is missing or suspect, restore `db.sqlite3` from the
+   SQLite artifact.
+5. Start Linkding with `eta-service linkding up`.
+6. Verify `https://bookmarks.mac.wie.dev` through Traefik.
+7. Create or import one bookmark, restart the stack with
+   `eta-service linkding restart`, and verify the bookmark persists.
+
+Success means the Corrective Migration fixed Linkding Durable Service State
+under the Service Data Root while preserving its domain and Ingress Layer
+settings.
 
 ### Fresh-User Rebuild Drill
 

@@ -192,6 +192,23 @@ current enough to recover Restic and Vaultwarden admin access.
 7. Keep Vaultwarden SQLite-backed in v1; do not add Postgres as part of this
    recovery path.
 
+## `eta` Home Server Linkding Recovery
+
+Linkding is restored after Vaultwarden because its service credentials live in
+Vaultwarden, not in the Bootstrap Secret Set.
+
+1. Restore and verify Vaultwarden first.
+2. Recover Linkding credentials from Vaultwarden.
+3. Recreate `~/nix/services/eta/linkding/.env` from
+   `~/nix/services/eta/linkding/.env.example`.
+4. Restore `~/Services/data/linkding` from the Home Server Backup Repository.
+5. If needed, recover `~/Services/data/linkding/db.sqlite3` from the online
+   SQLite artifact at `~/Services/dumps/linkding/linkding.sqlite3`.
+6. Start Linkding: `eta-service linkding up`.
+7. Verify `https://bookmarks.mac.wie.dev` through Traefik.
+8. Create or import a bookmark, restart with `eta-service linkding restart`,
+   and verify the bookmark persists.
+
 ## Keyboard
 
 Verify the declarative input-source baseline and the keyboard remaps after

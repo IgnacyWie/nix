@@ -1,0 +1,30 @@
+services:
+  linkding:
+    image: sissbruecker/linkding:1.45.0
+    container_name: linkding
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      LD_CSRF_TRUSTED_ORIGINS: ${LINKDING_CSRF_TRUSTED_ORIGINS}
+      LD_DISABLE_BACKGROUND_TASKS: ${LINKDING_DISABLE_BACKGROUND_TASKS:-False}
+      LD_SUPERUSER_NAME: ${LINKDING_SUPERUSER_NAME}
+      LD_SUPERUSER_PASSWORD: ${LINKDING_SUPERUSER_PASSWORD}
+    volumes:
+      - ${HOME}/Services/data/linkding:/etc/linkding/data
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.linkding.entrypoints: websecure
+      traefik.http.routers.linkding.rule: Host(`${LINKDING_HOST}`)
+      traefik.http.routers.linkding.tls: "true"
+      traefik.http.routers.linkding.tls.certresolver: myresolver
+      traefik.http.routers.linkding.tls.domains[0].main: mac.wie.dev
+      traefik.http.routers.linkding.tls.domains[0].sans: "*.mac.wie.dev"
+      traefik.http.services.linkding.loadbalancer.server.port: "9090"
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true
