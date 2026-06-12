@@ -35,6 +35,40 @@ volume. `specific` contains Baikal runtime data including the SQLite database.
 `eta-restic-backup` creates an online SQLite artifact at
 `~/Services/dumps/baikal/db.sqlite` when the database exists.
 
+## One-Time Migration Notes
+
+The legacy `calendar` Compose stack stored Baikal state in two places:
+
+```text
+calendar_config Docker volume -> /var/www/baikal/config
+~/Services/data/baikal     -> /var/www/baikal/Specific
+```
+
+If Baikal shows the initialization wizard after migration, the declared bind
+mounts are missing one or both of those legacy locations. Stop Baikal and copy
+legacy state into the normalized layout:
+
+```sh
+eta-service baikal down
+mkdir -p ~/Services/data/baikal/config ~/Services/data/baikal/specific
+
+docker run --rm \
+  -v calendar_config:/from \
+  -v "$HOME/Services/data/baikal/config:/to" \
+  alpine sh -c 'cd /from && tar cf - . | tar xf - -C /to'
+
+rsync -a --exclude config --exclude specific \
+  ~/Services/data/baikal/ \
+  ~/Services/data/baikal/specific/
+
+eta-service baikal up
+```
+
+After the copy, `~/Services/data/baikal/config/baikal.yaml` and
+`~/Services/data/baikal/specific/db/db.sqlite` must both exist, and
+`https://calendar.mac.wie.dev/admin/` should show the admin login rather than the
+initialization wizard.
+
 ## Required Environment
 
 ```sh
