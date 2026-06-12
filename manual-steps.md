@@ -169,6 +169,29 @@ mlx_vlm.generate --help
 8. Complete a restore drill for one file from `~/Services` and one recovery
    document from `~/nix/services/eta` or `~/nix/backup.md`.
 
+
+## `eta` Home Server Keystone Recovery
+
+Vaultwarden is the v1 Keystone Service and must be restored before relying on
+self-hosted secrets for other Home Server services. Vaultwarden does not replace
+the Bootstrap Secret Set; keep iCloud Keychain plus the offline emergency copy
+current enough to recover Restic and Vaultwarden admin access.
+
+1. Recover the Bootstrap Secret Set.
+2. Restore `eta` Restic credentials into macOS Keychain using the service names
+   in `backup.md`.
+3. Restore Vaultwarden service data from the Home Server Backup Repository to a
+   review directory first, then to `~/Services/data/vaultwarden` during a real
+   recovery.
+4. Recreate `~/nix/services/eta/vaultwarden/.env` from
+   `~/nix/services/eta/vaultwarden/.env.example` and Bootstrap Secret Set
+   values.
+5. Start Vaultwarden first: `eta-service vaultwarden up`.
+6. Verify login and representative vault contents before restoring dependent
+   services.
+7. Keep Vaultwarden SQLite-backed in v1; do not add Postgres as part of this
+   recovery path.
+
 ## Keyboard
 
 Verify the declarative input-source baseline and the keyboard remaps after

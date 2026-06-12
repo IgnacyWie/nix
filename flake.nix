@@ -307,6 +307,47 @@
             touch "$out"
           '';
 
+        eta-vaultwarden-service-stack = pkgs.runCommand "eta-vaultwarden-service-stack-check" { } ''
+          set -eu
+
+          test -f ${./services/eta/vaultwarden/compose.yaml}
+          test -f ${./services/eta/vaultwarden/.env.example}
+          test -f ${./services/eta/vaultwarden/README.md}
+
+          grep -Fq 'image: vaultwarden/server:1.36.0' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq 'container_name: vaultwarden' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq -- '- ''${HOME}/Services/data/vaultwarden:/data' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq 'name: proxy-network' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq 'external: true' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq 'env_file:' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq -- '- ./.env' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq 'ADMIN_TOKEN=set-me' ${./services/eta/vaultwarden/.env.example}
+          grep -Fq 'VAULTWARDEN_DOMAIN=https://vaultwarden.example.ts.net' ${./services/eta/vaultwarden/.env.example}
+          grep -Fq 'Do not commit .env or real secret values.' ${./services/eta/vaultwarden/.env.example}
+
+          grep -Fq 'Keystone Service' ${./services/eta/vaultwarden/README.md}
+          grep -Fq '~/Services/data/vaultwarden' ${./services/eta/vaultwarden/README.md}
+          grep -Fq 'v1 SQLite Keystone Data Store' ${./services/eta/vaultwarden/README.md}
+          grep -Fq 'Do not migrate Vaultwarden to Postgres in v1.' ${./services/eta/vaultwarden/README.md}
+          grep -Fq 'eta-service vaultwarden up' ${./services/eta/vaultwarden/README.md}
+          grep -Fq 'Verify representative vault contents' ${./services/eta/vaultwarden/README.md}
+
+          grep -Fq 'including Vaultwarden SQLite Keystone Data Store material' ${./backup.md}
+          grep -Fq 'services/eta/vaultwarden' ${./backup.md}
+          grep -Fq 'Vaultwarden Keystone Restore Drill' ${./backup.md}
+          grep -Fq 'without Postgres' ${./backup.md}
+          grep -Fq 'Vaultwarden the only recovery source for `eta`' ${./backup.md}
+
+          grep -Fq '`eta` Home Server Keystone Recovery' ${./manual-steps.md}
+          grep -Fq 'Vaultwarden does not replace' ${./manual-steps.md}
+          grep -Fq 'eta-service vaultwarden up' ${./manual-steps.md}
+          grep -Fq 'do not add Postgres' ${./manual-steps.md}
+
+          ! grep -R 'sDuTLX' ${./services/eta/vaultwarden}
+
+          touch "$out"
+        '';
+
         gamma-pam-config =
           let
             pamConfig = pkgs.writeText "sudo-local-pam" gammaConfiguration.config.security.pam.services.sudo_local.text;

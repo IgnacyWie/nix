@@ -162,8 +162,10 @@ exports.
 The v1 Home Server backup scope includes:
 
 - `~/Services` — the Service Data Root for durable service state and logical
-  database dumps.
-- `~/nix/services/eta` — Service Definitions and per-stack restore notes.
+  database dumps, including Vaultwarden SQLite Keystone Data Store material at
+  `~/Services/data/vaultwarden`.
+- `~/nix/services/eta` — Service Definitions and per-stack restore notes,
+  including `services/eta/vaultwarden` recovery instructions and env examples.
 - `~/nix/backup.md` — backup and restore contract.
 - `~/nix/manual-steps.md` — manual recovery checklist.
 - `~/nix/CONTEXT.md` — domain language for recovery decisions.
@@ -318,6 +320,32 @@ Procedure:
 
 Success means the fuzzy workflow can inspect backups and restore into a safe
 review directory without writing over the active home directory.
+
+
+### Vaultwarden Keystone Restore Drill
+
+Frequency: before migrating dependent Tier 1 service stacks, then after major
+Vaultwarden, Restic, or Ingress Layer changes.
+
+Procedure:
+
+1. Recover the Bootstrap Secret Set from iCloud Keychain or the offline
+   emergency copy. Do not depend on live Vaultwarden for this step.
+2. Recover `eta Restic Backblaze B2` credentials into macOS Keychain.
+3. Restore `/Users/ignacywielogorski/Services/data/vaultwarden` from the Home
+   Server Backup Repository into a review directory under `~/Restores`.
+4. Recreate `~/nix/services/eta/vaultwarden/.env` from the committed
+   `.env.example` and Bootstrap Secret Set values.
+5. For a real restore, place the reviewed data at `~/Services/data/vaultwarden`.
+6. Start Vaultwarden first with `eta-service vaultwarden up`.
+7. Verify login through the configured Vaultwarden URL.
+8. Verify representative vault contents: one login item, one secure note, and
+   one attachment if attachments are used.
+9. Only then use Vaultwarden to recover credentials for other service stacks.
+
+Success means the Keystone Service recovery path works with the v1 SQLite data
+directory and Bootstrap Secret Set, without Postgres and without making
+Vaultwarden the only recovery source for `eta`.
 
 ### Fresh-User Rebuild Drill
 

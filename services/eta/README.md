@@ -30,3 +30,10 @@ eta-service <stack> down
 `eta-service list` and `eta-service inspect <stack>` are no-Docker paths. They
 only read this checkout and can be used before OrbStack, Docker, or live
 containers are available.
+
+
+## Current Stacks
+
+- `vaultwarden` — Keystone Service. Durable Service State:
+  `~/Services/data/vaultwarden`; v1 Keystone Data Store: SQLite.
+
