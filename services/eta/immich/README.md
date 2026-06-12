@@ -30,14 +30,15 @@ Restore Vaultwarden first because Immich database credentials live there.
 Immich Durable Service State lives under:
 
 ```text
-~/Services/data/immich/library
+~/Services/photos
 ~/Services/data/immich/postgres
 ~/Services/data/immich/model-cache
 ~/Services/dumps/immich/immich.dump
 ```
 
-`library` contains uploaded originals, generated thumbnails, encoded video, and
-profile assets. `postgres` contains the raw Postgres data directory. The primary
+`~/Services/photos` contains uploaded originals, generated thumbnails, encoded
+video, profile assets, and Immich marker files from the current service layout.
+`postgres` contains the raw Postgres data directory. The primary
 Logical Database Dump is `~/Services/dumps/immich/immich.dump`, created by
 `eta-restic-backup` with `pg_dump` when the database container is running.
 `model-cache` is reproducible machine-learning cache and may be excluded or
@@ -53,7 +54,11 @@ chmod 600 .env
 
 Required values:
 
-- `IMMICH_HOST` — Traefik host name; currently `photos.mac.wie.dev`.
+- `IMMICH_TRAEFIK_HOST` — Traefik host name; currently `photos.mac.wie.dev`.
+  Do not use `IMMICH_HOST` for routing; Immich treats it as an application bind
+  address.
+- `IMMICH_UPLOAD_LOCATION` — existing Immich upload/library root; currently
+  `/Users/ignacywielogorski/Services/photos`.
 - `IMMICH_VERSION` — image version, defaulting to `release`.
 - `TZ` — time zone.
 - `DB_USERNAME`, `DB_DATABASE_NAME`, `DB_PASSWORD` — Postgres credentials from
@@ -65,7 +70,8 @@ Never commit `.env`, database credentials, API keys, or photo exports.
 
 The Home Server Backup Repository includes:
 
-- `~/Services/data/immich` through the broad `~/Services` backup scope.
+- `~/Services/photos` and `~/Services/data/immich` through the broad
+  `~/Services` backup scope.
 - `~/Services/dumps/immich/immich.dump` as the online Postgres restore artifact.
 - `~/nix/services/eta/immich` for the Service Definition and restore notes.
 - `backup.md`, `manual-steps.md`, `CONTEXT.md`, and ADRs as recovery material.
@@ -79,12 +85,14 @@ The Home Server Backup Repository includes:
    mkdir -p ~/Restores/immich-drill
    restic restore latest \
      --target ~/Restores/immich-drill \
+     --include /Users/ignacywielogorski/Services/photos \
      --include /Users/ignacywielogorski/Services/data/immich \
      --include /Users/ignacywielogorski/Services/dumps/immich
    ```
 
 3. Stop the active stack only during a real restore: `eta-service immich down`.
-4. Copy reviewed data to `~/Services/data/immich` and verify ownership.
+4. Copy reviewed data to `~/Services/photos` and `~/Services/data/immich`, then
+   verify ownership.
 5. If the raw Postgres directory is missing or suspect, initialize the database
    service and restore `immich.dump` with `pg_restore` into the Immich database.
 6. Recreate `.env` from `.env.example` and Vaultwarden values.

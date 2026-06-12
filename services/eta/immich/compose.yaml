@@ -6,7 +6,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ${HOME}/Services/data/immich/library:/data
+      - ${IMMICH_UPLOAD_LOCATION}:/data
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - redis
@@ -19,7 +19,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.immich.entrypoints: websecure
-      traefik.http.routers.immich.rule: Host(`${IMMICH_HOST}`)
+      traefik.http.routers.immich.rule: Host(`${IMMICH_TRAEFIK_HOST}`)
       traefik.http.routers.immich.tls: "true"
       traefik.http.services.immich.loadbalancer.server.port: "2283"
       traefik.http.middlewares.immich-upload-limit.buffering.maxRequestBodyBytes: "2000000000"
