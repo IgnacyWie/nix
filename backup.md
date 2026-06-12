@@ -166,9 +166,9 @@ The v1 Home Server backup scope includes:
   `~/Services/data/vaultwarden`, Linkding Durable Service State at
   `~/Services/data/linkding`, and the Linkding online SQLite restore artifact at
   `~/Services/dumps/linkding/linkding.sqlite3`.
-- `~/nix/services/eta` — Service Definitions and per-stack restore notes,
-  including `services/eta/vaultwarden` and `services/eta/linkding` recovery
-  instructions and env examples.
+- `~/nix/services/eta` — Service Definitions, the shared Tier 1 migration
+  template, and per-stack restore notes, including `services/eta/vaultwarden`
+  and `services/eta/linkding` recovery instructions and env examples.
 - `~/nix/backup.md` — backup and restore contract.
 - `~/nix/manual-steps.md` — manual recovery checklist.
 - `~/nix/CONTEXT.md` — domain language for recovery decisions.

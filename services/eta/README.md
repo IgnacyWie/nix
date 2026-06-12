@@ -9,12 +9,17 @@ Expected stack shape:
 ```text
 services/eta/<stack>/
   compose.yaml
+  .env.example
   README.md
 ```
 
 Compose files in this tree define container topology only. Durable service
 state belongs under the `eta` Service Data Root, `~/Services`, and stack
-restore notes should document the exact data paths used by that stack.
+restore notes should document the exact data paths used by that stack. New Tier
+1 Service Stack migrations should follow the shared
+[Tier 1 migration template](./tier-1-stack-template.md) so Service Definition,
+backup coverage, logical dump artifacts, Ingress Layer assumptions, and restore
+drills are captured consistently.
 
 Service stacks are intentionally not started by launchd as a group. Start or
 inspect a stack explicitly on `eta`:
