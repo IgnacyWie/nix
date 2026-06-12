@@ -61,7 +61,7 @@ The managed backup schedule for `eta`: one successful automatic backup per day, 
 _Avoid_: Cron time, backup timer, launchd job
 
 **Migration Scope**:
-The set of Home Server service stacks intentionally moved into declarative service definitions and restore drills. Matrix, Synapse, Mautrix bridges, and the Arr media stack are outside the v1 migration scope.
+The set of Home Server service stacks intentionally moved into declarative service definitions and restore drills. Migration Scope is not the same thing as current running Docker or OrbStack state. Matrix, Synapse, Mautrix bridges, and the Arr media stack are outside the v1 migration scope.
 _Avoid_: Everything running, container list, server contents
 
 **Personal Cloud**:
@@ -71,6 +71,10 @@ _Avoid_: File share, experiment, miscellaneous app
 **Tier 1 Service Stack**:
 A Home Server service stack whose data loss would be painful enough that migration is incomplete without declared data paths, backup coverage, and a restore drill. The v1 Tier 1 service stacks are Vaultwarden, Immich, Paperless, Home Assistant with Matter Server, Baikal, Linkding, and Personal Cloud.
 _Avoid_: Critical container, must-have app, production service
+
+**Tier 2 Service Stack**:
+A Home Server service stack that may matter operationally but is not a v1 migration blocker and does not receive Tier 1 backup-gating or restore-drill requirements unless a later issue promotes it. FreshRSS is Tier 2 for v1.
+_Avoid_: Forgotten service, in-scope Tier 1 service
 
 **Keystone Service**:
 The Tier 1 service stack that must be restored first because it unlocks recovery of other service secrets. Vaultwarden is the v1 Keystone Service for `eta`.

@@ -49,9 +49,11 @@ Use the raw inventory to answer migration questions:
   Store or Bootstrap Secret Set?
 - Which settings are accidental runtime history and should be dropped?
 
-Do not treat the current container list as the Migration Scope. Matrix, Synapse,
-Mautrix bridges, and the Arr media stack remain outside v1 unless a later issue
-changes scope.
+Do not treat the current container list as the Migration Scope. The v1 Tier 1
+Service Stacks are Vaultwarden, Immich, Paperless, Home Assistant with Matter
+Server, Baikal, Linkding, and Personal Cloud. FreshRSS remains Tier 2 for v1.
+Matrix, Synapse, Mautrix bridges, and the Arr media stack remain outside v1
+unless a later issue changes scope.
 
 ## 3. Sanitize before commit
 

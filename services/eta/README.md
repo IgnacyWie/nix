@@ -21,6 +21,39 @@ restore notes should document the exact data paths used by that stack. New Tier
 backup coverage, logical dump artifacts, Ingress Layer assumptions, and restore
 drills are captured consistently.
 
+## v1 Migration Scope
+
+Migration Scope is the intentionally migrated subset of Home Server services; it
+is not the same thing as the current running Docker or OrbStack container list.
+Current runtime inventory is supporting evidence only, and existing containers
+must not be copied into this tree just because they are running on `eta`.
+
+The v1 Tier 1 Service Stacks are:
+
+- `vaultwarden` — Keystone Service.
+- `immich` — photos and videos.
+- `paperless` — documents.
+- `home-assistant` — home automation, including Matter Server.
+- `baikal` — CalDAV/CardDAV.
+- `linkding` — bookmarks.
+- `personal-cloud` — Copyparty-backed Personal Cloud.
+
+FreshRSS is Tier 2 for v1. It may be inventoried and discussed, but it is not a
+v1 Tier 1 migration blocker and should not receive Tier 1 restore-drill or
+backup-gating requirements unless a later issue changes the scope.
+
+Explicitly out of scope for v1 migration work:
+
+- Matrix.
+- Synapse.
+- Mautrix bridges.
+- The Arr media stack, including Radarr, Sonarr, Lidarr, Readarr, Bazarr,
+  Prowlarr, and related media automation services.
+
+Do not add Service Definitions for those out-of-scope stacks under
+`services/eta/` during v1. If a future issue changes this decision, update this
+scope section and the repository checks in the same change.
+
 Service stacks are intentionally not started by launchd as a group. Start or
 inspect a stack explicitly on `eta`:
 

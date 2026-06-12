@@ -193,6 +193,42 @@
           touch "$out"
         '';
 
+        eta-v1-migration-scope = pkgs.runCommand "eta-v1-migration-scope-check" { } ''
+          set -eu
+
+          grep -Fq 'The v1 Tier 1 Service Stacks are:' ${./services/eta/README.md}
+          grep -Fq '`vaultwarden` — Keystone Service.' ${./services/eta/README.md}
+          grep -Fq '`immich` — photos and videos.' ${./services/eta/README.md}
+          grep -Fq '`paperless` — documents.' ${./services/eta/README.md}
+          grep -Fq '`home-assistant` — home automation, including Matter Server.' ${./services/eta/README.md}
+          grep -Fq '`baikal` — CalDAV/CardDAV.' ${./services/eta/README.md}
+          grep -Fq '`linkding` — bookmarks.' ${./services/eta/README.md}
+          grep -Fq '`personal-cloud` — Copyparty-backed Personal Cloud.' ${./services/eta/README.md}
+          grep -Fq 'FreshRSS is Tier 2 for v1.' ${./services/eta/README.md}
+          grep -Fq 'Explicitly out of scope for v1 migration work:' ${./services/eta/README.md}
+          grep -Fq 'Matrix.' ${./services/eta/README.md}
+          grep -Fq 'Synapse.' ${./services/eta/README.md}
+          grep -Fq 'Mautrix bridges.' ${./services/eta/README.md}
+          grep -Fq 'The Arr media stack' ${./services/eta/README.md}
+          grep -Fq 'must not be copied into this tree just because they are running on `eta`' ${./services/eta/README.md}
+          grep -Fq 'current running Docker' ${./README.md}
+          grep -Fq 'Matrix, Synapse, Mautrix bridges, and the Arr media' ${./README.md}
+          grep -Fq 'FreshRSS remains Tier 2 for v1.' ${./docs/eta-docker-orbstack-inventory.md}
+          grep -Fq 'Migration Scope is not the same thing as current running Docker or OrbStack state.' ${./CONTEXT.md}
+
+          find ${./services/eta} -mindepth 1 -maxdepth 1 -type d | while IFS= read -r dir; do
+            stack="$(basename "$dir")"
+            case "$stack" in
+              matrix|synapse|mautrix|mautrix-*|arr|radarr|sonarr|lidarr|readarr|bazarr|prowlarr)
+                echo "out-of-scope v1 service stack added under services/eta: $stack" >&2
+                exit 1
+                ;;
+            esac
+          done
+
+          touch "$out"
+        '';
+
         eta-service-control-command =
           let
             etaConfig = etaConfiguration.config;

@@ -80,6 +80,13 @@ independently. Durable service state remains outside the checkout under
 `~/Services`; Compose definitions should mount explicit per-stack paths there
 and stack documentation should describe restore expectations.
 
+The v1 Migration Scope is narrower than the current running Docker or OrbStack
+state on `eta`. The v1 Tier 1 Service Stacks are Vaultwarden, Immich, Paperless,
+Home Assistant with Matter Server, Baikal, Linkding, and Personal Cloud.
+FreshRSS is Tier 2 for v1. Matrix, Synapse, Mautrix bridges, and the Arr media
+stack are explicitly out of scope for v1 migration work and must not be added to
+`services/eta/` unless a later issue changes the scope and updates the checks.
+
 The canonical SSH Host Alias for the Home Server is `eta`, pointing at the
 Tailscale identity `eta.sparrow-pomano.ts.net` as user `ignacywielogorski`.
 `gamma` provides managed convenience wrappers for remote Home Server operations:
