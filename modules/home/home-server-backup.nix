@@ -169,8 +169,6 @@ let
           "$HOME/Services/dumps/baikal/db.sqlite"
         create_postgres_dump Immich immich_postgres \
           "$HOME/Services/dumps/immich/immich.dump"
-        create_postgres_dump Dawarich dawarich_db \
-          "$HOME/Services/dumps/dawarich/dawarich.dump"
       }
 
       create_logical_dumps

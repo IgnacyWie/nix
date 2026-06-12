@@ -69,7 +69,7 @@ The Copyparty-backed service stack used as personal cloud storage on `eta`. It i
 _Avoid_: File share, experiment, miscellaneous app
 
 **Tier 1 Service Stack**:
-A Home Server service stack whose data loss would be painful enough that migration is incomplete without declared data paths, backup coverage, and a restore drill. The v1 Tier 1 service stacks are Vaultwarden, Immich, Paperless, Home Assistant with Matter Server, Baikal, Linkding, Dawarich, and Personal Cloud.
+A Home Server service stack whose data loss would be painful enough that migration is incomplete without declared data paths, backup coverage, and a restore drill. The v1 Tier 1 service stacks are Vaultwarden, Immich, Paperless, Home Assistant with Matter Server, Baikal, Linkding, and Personal Cloud.
 _Avoid_: Critical container, must-have app, production service
 
 **Keystone Service**:

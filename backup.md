@@ -164,7 +164,7 @@ The v1 Home Server backup scope includes:
 - `~/Services` — the Service Data Root for durable service state and logical
   database dumps, including Vaultwarden SQLite Keystone Data Store material,
   Linkding Durable Service State, and Tier 1 state for Immich, Paperless, Home
-  Assistant with Matter Server, Baikal, Dawarich, and Personal Cloud under
+  Assistant with Matter Server, Baikal, and Personal Cloud under
   `~/Services/data`, plus online dump artifacts under `~/Services/dumps` where
   documented by each stack.
 - `~/nix/services/eta` — Service Definitions, the shared Tier 1 migration
@@ -391,10 +391,9 @@ Procedure:
    - `services/eta/paperless/README.md`
    - `services/eta/home-assistant/README.md`
    - `services/eta/baikal/README.md`
-   - `services/eta/dawarich/README.md`
    - `services/eta/personal-cloud/README.md`
-3. For Immich and Dawarich, verify the Postgres Logical Database Dump can be
-   used with `pg_restore` if raw database state is unavailable.
+3. For Immich, verify the Postgres Logical Database Dump can be used with
+   `pg_restore` if raw database state is unavailable.
 4. For Paperless, Home Assistant, and Baikal, verify the SQLite dump artifact can
    replace the live SQLite database if raw state is unavailable.
 5. For Personal Cloud, verify representative file upload and download because no

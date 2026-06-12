@@ -57,9 +57,6 @@ containers are available.
 - `baikal` — Tier 1 CalDAV/CardDAV Service Stack. Durable Service State:
   `~/Services/data/baikal`; online SQLite artifact:
   `~/Services/dumps/baikal/db.sqlite`.
-- `dawarich` — Tier 1 location history Service Stack. Durable Service State:
-  `~/Services/data/dawarich`; online Postgres artifact:
-  `~/Services/dumps/dawarich/dawarich.dump`.
 - `personal-cloud` — Tier 1 Copyparty-backed Personal Cloud Service Stack.
   Durable Service State: `~/Services/data/personal-cloud`; no separate logical
   database dump is required.
