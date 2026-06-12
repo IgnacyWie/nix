@@ -59,6 +59,8 @@
       brew "homebrew-zathura/zathura/synctex", trusted: true
       brew "homebrew-zathura/zathura/zathura", trusted: true
       brew "homebrew-zathura/zathura/zathura-pdf-poppler", trusted: true
+      tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true
+      brew "omlx", trusted: true
       brew "koekeishiya/formulae/yabai", trusted: true
       brew "koekeishiya/formulae/skhd", trusted: true
     '';
