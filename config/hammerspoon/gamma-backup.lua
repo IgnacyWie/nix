@@ -7,6 +7,7 @@ local stderrLog = home .. "/Library/Logs/gamma-restic-backup/launchd-stderr.log"
 local backupCommand = "/etc/profiles/per-user/" .. user .. "/bin/gamma-restic-backup"
 local restorePicker = home .. "/.local/scripts/backup-restore-picker"
 local backupDoc = home .. "/nix/backup.md"
+local iconDir = home .. "/Library/Caches/Hammerspoon/gamma-backup-icons"
 
 local runningTask = nil
 
@@ -46,6 +47,49 @@ local function fileSize(path)
   return 0
 end
 
+local sfSymbolRenderer = [[
+import AppKit
+
+let symbol = CommandLine.arguments[1]
+let output = CommandLine.arguments[2]
+let size = NSSize(width: 22, height: 22)
+
+guard let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) else {
+  exit(2)
+}
+
+let configuration = NSImage.SymbolConfiguration(pointSize: 18, weight: .regular)
+let configured = image.withSymbolConfiguration(configuration) ?? image
+
+let representation = NSBitmapImageRep(
+  bitmapDataPlanes: nil,
+  pixelsWide: Int(size.width * 2),
+  pixelsHigh: Int(size.height * 2),
+  bitsPerSample: 8,
+  samplesPerPixel: 4,
+  hasAlpha: true,
+  isPlanar: false,
+  colorSpaceName: .deviceRGB,
+  bitmapFormat: [.alphaFirst],
+  bytesPerRow: 0,
+  bitsPerPixel: 0
+)!
+representation.size = size
+
+NSGraphicsContext.saveGraphicsState()
+NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: representation)
+NSColor.clear.setFill()
+NSRect(origin: .zero, size: size).fill()
+configured.draw(in: NSRect(origin: .zero, size: size), from: .zero, operation: .sourceOver, fraction: 1.0)
+NSGraphicsContext.restoreGraphicsState()
+
+guard let data = representation.representation(using: .png, properties: [:]) else {
+  exit(3)
+}
+
+try data.write(to: URL(fileURLWithPath: output))
+]]
+
 local function asTemplate(image)
   if not image then
     return nil
@@ -60,7 +104,48 @@ local function asTemplate(image)
   return image
 end
 
+local function ensureDirectory(path)
+  hs.execute("/bin/mkdir -p " .. shellQuote(path), true)
+end
+
+local function writeFile(path, content)
+  local file = io.open(path, "w")
+  if not file then
+    return false
+  end
+
+  file:write(content)
+  file:close()
+  return true
+end
+
+local function renderSystemSymbol(name)
+  ensureDirectory(iconDir)
+
+  local iconPath = iconDir .. "/" .. name:gsub("[^A-Za-z0-9_.-]", "_") .. ".png"
+  if not fileModifiedAt(iconPath) then
+    local rendererPath = iconDir .. "/render-sf-symbol.swift"
+    if writeFile(rendererPath, sfSymbolRenderer) then
+      hs.execute(
+        "/usr/bin/swift " .. shellQuote(rendererPath) .. " " .. shellQuote(name) .. " " .. shellQuote(iconPath),
+        true
+      )
+    end
+  end
+
+  if fileModifiedAt(iconPath) then
+    return asTemplate(hs.image.imageFromPath(iconPath))
+  end
+
+  return nil
+end
+
 local function systemImage(name, fallbackName)
+  local rendered = renderSystemSymbol(name)
+  if rendered then
+    return rendered
+  end
+
   if hs.image.systemImageFromName then
     local ok, image = pcall(hs.image.systemImageFromName, name)
     if ok and image then
@@ -68,15 +153,15 @@ local function systemImage(name, fallbackName)
     end
   end
 
-  return asTemplate(hs.image.imageFromName(fallbackName or "NSStatusAvailable"))
+  return asTemplate(hs.image.imageFromName(fallbackName or "NSRefreshTemplate"))
 end
 
 local icons = {
-  ok = systemImage("externaldrive.badge.checkmark", "NSStatusAvailable"),
-  stale = systemImage("externaldrive.badge.exclamationmark", "NSStatusPartiallyAvailable"),
-  failed = systemImage("externaldrive.badge.xmark", "NSStatusUnavailable"),
+  ok = systemImage("externaldrive.badge.checkmark", "NSMenuOnStateTemplate"),
+  stale = systemImage("externaldrive.badge.exclamationmark", "NSCaution"),
+  failed = systemImage("externaldrive.badge.xmark", "NSStopProgressTemplate"),
   running = systemImage("arrow.triangle.2.circlepath", "NSRefreshTemplate"),
-  unknown = systemImage("externaldrive", "NSStatusNone"),
+  unknown = systemImage("externaldrive", "NSActionTemplate"),
 }
 
 local function statusFromFiles()
