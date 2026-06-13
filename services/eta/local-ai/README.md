@@ -51,7 +51,9 @@ Required contract:
 - `OPEN_WEBUI_HOST=ai.mac.wie.dev` keeps the browser UI behind Traefik.
 - `OPEN_WEBUI_AUTH=true` requires Open WebUI application authentication.
 - `OPEN_WEBUI_ENABLE_SIGNUP=false` keeps public signup disabled after the owner
-  account exists.
+  account exists. For first bootstrap on empty Open WebUI state, temporarily set
+  this to `true`, create the owner/admin account, then set it back to `false`
+  and restart the stack.
 - `OMLX_OPENAI_API_BASE_URL=http://host.docker.internal:8000/v1` points Open
   WebUI at host-managed OMLX through the Docker host bridge.
 - `OMLX_OPENAI_API_KEY=omlx-local-no-key` is a non-secret placeholder because
@@ -74,8 +76,24 @@ Never commit `.env`, chat exports, API tokens, or prompt/document content.
    eta-service local-ai up
    ```
 
-3. Open `https://ai.mac.wie.dev` through the Home Server Access Model.
-4. Authenticate with the owner/admin Open WebUI account.
-5. Send one short prompt and confirm it reaches OMLX.
-6. Restart the Service Stack and verify the account and chat state persist under
+3. If this is a fresh Open WebUI data directory, temporarily allow first-account
+   creation:
+
+   ```sh
+   perl -0pi -e 's/OPEN_WEBUI_ENABLE_SIGNUP=false/OPEN_WEBUI_ENABLE_SIGNUP=true/' .env
+   eta-service local-ai up
+   ```
+
+4. Open `https://ai.mac.wie.dev` through the Home Server Access Model and create
+   the owner/admin account.
+5. Disable further signup and restart:
+
+   ```sh
+   perl -0pi -e 's/OPEN_WEBUI_ENABLE_SIGNUP=true/OPEN_WEBUI_ENABLE_SIGNUP=false/' .env
+   eta-service local-ai up
+   ```
+
+6. Authenticate with the owner/admin Open WebUI account.
+7. Send one short prompt and confirm it reaches OMLX.
+8. Restart the Service Stack and verify the account and chat state persist under
    `~/Services/data/local-ai/open-webui`.
