@@ -12,6 +12,66 @@ _Avoid_: Dotfiles, backup repo, Nix platform
 The personal macOS machine used for daily work and development.
 _Avoid_: Laptop, Mac, client
 
+**Personal Assistant Agent**:
+An AI-assisted Home Server capability for the user's calendar, tasks, documents, and email. It is intended to be always available, remotely reachable through the Home Server Access Model, and centered on personal services rather than Workstation-local app state.
+_Avoid_: Bot, secretary, automation script
+
+**Assistant Runtime Home**:
+The host family boundary where the Personal Assistant Agent normally runs. In v1, the Assistant Runtime Home is the Home Server rather than the Workstation.
+_Avoid_: Deployment target, agent host, assistant machine
+
+**Assistant Interaction Surface**:
+The primary channel through which the user talks to the Personal Assistant Agent. In v1, the Assistant Interaction Surface is a Telegram bot rather than Pi CLI, direct web UI, or email.
+_Avoid_: Chat UI, frontend, command channel
+
+**Assistant Runtime Shape**:
+The process form of the Personal Assistant Agent. In v1, the assistant is a long-running Pi SDK service on the Home Server rather than an interactive Pi extension, with an optional Pi extension reserved for later debugging or administration.
+_Avoid_: App type, service architecture, bot daemon
+
+**Host-Managed Assistant Service**:
+A Personal Assistant Agent service managed directly by the Home Server operating system rather than as a Docker Compose Service Stack. In v1, this shape is used because the assistant depends on Home Server local app automation.
+_Avoid_: Containerized assistant, compose bot, unmanaged script
+
+**Assistant Durable State**:
+The Personal Assistant Agent state that must survive service restarts and Home Server recovery. In v1, pending approvals, staged actions, audit history, and conversation summaries live under the Service Data Root, likely in SQLite plus an append-only audit log.
+_Avoid_: Bot database, memory, chat history
+
+**Assistant Secret Projection**:
+The local untracked copy of Personal Assistant Agent credentials used by the Home Server service. In v1, `apps/personal-assistant/.env` may project secrets from the Secret Store and be protected by local backup, but it is not the canonical Secret Store and must never be committed.
+_Avoid_: Secret source, checked-in environment, credential store
+
+**Assistant Audit Boundary**:
+The accountability scope for Personal Assistant Agent activity. In v1, every write and staged action is audited, while reads are recorded only as selective summaries when needed to explain later actions.
+_Avoid_: Logging, telemetry, full trace
+
+**Assistant Task Timing Defaults**:
+The conventional dates and times the Personal Assistant Agent may apply when creating tasks from vague natural language. In v1, vague times may be applied immediately when they match approved defaults, while recurring tasks still require preview.
+_Avoid_: Date parsing, reminder rules, schedule guesses
+
+**Assistant User Boundary**:
+The human identity boundary for the Personal Assistant Agent. In v1, only the owner's allowlisted Telegram user ID may issue commands.
+_Avoid_: Bot users, access control, authentication
+
+**Assistant Integration Boundary**:
+The rule for how the Personal Assistant Agent connects to external personal systems. In v1, integrations are network-first except for Things, which is allowed as a Home Server local app automation exception.
+_Avoid_: API strategy, connector pattern, integration style
+
+**Home Server Local App Automation**:
+A Personal Assistant Agent integration that depends on a macOS app installed and signed in on the Home Server. In v1, this is an explicit exception for Things rather than a general Home Server pattern.
+_Avoid_: GUI automation, AppleScript hack, desktop automation
+
+**Assistant Authority Model**:
+The permission boundary for Personal Assistant Agent actions. The v1 model allows autonomous low-risk actions within explicit rules and requires confirmation for high-risk actions.
+_Avoid_: Full autopilot, manual-only approval, permissions
+
+**Low-Risk Assistant Action**:
+A Personal Assistant Agent action that is read-only, staged for later review, or a reversible personal write such as creating a tentative private calendar hold. Low-risk actions exclude external side effects, deletion, modification of existing calendar events, and changes outside approved staging areas.
+_Avoid_: Safe action, harmless automation, background permission
+
+**External Assistant Side Effect**:
+A Personal Assistant Agent action that affects another person or a shared system, such as sending email, inviting attendees, modifying shared calendar events, or publishing document changes. External side effects require explicit confirmation in v1.
+_Avoid_: Send action, real-world action, irreversible action
+
 **Home Server**:
 A macOS machine used to run household and self-hosted services, plus the recovery process for those services. The current home server's host name is `eta`.
 _Avoid_: Server box, Mac Mini, Docker host
@@ -73,8 +133,20 @@ A Home Server service stack whose data loss would be painful enough that migrati
 _Avoid_: Critical container, must-have app, production service
 
 **Tier 2 Service Stack**:
-A Home Server service stack that may matter operationally but is not a v1 migration blocker and does not receive Tier 1 backup-gating or restore-drill requirements unless a later issue promotes it. FreshRSS is Tier 2 for v1.
+A Home Server service stack that may matter operationally but is not a v1 migration blocker and does not receive Tier 1 backup-gating or restore-drill requirements unless a later issue promotes it. FreshRSS and Local AI Service Stacks are Tier 2 for v1.
 _Avoid_: Forgotten service, in-scope Tier 1 service
+
+**Local AI Service Stack**:
+A Home Server service stack that runs local model-serving or AI-assisted workflows on `eta` without depending on hosted AI APIs for normal operation.
+_Avoid_: Cloud AI, generic AI setup, hosted model service
+
+**Local Model Runtime**:
+The Home Server component that loads local language models and exposes them to AI-facing services. It should be treated as replaceable behind a standard API where practical.
+_Avoid_: Model app, inference thing, AI backend
+
+**AI-Written Document Metadata**:
+Paperless document metadata that a Local AI Service Stack writes automatically after analyzing a document. In v1, AI-written metadata must be visibly marked so it can be audited later.
+_Avoid_: AI magic, enrichment, autocategorization
 
 **Keystone Service**:
 The Tier 1 service stack that must be restored first because it unlocks recovery of other service secrets. Vaultwarden is the v1 Keystone Service for `eta`.
