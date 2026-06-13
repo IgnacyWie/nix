@@ -576,6 +576,8 @@
           grep -Fq 'OPENAI_API_KEYS: ''${OMLX_OPENAI_API_KEY:-omlx-local-no-key}' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'extra_hosts:' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'host.docker.internal:host-gateway' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'healthcheck:' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'disable: true' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'WEBUI_AUTH: ''${OPEN_WEBUI_AUTH:-true}' ${./services/eta/local-ai/compose.yaml}
 
           grep -Fq 'OPEN_WEBUI_HOST=ai.mac.wie.dev' ${./services/eta/local-ai/.env.example}

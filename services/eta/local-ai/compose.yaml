@@ -14,6 +14,8 @@ services:
       OPENAI_API_KEYS: ${OMLX_OPENAI_API_KEY:-omlx-local-no-key}
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    healthcheck:
+      disable: true
     volumes:
       - ${HOME}/Services/data/local-ai/open-webui:/app/backend/data
     networks:
