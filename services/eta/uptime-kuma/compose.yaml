@@ -1,0 +1,29 @@
+networks:
+  monitoring:
+    driver: bridge
+  ingress:
+    name: proxy-network
+    external: true
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    environment:
+      PUID: ${UPTIME_KUMA_PUID:-1000}
+      PGID: ${UPTIME_KUMA_PGID:-1000}
+    volumes:
+      - ${HOME}/Services/data/uptime-kuma:/app/data
+    networks:
+      - monitoring
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.uptime-kuma.entrypoints: websecure
+      traefik.http.routers.uptime-kuma.rule: Host(`${UPTIME_KUMA_HOST}`)
+      traefik.http.routers.uptime-kuma.tls: "true"
+      traefik.http.routers.uptime-kuma.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-myresolver}
+      traefik.http.routers.uptime-kuma.tls.domains[0].main: ${TRAEFIK_TLS_DOMAIN_MAIN}
+      traefik.http.routers.uptime-kuma.tls.domains[0].sans: ${TRAEFIK_TLS_DOMAIN_SANS}
+      traefik.http.services.uptime-kuma.loadbalancer.server.port: "3001"

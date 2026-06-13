@@ -93,4 +93,12 @@ containers are available.
 - `personal-cloud` — Tier 1 Copyparty-backed Personal Cloud Service Stack.
   Durable Service State: `~/Services/data/personal-cloud`; no separate logical
   database dump is required.
+- `traefik` — Ingress Layer. Durable Service State:
+  `~/Services/data/traefik`.
+- `homepage` — Homepage and Glance dashboards. Durable Service State:
+  `~/Services/data/homepage` and `~/Services/data/glance`.
+- `beszel` — monitoring dashboard. Durable Service State:
+  `~/Services/data/beszel`.
+- `uptime-kuma` — uptime monitoring. Durable Service State:
+  `~/Services/data/uptime-kuma`.
 

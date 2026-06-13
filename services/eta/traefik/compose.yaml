@@ -1,0 +1,52 @@
+services:
+  traefik:
+    image: traefik:v3.6
+    container_name: traefik
+    restart: always
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/etc/traefik/external_services.yml"
+      - "--providers.file.watch=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--certificatesresolvers.${TRAEFIK_CERT_RESOLVER:-myresolver}.acme.dnschallenge=true"
+      - "--certificatesresolvers.${TRAEFIK_CERT_RESOLVER:-myresolver}.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.${TRAEFIK_CERT_RESOLVER:-myresolver}.acme.dnschallenge.delaybeforecheck=${TRAEFIK_DNS_CHALLENGE_DELAY:-10}"
+      - "--certificatesresolvers.${TRAEFIK_CERT_RESOLVER:-myresolver}.acme.dnschallenge.resolvers=${TRAEFIK_DNS_CHALLENGE_RESOLVERS:-1.1.1.1:53,8.8.8.8:53}"
+      - "--certificatesresolvers.${TRAEFIK_CERT_RESOLVER:-myresolver}.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.${TRAEFIK_CERT_RESOLVER:-myresolver}.acme.storage=/letsencrypt/acme.json"
+    environment:
+      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8081:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${HOME}/Services/data/traefik/letsencrypt:/letsencrypt
+      - ${HOME}/Services/data/traefik/config/external_services.yml:/etc/traefik/external_services.yml
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dashboard.entrypoints: websecure
+      traefik.http.routers.dashboard.rule: Host(`${TRAEFIK_DASHBOARD_HOST}`)
+      traefik.http.routers.dashboard.service: api@internal
+      traefik.http.routers.dashboard.tls: "true"
+      traefik.http.routers.dashboard.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-myresolver}
+      traefik.http.routers.dashboard.tls.domains[0].main: ${TRAEFIK_TLS_DOMAIN_MAIN}
+      traefik.http.routers.dashboard.tls.domains[0].sans: ${TRAEFIK_TLS_DOMAIN_SANS}
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true

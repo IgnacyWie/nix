@@ -1,0 +1,47 @@
+services:
+  glance:
+    image: glanceapp/glance:latest
+    container_name: glance
+    restart: unless-stopped
+    ports:
+      - "${GLANCE_BIND_PORT:-8080}:8080"
+    volumes:
+      - ${HOME}/Services/data/glance/config:/app/config
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.glance.entrypoints: websecure
+      traefik.http.routers.glance.rule: Host(`${GLANCE_HOST}`)
+      traefik.http.routers.glance.tls: "true"
+      traefik.http.routers.glance.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-myresolver}
+      traefik.http.routers.glance.tls.domains[0].main: ${TRAEFIK_TLS_DOMAIN_MAIN}
+      traefik.http.routers.glance.tls.domains[0].sans: ${TRAEFIK_TLS_DOMAIN_SANS}
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    environment:
+      PUID: ${HOMEPAGE_PUID:-501}
+      PGID: ${HOMEPAGE_PGID:-20}
+      TZ: ${TZ:-Europe/Amsterdam}
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS}
+    volumes:
+      - ${HOME}/Services/data/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.homepage.entrypoints: websecure
+      traefik.http.routers.homepage.rule: Host(`${HOMEPAGE_HOST}`)
+      traefik.http.routers.homepage.tls: "true"
+      traefik.http.routers.homepage.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-myresolver}
+      traefik.http.routers.homepage.tls.domains[0].main: ${TRAEFIK_TLS_DOMAIN_MAIN}
+      traefik.http.routers.homepage.tls.domains[0].sans: ${TRAEFIK_TLS_DOMAIN_SANS}
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true

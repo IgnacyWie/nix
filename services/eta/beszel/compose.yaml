@@ -1,0 +1,24 @@
+services:
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    restart: unless-stopped
+    volumes:
+      - ${HOME}/Services/data/beszel/data:/beszel_data
+      - ${HOME}/Services/data/beszel/socket:/beszel_socket
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.beszel.entrypoints: websecure
+      traefik.http.routers.beszel.rule: Host(`${BESZEL_HOST}`)
+      traefik.http.routers.beszel.tls: "true"
+      traefik.http.routers.beszel.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-myresolver}
+      traefik.http.routers.beszel.tls.domains[0].main: ${TRAEFIK_TLS_DOMAIN_MAIN}
+      traefik.http.routers.beszel.tls.domains[0].sans: ${TRAEFIK_TLS_DOMAIN_SANS}
+      traefik.http.services.beszel.loadbalancer.server.port: "8090"
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true
