@@ -1,0 +1,34 @@
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      TZ: ${TZ:-Europe/Amsterdam}
+      WEBUI_AUTH: ${OPEN_WEBUI_AUTH:-true}
+      ENABLE_SIGNUP: ${OPEN_WEBUI_ENABLE_SIGNUP:-false}
+      ENABLE_OLLAMA_API: ${OPEN_WEBUI_ENABLE_OLLAMA_API:-false}
+      OPENAI_API_BASE_URLS: ${OMLX_OPENAI_API_BASE_URL:-http://host.docker.internal:8000/v1}
+      OPENAI_API_KEYS: ${OMLX_OPENAI_API_KEY:-omlx-local-no-key}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ${HOME}/Services/data/local-ai/open-webui:/app/backend/data
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.open-webui.entrypoints: websecure
+      traefik.http.routers.open-webui.rule: Host(`${OPEN_WEBUI_HOST}`)
+      traefik.http.routers.open-webui.tls: "true"
+      traefik.http.routers.open-webui.tls.certresolver: myresolver
+      traefik.http.routers.open-webui.tls.domains[0].main: mac.wie.dev
+      traefik.http.routers.open-webui.tls.domains[0].sans: "*.mac.wie.dev"
+      traefik.http.services.open-webui.loadbalancer.server.port: "8080"
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true

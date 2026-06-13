@@ -553,6 +553,54 @@
           touch "$out"
         '';
 
+        eta-local-ai-service-stack = pkgs.runCommand "eta-local-ai-service-stack-check" { } ''
+          set -eu
+
+          test -f ${./services/eta/local-ai/compose.yaml}
+          test -f ${./services/eta/local-ai/.env.example}
+          test -f ${./services/eta/local-ai/README.md}
+
+          grep -Fq 'image: ghcr.io/open-webui/open-webui:main' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'container_name: open-webui' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq -- '- ''${HOME}/Services/data/local-ai/open-webui:/app/backend/data' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'name: proxy-network' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'external: true' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'env_file:' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq -- '- ./.env' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.routers.open-webui.rule: Host(`''${OPEN_WEBUI_HOST}`)' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.routers.open-webui.tls.certresolver: myresolver' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.routers.open-webui.tls.domains[0].main: mac.wie.dev' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.routers.open-webui.tls.domains[0].sans: "*.mac.wie.dev"' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.services.open-webui.loadbalancer.server.port: "8080"' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'OPENAI_API_BASE_URLS: ''${OMLX_OPENAI_API_BASE_URL:-http://host.docker.internal:8000/v1}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'OPENAI_API_KEYS: ''${OMLX_OPENAI_API_KEY:-omlx-local-no-key}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'extra_hosts:' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'host.docker.internal:host-gateway' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'WEBUI_AUTH: ''${OPEN_WEBUI_AUTH:-true}' ${./services/eta/local-ai/compose.yaml}
+
+          grep -Fq 'OPEN_WEBUI_HOST=ai.mac.wie.dev' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'OPEN_WEBUI_AUTH=true' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'OPEN_WEBUI_ENABLE_SIGNUP=false' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'OMLX_OPENAI_API_BASE_URL=http://host.docker.internal:8000/v1' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'OMLX_OPENAI_API_KEY=omlx-local-no-key' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'Do not commit .env or real secrets.' ${./services/eta/local-ai/.env.example}
+
+          grep -Fq 'Local AI Service Stack' ${./services/eta/local-ai/README.md}
+          grep -Fq 'https://ai.mac.wie.dev' ${./services/eta/local-ai/README.md}
+          grep -Fq '~/Services/data/local-ai/open-webui' ${./services/eta/local-ai/README.md}
+          grep -Fq 'host-managed OMLX' ${./services/eta/local-ai/README.md}
+          grep -Fq 'http://host.docker.internal:8000/v1' ${./services/eta/local-ai/README.md}
+          grep -Fq 'Open WebUI application authentication' ${./services/eta/local-ai/README.md}
+          grep -Fq 'eta-service local-ai up' ${./services/eta/local-ai/README.md}
+
+          grep -Fq '`local-ai` — Tier 2 Local AI Service Stack.' ${./services/eta/README.md}
+          grep -Fq 'ai.mac.wie.dev' ${./services/eta/README.md}
+
+          ! grep -R 'sk-' ${./services/eta/local-ai}
+
+          touch "$out"
+        '';
+
         gamma-pam-config =
           let
             pamConfig = pkgs.writeText "sudo-local-pam" gammaConfiguration.config.security.pam.services.sudo_local.text;

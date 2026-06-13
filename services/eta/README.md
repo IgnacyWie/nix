@@ -38,9 +38,10 @@ The v1 Tier 1 Service Stacks are:
 - `linkding` — bookmarks.
 - `personal-cloud` — Copyparty-backed Personal Cloud.
 
-FreshRSS is Tier 2 for v1. It may be inventoried and discussed, but it is not a
-v1 Tier 1 migration blocker and should not receive Tier 1 restore-drill or
-backup-gating requirements unless a later issue changes the scope.
+FreshRSS is Tier 2 for v1. Local AI Service Stacks are also Tier 2 for v1. They
+may be inventoried and discussed, but they are not v1 Tier 1 migration blockers
+and should not receive Tier 1 restore-drill or backup-gating requirements unless
+a later issue changes the scope.
 
 Explicitly out of scope for v1 migration work:
 
@@ -101,4 +102,8 @@ containers are available.
   `~/Services/data/beszel`.
 - `uptime-kuma` — uptime monitoring. Durable Service State:
   `~/Services/data/uptime-kuma`.
+- `local-ai` — Tier 2 Local AI Service Stack. Open WebUI is routed at
+  `ai.mac.wie.dev`; Durable Service State:
+  `~/Services/data/local-ai/open-webui`; OMLX remains host-managed and is reached
+  through `http://host.docker.internal:8000/v1`.
 
