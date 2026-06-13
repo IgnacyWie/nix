@@ -211,6 +211,45 @@ depend on live model inference.
    tail -100 ~/Services/data/omlx/logs/server.log
    ```
 
+## `eta` Personal Assistant Agent
+
+The Personal Assistant Agent is a primary-user launchd agent. Its local
+`apps/personal-assistant/.env` is an Assistant Secret Projection and must be
+created from the secret store, not committed.
+
+1. On `eta`, install application dependencies after checkout updates:
+
+   ```sh
+   cd ~/nix/apps/personal-assistant
+   npm install --omit=dev
+   ```
+
+2. Materialize the Assistant Secret Projection:
+
+   ```sh
+   cd ~/nix/apps/personal-assistant
+   cp .env.example .env
+   chmod 600 .env
+   $EDITOR .env
+   ```
+
+3. Apply the `eta` Home Manager configuration and confirm the launchd agent is
+   loaded:
+
+   ```sh
+   launchctl print gui/$(id -u)/org.nix-community.home.eta-personal-assistant
+   ```
+
+4. Inspect startup logs if validation fails:
+
+   ```sh
+   tail -100 ~/Library/Logs/personal-assistant/launchd-stderr.log
+   ```
+
+5. Send a Telegram message from a non-allowlisted account and verify the reply
+   is `Unauthorized.` Then send a message from the allowlisted user and verify a
+   concise hosted Pi model response.
+
 ## `eta` Home Server Keystone Recovery
 
 Vaultwarden is the v1 Keystone Service and must be restored before relying on

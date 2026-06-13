@@ -71,6 +71,7 @@
                   ./modules/home/home-server.nix
                   ./modules/home/home-server-backup.nix
                   ./modules/home/omlx.nix
+                  ./modules/home/personal-assistant.nix
                   ./modules/home/shell.nix
                 ];
                 personal = {
@@ -268,6 +269,45 @@
             grep -Fq 'not exposed directly to the LAN or tailnet' ${./README.md}
             grep -Fq '~/Services/data/omlx/models' ${./README.md}
             grep -Fq '~/Services/data/omlx/logs' ${./README.md}
+
+            touch "$out"
+          '';
+
+        eta-personal-assistant =
+          let
+            etaConfig = etaConfiguration.config;
+            homeConfig = etaConfig.home-manager.users.ignacywielogorski;
+            agent = homeConfig.launchd.agents.eta-personal-assistant;
+          in
+          assert agent.enable;
+          assert agent.config.KeepAlive == true;
+          assert agent.config.ProcessType == "Background";
+          assert agent.config.RunAtLoad == true;
+          assert builtins.elem "${pkgs.nodejs}/bin/node" agent.config.ProgramArguments;
+          assert builtins.elem "/Users/ignacywielogorski/nix/apps/personal-assistant/src/main.mjs"
+            agent.config.ProgramArguments;
+          assert agent.config.WorkingDirectory == "/Users/ignacywielogorski/nix/apps/personal-assistant";
+          assert
+            agent.config.StandardOutPath
+            == "/Users/ignacywielogorski/Library/Logs/personal-assistant/launchd-stdout.log";
+          assert
+            agent.config.StandardErrorPath
+            == "/Users/ignacywielogorski/Library/Logs/personal-assistant/launchd-stderr.log";
+          pkgs.runCommand "eta-personal-assistant-check" { nativeBuildInputs = [ pkgs.nodejs ]; } ''
+            set -eu
+
+            node --test ${./apps/personal-assistant}/test/*.test.mjs
+            test -f ${./apps/personal-assistant/.env.example}
+            grep -Fq 'TELEGRAM_BOT_TOKEN=' ${./apps/personal-assistant/.env.example}
+            grep -Fq 'ASSISTANT_ALLOWLISTED_TELEGRAM_USER_ID=' ${./apps/personal-assistant/.env.example}
+            grep -Fq 'ASSISTANT_DURABLE_STATE_DIR=' ${./apps/personal-assistant/.env.example}
+            grep -Fq 'PI_MODEL_PROVIDER=' ${./apps/personal-assistant/.env.example}
+            grep -Fq 'PI_MODEL_ID=' ${./apps/personal-assistant/.env.example}
+            grep -Fq 'Assistant Secret Projection' ${./apps/personal-assistant/.env.example}
+            grep -Fq 'apps/personal-assistant/.env' ${./.gitignore}
+            grep -Fq 'assistant-secret-projection' ${./.gitleaks.toml}
+            grep -Fq 'launchctl print gui/$(id -u)/org.nix-community.home.eta-personal-assistant' ${./manual-steps.md}
+            grep -Fq 'Personal Assistant Agent' ${./README.md}
 
             touch "$out"
           '';
