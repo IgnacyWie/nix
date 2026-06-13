@@ -1,6 +1,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./homebrew.nix
+  ];
+
   networking.hostName = "eta";
   networking.computerName = "eta";
   system.primaryUser = "ignacywielogorski";

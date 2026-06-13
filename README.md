@@ -107,6 +107,14 @@ On `eta`, `eta-service list` and `eta-service inspect <stack>` only read
 Startup remains explicit through commands such as `eta-service <stack> up`; the
 flake does not configure launchd autostart for all stacks.
 
+OMLX is installed on `eta` through host-specific Homebrew configuration as the
+host-managed Local Model Runtime for Local AI Service Stacks. This Homebrew
+scope is separate from the `gamma` Workstation Homebrew scope. The initial model
+preference is configurable with `personal.omlx.initialModel` and defaults to
+`mlx-community/Qwen2.5-1.5B-Instruct-4bit`, a small instruct model preference
+for constrained Apple Silicon memory. It is not a recovery dependency; restored
+service state must not require that exact model to exist.
+
 ## Repository Workflow
 
 ### Apply Flow

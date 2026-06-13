@@ -193,6 +193,30 @@
           touch "$out"
         '';
 
+        eta-omlx-homebrew =
+          let
+            etaConfig = etaConfiguration.config;
+            gammaConfig = gammaConfiguration.config;
+            etaHomebrewExtraConfig = pkgs.writeText "eta-homebrew-extra-config" etaConfig.homebrew.extraConfig;
+            gammaHomebrewExtraConfig = pkgs.writeText "gamma-homebrew-extra-config" gammaConfig.homebrew.extraConfig;
+          in
+          assert etaConfig.homebrew.enable;
+          assert etaConfig.homebrew.onActivation.autoUpdate == false;
+          assert etaConfig.homebrew.onActivation.upgrade == false;
+          assert etaConfig.homebrew.onActivation.cleanup == "none";
+          assert etaConfig.personal.omlx.initialModel == "mlx-community/Qwen2.5-1.5B-Instruct-4bit";
+          assert etaConfig.environment.variables.OMLX_INITIAL_MODEL == etaConfig.personal.omlx.initialModel;
+          pkgs.runCommand "eta-omlx-homebrew-check" { } ''
+            set -eu
+
+            grep -Fq 'tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true' ${etaHomebrewExtraConfig}
+            grep -Fq 'brew "omlx", trusted: true' ${etaHomebrewExtraConfig}
+            ! grep -Fq 'jundot/omlx' ${gammaHomebrewExtraConfig}
+            ! grep -Fq 'brew "omlx"' ${gammaHomebrewExtraConfig}
+
+            touch "$out"
+          '';
+
         eta-v1-migration-scope = pkgs.runCommand "eta-v1-migration-scope-check" { } ''
           set -eu
 
