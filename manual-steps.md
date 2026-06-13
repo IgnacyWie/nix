@@ -169,6 +169,47 @@ mlx_vlm.generate --help
 8. Complete a restore drill for one file from `~/Services` and one recovery
    document from `~/nix/services/eta` or `~/nix/backup.md`.
 
+## `eta` OMLX Local Model Runtime
+
+OMLX is host-managed on `eta` and should be checked without making flake checks
+depend on live model inference.
+
+1. Apply the `eta` Home Manager configuration.
+2. Confirm the launchd agent is loaded:
+
+   ```sh
+   launchctl print gui/$(id -u)/org.nix-community.home.eta-omlx
+   ```
+
+3. Confirm OMLX is listening only on localhost:
+
+   ```sh
+   lsof -nP -iTCP:8000 -sTCP:LISTEN
+   ```
+
+   The listener must be `127.0.0.1:8000`, not `0.0.0.0:8000`, `*:8000`, or a
+   tailnet/LAN address.
+
+4. Confirm the server responds without loading a model:
+
+   ```sh
+   curl -fsS http://127.0.0.1:8000/health
+   curl -fsS http://127.0.0.1:8000/v1/models
+   ```
+
+5. Confirm model and log directories exist:
+
+   ```sh
+   test -d ~/Services/data/omlx/models
+   test -d ~/Services/data/omlx/logs
+   ```
+
+6. Inspect logs if startup fails:
+
+   ```sh
+   tail -100 ~/Services/data/omlx/logs/launchd-stderr.log
+   tail -100 ~/Services/data/omlx/logs/server.log
+   ```
 
 ## `eta` Home Server Keystone Recovery
 

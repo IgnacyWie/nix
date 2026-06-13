@@ -115,6 +115,28 @@ preference is configurable with `personal.omlx.initialModel` and defaults to
 for constrained Apple Silicon memory. It is not a recovery dependency; restored
 service state must not require that exact model to exist.
 
+Home Manager manages OMLX as a user launchd agent on `eta`. The agent starts at
+login, restarts on failure, and runs:
+
+```sh
+/opt/homebrew/bin/omlx serve \
+  --base-path ~/Services/data/omlx \
+  --model-dir ~/Services/data/omlx/models \
+  --host 127.0.0.1 \
+  --port 8000 \
+  --log-level info \
+  --max-concurrent-requests 1 \
+  --memory-guard safe \
+  --no-cache
+```
+
+The raw OMLX model API is intentionally bound only to `127.0.0.1:8000` and is
+not exposed directly to the LAN or tailnet. v1 does not configure an OMLX API
+key because the raw API is localhost-only; later service-facing access should go
+through an explicit local proxy or integration boundary. Durable model storage
+lives at `~/Services/data/omlx/models`; OMLX runtime logs and launchd stdout and
+stderr live under `~/Services/data/omlx/logs`.
+
 ## Repository Workflow
 
 ### Apply Flow

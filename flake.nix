@@ -70,6 +70,7 @@
                   ./modules/home/git.nix
                   ./modules/home/home-server.nix
                   ./modules/home/home-server-backup.nix
+                  ./modules/home/omlx.nix
                   ./modules/home/shell.nix
                 ];
                 personal = {
@@ -213,6 +214,60 @@
             grep -Fq 'brew "omlx", trusted: true' ${etaHomebrewExtraConfig}
             ! grep -Fq 'jundot/omlx' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'brew "omlx"' ${gammaHomebrewExtraConfig}
+
+            touch "$out"
+          '';
+
+        eta-omlx-launchd =
+          let
+            etaConfig = etaConfiguration.config;
+            homeConfig = etaConfig.home-manager.users.ignacywielogorski;
+            agent = homeConfig.launchd.agents.eta-omlx;
+            expectedProgramArguments = [
+              "/opt/homebrew/bin/omlx"
+              "serve"
+              "--base-path"
+              "/Users/ignacywielogorski/Services/data/omlx"
+              "--model-dir"
+              "/Users/ignacywielogorski/Services/data/omlx/models"
+              "--host"
+              "127.0.0.1"
+              "--port"
+              "8000"
+              "--log-level"
+              "info"
+              "--max-concurrent-requests"
+              "1"
+              "--memory-guard"
+              "safe"
+              "--no-cache"
+            ];
+          in
+          assert agent.enable;
+          assert agent.config.ProgramArguments == expectedProgramArguments;
+          assert agent.config.KeepAlive == true;
+          assert agent.config.ProcessType == "Background";
+          assert agent.config.RunAtLoad == true;
+          assert
+            agent.config.StandardOutPath
+            == "/Users/ignacywielogorski/Services/data/omlx/logs/launchd-stdout.log";
+          assert
+            agent.config.StandardErrorPath
+            == "/Users/ignacywielogorski/Services/data/omlx/logs/launchd-stderr.log";
+          assert agent.config.WorkingDirectory == "/Users/ignacywielogorski/Services/data/omlx";
+          assert !(builtins.elem "--api-key" agent.config.ProgramArguments);
+          pkgs.runCommand "eta-omlx-launchd-check" { } ''
+            set -eu
+
+            grep -Fq 'Services/data/omlx' ${./modules/home/omlx.nix}
+            grep -Fq '/models' ${./modules/home/omlx.nix}
+            grep -Fq '/logs' ${./modules/home/omlx.nix}
+            grep -Fq 'curl -fsS http://127.0.0.1:8000/health' ${./manual-steps.md}
+            grep -Fq 'curl -fsS http://127.0.0.1:8000/v1/models' ${./manual-steps.md}
+            grep -Fq 'launchctl print gui/$(id -u)/org.nix-community.home.eta-omlx' ${./manual-steps.md}
+            grep -Fq 'not exposed directly to the LAN or tailnet' ${./README.md}
+            grep -Fq '~/Services/data/omlx/models' ${./README.md}
+            grep -Fq '~/Services/data/omlx/logs' ${./README.md}
 
             touch "$out"
           '';
