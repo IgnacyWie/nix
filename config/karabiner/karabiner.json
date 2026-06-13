@@ -1001,13 +1001,6 @@
         "to" : [ {
           "key_code" : "right_option"
         } ]
-      }, {
-        "from" : {
-          "key_code" : "right_option"
-        },
-        "to" : [ {
-          "key_code" : "right_command"
-        } ]
       } ]
     }, {
       "identifiers" : {
@@ -1021,13 +1014,6 @@
         },
         "to" : [ {
           "key_code" : "right_option"
-        } ]
-      }, {
-        "from" : {
-          "key_code" : "right_option"
-        },
-        "to" : [ {
-          "key_code" : "right_command"
         } ]
       } ]
     }, {
@@ -1043,13 +1029,6 @@
         "to" : [ {
           "key_code" : "right_option"
         } ]
-      }, {
-        "from" : {
-          "key_code" : "right_option"
-        },
-        "to" : [ {
-          "key_code" : "right_command"
-        } ]
       } ]
     }, {
       "identifiers" : {
@@ -1063,13 +1042,6 @@
         "to" : [ {
           "key_code" : "right_option"
         } ]
-      }, {
-        "from" : {
-          "key_code" : "right_option"
-        },
-        "to" : [ {
-          "key_code" : "right_command"
-        } ]
       } ]
     }, {
       "identifiers" : {
@@ -1081,13 +1053,6 @@
         },
         "to" : [ {
           "key_code" : "right_option"
-        } ]
-      }, {
-        "from" : {
-          "key_code" : "right_option"
-        },
-        "to" : [ {
-          "key_code" : "right_command"
         } ]
       } ]
     } ],
