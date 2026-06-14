@@ -35,3 +35,9 @@ Copy `.env.example` to `.env` on `eta` and keep it uncommitted. Required values:
 
 Keep `STIRLING_PDF_SECURITY_ENABLE_LOGIN=true` unless access is otherwise
 restricted by the Home Server Access Model.
+
+For a first-boot or password-reset bootstrap, set
+`STIRLING_PDF_INITIAL_LOGIN_ENABLED=true` with temporary
+`STIRLING_PDF_INITIAL_LOGIN_USERNAME` and `STIRLING_PDF_INITIAL_LOGIN_PASSWORD`,
+then recreate the H2 database under `~/Services/data/stirling-pdf/configs`.
+Disable the initial login values again after taking over the admin account.
