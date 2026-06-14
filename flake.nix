@@ -580,7 +580,7 @@
           grep -Fq 'image: clusterzx/paperless-ai:latest' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'container_name: paperless-ai' ${./services/eta/local-ai/compose.yaml}
           grep -Fq -- '- ''${HOME}/Services/data/local-ai/paperless-ai:/app/data' ${./services/eta/local-ai/compose.yaml}
-          grep -Fq 'PAPERLESS_API_URL: ''${PAPERLESS_AI_PAPERLESS_API_URL:-https://documents.mac.wie.dev/api}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'PAPERLESS_API_URL: ''${PAPERLESS_AI_PAPERLESS_API_URL:-http://paperless-webserver-1:8000/api}' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'PAPERLESS_API_TOKEN: ''${PAPERLESS_AI_PAPERLESS_API_TOKEN:-set-me}' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'PAPERLESS_USERNAME: ''${PAPERLESS_AI_PAPERLESS_USERNAME:-set-me}' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'CUSTOM_BASE_URL: ''${OMLX_OPENAI_API_BASE_URL:-http://host.docker.internal:8000/v1}' ${./services/eta/local-ai/compose.yaml}
@@ -597,7 +597,7 @@
           grep -Fq 'OMLX_OPENAI_API_BASE_URL=http://host.docker.internal:8000/v1' ${./services/eta/local-ai/.env.example}
           grep -Fq 'OMLX_OPENAI_API_KEY=omlx-local-no-key' ${./services/eta/local-ai/.env.example}
           grep -Fq 'PAPERLESS_AI_HOST=paperless-ai.mac.wie.dev' ${./services/eta/local-ai/.env.example}
-          grep -Fq 'PAPERLESS_AI_PAPERLESS_API_URL=https://documents.mac.wie.dev/api' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_PAPERLESS_API_URL=http://paperless-webserver-1:8000/api' ${./services/eta/local-ai/.env.example}
           grep -Fq 'PAPERLESS_AI_PAPERLESS_USERNAME=set-me-paperless-ai-user' ${./services/eta/local-ai/.env.example}
           grep -Fq 'PAPERLESS_AI_PAPERLESS_API_TOKEN=set-me-paperless-api-token' ${./services/eta/local-ai/.env.example}
           grep -Fq 'PAPERLESS_AI_PROVIDER=custom' ${./services/eta/local-ai/.env.example}

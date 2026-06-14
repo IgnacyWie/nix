@@ -83,8 +83,10 @@ Paperless-AI contract:
 
 - `PAPERLESS_AI_HOST=paperless-ai.mac.wie.dev` routes the Paperless-AI UI through
   Traefik.
-- `PAPERLESS_AI_PAPERLESS_API_URL=https://documents.mac.wie.dev/api` points at
-  the Tier 1 Paperless Service Stack.
+- `PAPERLESS_AI_PAPERLESS_API_URL=http://paperless-webserver-1:8000/api` points
+  at the Tier 1 Paperless Service Stack over the shared `proxy-network` Docker
+  network. `https://documents.mac.wie.dev/api` also works when Traefik is
+  healthy, but the internal URL avoids an unnecessary Ingress Layer round trip.
 - `PAPERLESS_AI_PAPERLESS_USERNAME` and `PAPERLESS_AI_PAPERLESS_API_TOKEN` must
   be a dedicated Paperless user/token for Paperless-AI, stored in the Secret
   Store and projected only into the untracked `.env` on `eta`.
@@ -94,6 +96,11 @@ Paperless-AI contract:
 - `PAPERLESS_AI_API_KEY` and `PAPERLESS_AI_JWT_SECRET` must be replaced with long
   random values. Paperless-AI supports login/JWT sessions after initial setup
   and API-key authentication for API calls.
+- If the Paperless-AI setup UI writes settings to
+  `~/Services/data/local-ai/paperless-ai/.env`, copy the Paperless and custom AI
+  values back into this stack `.env` using the `PAPERLESS_AI_*` names above, then
+  recreate the container. Compose environment values override Paperless-AI's
+  persisted `/app/data/.env` values.
 - `PAPERLESS_AI_ADD_AI_PROCESSED_TAG=yes` and
   `PAPERLESS_AI_PROCESSED_TAG_NAME=ai-written-metadata` visibly mark
   AI-written document metadata for later audits.
@@ -142,7 +149,14 @@ prompt/document content.
 9. Open `https://paperless-ai.mac.wie.dev` through the Home Server Access Model,
    complete Paperless-AI setup if prompted, and confirm its login flow is active.
 10. Confirm Paperless-AI can read a Paperless document through the dedicated
-    token and can reach OMLX through the custom OpenAI-compatible provider.
+    token at `http://paperless-webserver-1:8000/api` and can reach OMLX through
+    the custom OpenAI-compatible provider. If
+    logs show Paperless `401` responses after changing `.env`, recreate the
+    container rather than only restarting it:
+
+    ```sh
+    eta-service local-ai up --force-recreate paperless-ai
+    ```
 11. If allowing a metadata write, verify the resulting AI-written metadata is
     marked with `ai-written-metadata` or another configured audit tag.
 12. Restart the Service Stack and verify Open WebUI state persists under
