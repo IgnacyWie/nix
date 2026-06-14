@@ -102,6 +102,9 @@ containers are available.
   `~/Services/data/beszel`.
 - `uptime-kuma` — uptime monitoring. Durable Service State:
   `~/Services/data/uptime-kuma`.
+- `stirling-pdf` — PDF tools routed at `pdf.mac.wie.dev` and advertised in
+  Homepage through Docker labels. Durable Service State:
+  `~/Services/data/stirling-pdf`.
 - `local-ai` — Tier 2 Local AI Service Stack. Open WebUI is routed at
   `ai.mac.wie.dev`; Paperless-AI is routed at `paperless-ai.mac.wie.dev` for
   Paperless metadata assistance; Durable Service State:

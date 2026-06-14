@@ -2,6 +2,9 @@
 
 Homepage contains the Homepage dashboard and Glance dashboard for `eta`.
 
+Service stacks can add themselves to Homepage with Docker discovery labels such
+as `homepage.group`, `homepage.name`, `homepage.icon`, and `homepage.href`.
+
 ## Run
 
 ```sh

@@ -1,0 +1,38 @@
+services:
+  stirling-pdf:
+    image: ghcr.io/stirling-tools/stirling-pdf:latest
+    container_name: stirling-pdf
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Europe/Amsterdam}
+      SECURITY_ENABLELOGIN: ${STIRLING_PDF_SECURITY_ENABLE_LOGIN:-true}
+      SYSTEM_DEFAULTLOCALE: ${STIRLING_PDF_DEFAULT_LOCALE:-en-US}
+      SYSTEM_GOOGLEVISIBILITY: "false"
+      METRICS_ENABLED: "false"
+    volumes:
+      - ${HOME}/Services/data/stirling-pdf/configs:/configs
+      - ${HOME}/Services/data/stirling-pdf/custom-files:/customFiles
+      - ${HOME}/Services/data/stirling-pdf/logs:/logs
+      - ${HOME}/Services/data/stirling-pdf/pipeline:/pipeline
+      - ${HOME}/Services/data/stirling-pdf/tessdata:/usr/share/tessdata
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.stirling-pdf.entrypoints: websecure
+      traefik.http.routers.stirling-pdf.rule: Host(`${STIRLING_PDF_HOST}`)
+      traefik.http.routers.stirling-pdf.tls: "true"
+      traefik.http.routers.stirling-pdf.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-myresolver}
+      traefik.http.routers.stirling-pdf.tls.domains[0].main: ${TRAEFIK_TLS_DOMAIN_MAIN}
+      traefik.http.routers.stirling-pdf.tls.domains[0].sans: ${TRAEFIK_TLS_DOMAIN_SANS}
+      traefik.http.services.stirling-pdf.loadbalancer.server.port: "8080"
+      homepage.group: Tools
+      homepage.name: Stirling PDF
+      homepage.icon: stirling-pdf.png
+      homepage.href: https://${STIRLING_PDF_HOST}
+      homepage.description: PDF tools
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true
