@@ -103,7 +103,9 @@ containers are available.
 - `uptime-kuma` — uptime monitoring. Durable Service State:
   `~/Services/data/uptime-kuma`.
 - `local-ai` — Tier 2 Local AI Service Stack. Open WebUI is routed at
-  `ai.mac.wie.dev`; Durable Service State:
-  `~/Services/data/local-ai/open-webui`; OMLX remains host-managed and is reached
-  through `http://host.docker.internal:8000/v1`.
+  `ai.mac.wie.dev`; Paperless-AI is routed at `paperless-ai.mac.wie.dev` for
+  Paperless metadata assistance; Durable Service State:
+  `~/Services/data/local-ai/open-webui` and
+  `~/Services/data/local-ai/paperless-ai`; OMLX remains host-managed and is
+  reached through `http://host.docker.internal:8000/v1`.
 

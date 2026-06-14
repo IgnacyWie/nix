@@ -3,8 +3,6 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     restart: unless-stopped
-    env_file:
-      - ./.env
     environment:
       TZ: ${TZ:-Europe/Amsterdam}
       WEBUI_AUTH: ${OPEN_WEBUI_AUTH:-true}
@@ -29,6 +27,50 @@ services:
       traefik.http.routers.open-webui.tls.domains[0].main: mac.wie.dev
       traefik.http.routers.open-webui.tls.domains[0].sans: "*.mac.wie.dev"
       traefik.http.services.open-webui.loadbalancer.server.port: "8080"
+
+  paperless-ai:
+    image: clusterzx/paperless-ai:latest
+    container_name: paperless-ai
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      TZ: ${TZ:-Europe/Amsterdam}
+      PUID: ${USERMAP_UID:-501}
+      PGID: ${USERMAP_GID:-20}
+      PAPERLESS_AI_PORT: ${PAPERLESS_AI_PORT:-3000}
+      PAPERLESS_AI_INITIAL_SETUP: ${PAPERLESS_AI_INITIAL_SETUP:-yes}
+      PAPERLESS_API_URL: ${PAPERLESS_AI_PAPERLESS_API_URL:-https://documents.mac.wie.dev/api}
+      PAPERLESS_API_TOKEN: ${PAPERLESS_AI_PAPERLESS_API_TOKEN:-set-me}
+      PAPERLESS_USERNAME: ${PAPERLESS_AI_PAPERLESS_USERNAME:-set-me}
+      AI_PROVIDER: ${PAPERLESS_AI_PROVIDER:-custom}
+      CUSTOM_BASE_URL: ${OMLX_OPENAI_API_BASE_URL:-http://host.docker.internal:8000/v1}
+      CUSTOM_API_KEY: ${OMLX_OPENAI_API_KEY:-omlx-local-no-key}
+      CUSTOM_MODEL: ${PAPERLESS_AI_OMLX_MODEL:-set-me}
+      ADD_AI_PROCESSED_TAG: ${PAPERLESS_AI_ADD_AI_PROCESSED_TAG:-yes}
+      AI_PROCESSED_TAG_NAME: ${PAPERLESS_AI_PROCESSED_TAG_NAME:-ai-written-metadata}
+      API_KEY: ${PAPERLESS_AI_API_KEY:-set-me}
+      JWT_SECRET: ${PAPERLESS_AI_JWT_SECRET:-set-me}
+      RAG_SERVICE_ENABLED: ${PAPERLESS_AI_RAG_SERVICE_ENABLED:-false}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      disable: true
+    volumes:
+      - ${HOME}/Services/data/local-ai/paperless-ai:/app/data
+    networks:
+      - ingress
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.paperless-ai.entrypoints: websecure
+      traefik.http.routers.paperless-ai.rule: Host(`${PAPERLESS_AI_HOST}`)
+      traefik.http.routers.paperless-ai.tls: "true"
+      traefik.http.routers.paperless-ai.tls.certresolver: myresolver
+      traefik.http.routers.paperless-ai.tls.domains[0].main: mac.wie.dev
+      traefik.http.routers.paperless-ai.tls.domains[0].sans: "*.mac.wie.dev"
+      traefik.http.services.paperless-ai.loadbalancer.server.port: "3000"
 
 networks:
   ingress:

@@ -565,8 +565,6 @@
           grep -Fq -- '- ''${HOME}/Services/data/local-ai/open-webui:/app/backend/data' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'name: proxy-network' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'external: true' ${./services/eta/local-ai/compose.yaml}
-          grep -Fq 'env_file:' ${./services/eta/local-ai/compose.yaml}
-          grep -Fq -- '- ./.env' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'traefik.http.routers.open-webui.rule: Host(`''${OPEN_WEBUI_HOST}`)' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'traefik.http.routers.open-webui.tls.certresolver: myresolver' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'traefik.http.routers.open-webui.tls.domains[0].main: mac.wie.dev' ${./services/eta/local-ai/compose.yaml}
@@ -579,24 +577,53 @@
           grep -Fq 'healthcheck:' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'disable: true' ${./services/eta/local-ai/compose.yaml}
           grep -Fq 'WEBUI_AUTH: ''${OPEN_WEBUI_AUTH:-true}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'image: clusterzx/paperless-ai:latest' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'container_name: paperless-ai' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq -- '- ''${HOME}/Services/data/local-ai/paperless-ai:/app/data' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'PAPERLESS_API_URL: ''${PAPERLESS_AI_PAPERLESS_API_URL:-https://documents.mac.wie.dev/api}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'PAPERLESS_API_TOKEN: ''${PAPERLESS_AI_PAPERLESS_API_TOKEN:-set-me}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'PAPERLESS_USERNAME: ''${PAPERLESS_AI_PAPERLESS_USERNAME:-set-me}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'CUSTOM_BASE_URL: ''${OMLX_OPENAI_API_BASE_URL:-http://host.docker.internal:8000/v1}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'CUSTOM_API_KEY: ''${OMLX_OPENAI_API_KEY:-omlx-local-no-key}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'CUSTOM_MODEL: ''${PAPERLESS_AI_OMLX_MODEL:-set-me}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'API_KEY: ''${PAPERLESS_AI_API_KEY:-set-me}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'JWT_SECRET: ''${PAPERLESS_AI_JWT_SECRET:-set-me}' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.routers.paperless-ai.rule: Host(`''${PAPERLESS_AI_HOST}`)' ${./services/eta/local-ai/compose.yaml}
+          grep -Fq 'traefik.http.services.paperless-ai.loadbalancer.server.port: "3000"' ${./services/eta/local-ai/compose.yaml}
 
           grep -Fq 'OPEN_WEBUI_HOST=ai.mac.wie.dev' ${./services/eta/local-ai/.env.example}
           grep -Fq 'OPEN_WEBUI_AUTH=true' ${./services/eta/local-ai/.env.example}
           grep -Fq 'OPEN_WEBUI_ENABLE_SIGNUP=false' ${./services/eta/local-ai/.env.example}
           grep -Fq 'OMLX_OPENAI_API_BASE_URL=http://host.docker.internal:8000/v1' ${./services/eta/local-ai/.env.example}
           grep -Fq 'OMLX_OPENAI_API_KEY=omlx-local-no-key' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_HOST=paperless-ai.mac.wie.dev' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_PAPERLESS_API_URL=https://documents.mac.wie.dev/api' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_PAPERLESS_USERNAME=set-me-paperless-ai-user' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_PAPERLESS_API_TOKEN=set-me-paperless-api-token' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_PROVIDER=custom' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_OMLX_MODEL=set-me-omlx-model' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_API_KEY=set-me-random-api-key' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_JWT_SECRET=set-me-random-jwt-secret' ${./services/eta/local-ai/.env.example}
+          grep -Fq 'PAPERLESS_AI_PROCESSED_TAG_NAME=ai-written-metadata' ${./services/eta/local-ai/.env.example}
           grep -Fq 'Do not commit .env or real secrets.' ${./services/eta/local-ai/.env.example}
 
           grep -Fq 'Local AI Service Stack' ${./services/eta/local-ai/README.md}
           grep -Fq 'https://ai.mac.wie.dev' ${./services/eta/local-ai/README.md}
+          grep -Fq 'https://paperless-ai.mac.wie.dev' ${./services/eta/local-ai/README.md}
           grep -Fq '~/Services/data/local-ai/open-webui' ${./services/eta/local-ai/README.md}
+          grep -Fq '~/Services/data/local-ai/paperless-ai' ${./services/eta/local-ai/README.md}
           grep -Fq 'host-managed OMLX' ${./services/eta/local-ai/README.md}
           grep -Fq 'http://host.docker.internal:8000/v1' ${./services/eta/local-ai/README.md}
           grep -Fq 'Open WebUI application authentication' ${./services/eta/local-ai/README.md}
+          grep -Fq 'Tier 1 Paperless Service Stack' ${./services/eta/local-ai/README.md}
+          grep -Fq 'dedicated Paperless user/token' ${./services/eta/local-ai/README.md}
+          grep -Fq 'AI-written document metadata' ${./services/eta/local-ai/README.md}
+          grep -Fq 'Paperless-AI supports login/JWT sessions' ${./services/eta/local-ai/README.md}
           grep -Fq 'eta-service local-ai up' ${./services/eta/local-ai/README.md}
 
           grep -Fq '`local-ai` — Tier 2 Local AI Service Stack.' ${./services/eta/README.md}
           grep -Fq 'ai.mac.wie.dev' ${./services/eta/README.md}
+          grep -Fq 'paperless-ai.mac.wie.dev' ${./services/eta/README.md}
 
           ! grep -R 'sk-' ${./services/eta/local-ai}
 
