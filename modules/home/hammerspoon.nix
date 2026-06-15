@@ -14,6 +14,11 @@ in
     force = true;
   };
 
+  home.file.".hammerspoon/wifi.lua" = {
+    source = ../../config/hammerspoon/wifi.lua;
+    force = true;
+  };
+
   launchd.agents.hammerspoon = {
     enable = true;
     config = {
