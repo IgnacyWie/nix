@@ -894,6 +894,7 @@
             zshInit = pkgs.writeText "zsh-init" homeConfig.programs.zsh.initContent;
             zshAliases = homeConfig.programs.zsh.shellAliases;
             sessionPath = homeConfig.home.sessionPath;
+            sessionVariables = homeConfig.home.sessionVariables;
             homePackages = homeConfig.home.packages;
             codexPackage = builtins.head (
               builtins.filter (package: package.name or "" == "codex") homePackages
@@ -914,6 +915,8 @@
           assert !(builtins.hasAttr "claude" zshAliases);
           assert builtins.elem "/opt/homebrew/bin" sessionPath;
           assert builtins.elem "/opt/homebrew/sbin" sessionPath;
+          assert sessionVariables.NVM_DIR == "$HOME/.nvm";
+          assert sessionVariables.PNPM_HOME == "$HOME/.local/share/pnpm";
           pkgs.runCommand "gamma-shell-caffeinate-wrappers-check"
             {
               nativeBuildInputs = [
@@ -934,6 +937,9 @@
               grep -Fq '/etc/profiles/per-user/$USER/bin' ${zshInit}
               grep -Fq '/run/current-system/sw/bin' ${zshInit}
               grep -Fq '/opt/homebrew/bin' ${zshInit}
+              grep -Fq '/opt/homebrew/opt/node@20/bin' ${zshInit}
+              grep -Fq '$HOME/Library/pnpm' ${zshInit}
+              grep -Fq '$PNPM_HOME' ${zshInit}
               grep -Fq 'typeset -U path' ${zshInit}
               grep -Fq "PROMPT='γ %~/ " ${zshInit}
               ! grep -Fq "PROMPT='η %~/ " ${zshInit}
@@ -945,7 +951,8 @@
               ! grep -q "bindkey -s '\^I' 'issue-picker" ${zshInit}
 
               test -x ${codexPackage}/bin/codex
-              grep -Fq 'codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
+              grep -Fq 'pnpm_codex_bin="''${PNPM_HOME:-$HOME/.local/share/pnpm}/codex"' ${codexPackage}/bin/codex
+              grep -Fq 'homebrew_codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex
               grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
               test -x ${tmuxWrapper}
               grep -Fq 'tmux-3.3a/bin/tmux' ${tmuxWrapper}

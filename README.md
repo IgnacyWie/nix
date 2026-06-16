@@ -284,8 +284,9 @@ state such as hook trust. The managed `hooks.json` uses the Home Manager
 `notify` command for Codex `Stop` and `PermissionRequest` lifecycle events, so
 completed turns and approval requests produce the same audible alert.
 
-Home Manager provides a deterministic `codex` wrapper that runs
-`/opt/homebrew/bin/codex` under `caffeinate -dims -t 3600` with
+Home Manager provides a deterministic `codex` wrapper that prefers
+`$PNPM_HOME/codex`, falls back to `/opt/homebrew/bin/codex`, and runs the
+selected binary under `caffeinate -dims -t 3600` with
 `--dangerously-bypass-approvals-and-sandbox` and
 `--dangerously-bypass-hook-trust`. It also defines a zsh function for `claude`
 that resolves the real executable with `whence -p` and runs it under

@@ -30,10 +30,15 @@ in
     (pkgs.writeShellScriptBin "codex" ''
       set -eu
 
-      codex_bin="/opt/homebrew/bin/codex"
+      pnpm_codex_bin="''${PNPM_HOME:-$HOME/.local/share/pnpm}/codex"
+      homebrew_codex_bin="/opt/homebrew/bin/codex"
 
-      if [ ! -x "$codex_bin" ]; then
-        printf '%s\n' "codex: expected executable not found at $codex_bin" >&2
+      if [ -x "$pnpm_codex_bin" ]; then
+        codex_bin="$pnpm_codex_bin"
+      elif [ -x "$homebrew_codex_bin" ]; then
+        codex_bin="$homebrew_codex_bin"
+      else
+        printf '%s\n' "codex: expected executable not found at $pnpm_codex_bin or $homebrew_codex_bin" >&2
         exit 127
       fi
 

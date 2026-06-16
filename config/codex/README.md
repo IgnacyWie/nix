@@ -15,5 +15,5 @@ Not tracked:
 
 Home Manager installs `config.toml` as a mutable copy rather than a symlink so
 Codex can persist local state such as hook trust. The deterministic `codex`
-wrapper also passes `--dangerously-bypass-hook-trust` for these repo-owned
-hooks.
+wrapper prefers `$PNPM_HOME/codex`, falls back to `/opt/homebrew/bin/codex`, and
+passes `--dangerously-bypass-hook-trust` for these repo-owned hooks.

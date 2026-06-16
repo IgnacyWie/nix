@@ -139,6 +139,7 @@ in
       home.activation.createShellDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/bin"}
         run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/scripts"}
+        run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.local/share/pnpm"}
       '';
 
       programs.zsh = {
@@ -219,6 +220,14 @@ in
             . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
           fi
 
+          export PNPM_HOME="''${PNPM_HOME:-$HOME/.local/share/pnpm}"
+          path=(
+            $path
+            $PNPM_HOME
+          )
+          typeset -U path
+          export PATH
+
           claude() {
             local bin
             bin="$(whence -p claude)" || return
@@ -260,7 +269,10 @@ in
         "/opt/homebrew/sbin"
       ];
 
-      home.sessionVariables.NVM_DIR = "$HOME/.nvm";
+      home.sessionVariables = {
+        NVM_DIR = "$HOME/.nvm";
+        PNPM_HOME = "$HOME/.local/share/pnpm";
+      };
 
       home.activation.createWorkstationDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run mkdir -p ${lib.escapeShellArg "${homeDirectory}/Developer"}
