@@ -1119,6 +1119,7 @@
           assert !(builtins.elem "tmux" homebrewBrewNames);
           assert builtins.elem "goku" homebrewBrewNames;
           assert builtins.elem "keka" homebrewCaskNames;
+          assert builtins.elem "qutebrowser" homebrewCaskNames;
           assert builtins.elem "tailscale-app" homebrewCaskNames;
           assert homebrewMasApps.Bitwarden == 1352778147;
           assert homebrewMasApps.Flighty == 1358823008;

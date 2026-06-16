@@ -39,6 +39,7 @@
       "loom"
       "orbstack" # Docker alternative for Apple Silicon, with better performance and native support for Apple Silicon.
       "pearcleaner"
+      "qutebrowser"
       "raycast"
       "sf-symbols"
       "tailscale-app"
