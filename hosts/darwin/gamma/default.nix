@@ -41,7 +41,9 @@
     glow
     gnupg
     gnused
-    google-cloud-sdk
+    (google-cloud-sdk.withExtraComponents [
+      google-cloud-sdk.components.gke-gcloud-auth-plugin
+    ])
     kubernetes-helm
     htop
     httpie
