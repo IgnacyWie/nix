@@ -94,6 +94,7 @@
           {
             find "$HOME/Developer" -mindepth 1 -maxdepth 1 -type d
             [[ -d "$HOME/nix" ]] && printf '%s\n' "$HOME/nix"
+            [[ -d "$HOME/typst" ]] && printf '%s\n' "$HOME/typst"
           } | fzf \
             --prompt='tmux session> ' \
             --preview="$preview_command"

@@ -1178,6 +1178,7 @@
               grep -q 'glow -s dark' ${tmuxSessionizer}
               ! grep -q 'chafa' ${tmuxSessionizer}
               grep -q 'Recent commits:' ${tmuxSessionizer}
+              grep -Fq '[[ -d "$HOME/typst" ]] && printf' ${tmuxSessionizer}
               grep -q 'typst document> ' ${typstSmartOpen}
               grep -q 'typst compile --pages 1' ${typstSmartOpen}
               grep -q 'Type a new document name' ${typstSmartOpen}

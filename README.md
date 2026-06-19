@@ -324,7 +324,7 @@ with tmux and SSH-to-localhost workflows instead of the newer
 ### Workflow Scripts
 
 Home Manager also manages `~/.local/scripts/tmux-sessionizer`. It selects a
-project under `~/Developer` or the `~/nix` configuration repository, creates or
+project under `~/Developer`, `~/nix`, or `~/typst`, creates or
 switches to a named tmux session, and opens the first window as `codex` before
 adding the usual development, Git, database, and REST client windows. Its `fzf`
 selector previews the selected project's README with `glow` when present,
