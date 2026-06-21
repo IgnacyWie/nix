@@ -8,6 +8,9 @@ in
     "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
   ];
 
+  # Force the live ISO to copy itself entirely into RAM on boot
+  boot.kernelParams = [ "copytoram" ];
+
   boot.zfs.forceImportRoot = false;
 
   networking.hostName = "omega";
