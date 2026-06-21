@@ -43,6 +43,7 @@
       "qutebrowser"
       "raycast"
       "sf-symbols"
+      "spotify"
       "tailscale-app"
       "zen"
       "firefox@developer-edition"
