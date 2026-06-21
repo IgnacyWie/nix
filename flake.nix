@@ -161,6 +161,7 @@
             grep -Fq "PROMPT='η %~/ " ${zshInit}
             grep -Fq 'host_shell_prompt_precmd()' ${zshInit}
             grep -Fq 'add-zsh-hook precmd host_shell_prompt_precmd' ${zshInit}
+            grep -Fq 'export PATH="/Users/ignacywielogorski/.local/share/pi-node/node-v22.23.0-darwin-arm64/bin:$PATH"' ${zshInit}
             ! grep -Fq "PROMPT='γ %~/ " ${zshInit}
             ! grep -q 'gamma-restic-backup' ${zshInit}
             ! grep -Fq '/opt/homebrew/bin' ${zshInit}
