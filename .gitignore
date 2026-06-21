@@ -3,10 +3,6 @@
 .env.*
 !.env.example
 !.env.*.example
-apps/personal-assistant/.env
-apps/personal-assistant/.env.*
-!apps/personal-assistant/.env.example
-
 # Raw machine inventory can include secrets, private URLs, labels, and paths.
 .local/
 raw-inventory/

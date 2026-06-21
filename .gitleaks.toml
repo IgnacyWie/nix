@@ -49,28 +49,3 @@ tags = [
   "local-secret-file",
 ]
 
-[[rules]]
-id = "assistant-secret-projection"
-description = "Detect committed Assistant Secret Projection files or values"
-path = '''(?i)(^|/)apps/personal-assistant/\.env(\..*)?$'''
-regex = '''(?s).+'''
-tags = [
-  "assistant",
-  "local-secret-file",
-]
-
-[[rules]]
-id = "assistant-token-or-model-secret"
-description = "Detect Personal Assistant Agent token and hosted model secrets"
-regex = '''(?i)\b(?:TELEGRAM_BOT_TOKEN|ANTHROPIC_API_KEY|OPENAI_API_KEY|PI_API_KEY)\b\s*(?:=|:|=>)\s*["']?([A-Za-z0-9][A-Za-z0-9_:/+=.-]{15,})["']?'''
-secretGroup = 1
-keywords = [
-  "TELEGRAM_BOT_TOKEN",
-  "ANTHROPIC_API_KEY",
-  "OPENAI_API_KEY",
-  "PI_API_KEY",
-]
-tags = [
-  "assistant",
-  "hosted-model",
-]

@@ -137,17 +137,6 @@ through an explicit local proxy or integration boundary. Durable model storage
 lives at `~/Services/data/omlx/models`; OMLX runtime logs and launchd stdout and
 stderr live under `~/Services/data/omlx/logs`.
 
-The Personal Assistant Agent is bootstrapped as a Host-Managed Assistant Service
-on `eta`. Home Manager installs a primary-user launchd agent named
-`eta-personal-assistant` that runs `apps/personal-assistant/src/main.mjs` with
-Node, validates `apps/personal-assistant/.env` at startup, long-polls Telegram,
-rejects non-allowlisted Telegram users, and sends allowlisted messages to the
-configured hosted Pi model with no tools enabled. Durable assistant state lives
-under `~/Services/data/personal-assistant`; launchd stdout and stderr live under
-`~/Library/Logs/personal-assistant`. Copy
-`apps/personal-assistant/.env.example` to `.env` on `eta` and materialize the
-Assistant Secret Projection from the secret store before starting the agent.
-
 ## Repository Workflow
 
 ### Apply Flow
