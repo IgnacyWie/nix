@@ -11,7 +11,12 @@
 
   nixpkgs = {
     hostPlatform = "aarch64-darwin";
-    config.allowUnfree = true;
+    config = {
+      allowUnfree = true;
+      permittedInsecurePackages = [
+        "openclaw-2026.6.1"
+      ];
+    };
   };
 
   users.users.ignacywielogorski = {
@@ -29,6 +34,7 @@
     gh
     git
     jq
+    openclaw
     restic
     ripgrep
     tailscale

@@ -122,6 +122,7 @@
           assert etaConfig.networking.computerName == "eta";
           assert etaConfig.system.primaryUser == "ignacywielogorski";
           assert etaConfig.nixpkgs.hostPlatform.system == "aarch64-darwin";
+          assert builtins.elem "openclaw-2026.6.1" etaConfig.nixpkgs.config.permittedInsecurePackages;
           assert etaConfig.home-manager.users.ignacywielogorski.home.username == "ignacywielogorski";
           assert
             etaConfig.home-manager.users.ignacywielogorski.home.homeDirectory == "/Users/ignacywielogorski";
@@ -186,6 +187,7 @@
           assert builtins.any (name: builtins.match ".*docker-compose.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*openclaw.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tmux.*" name != null) packageNames;
