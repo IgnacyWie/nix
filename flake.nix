@@ -24,6 +24,7 @@
     }:
     let
       system = "aarch64-darwin";
+      nixosSystem = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       gammaConfiguration = nix-darwin.lib.darwinSystem {
         inherit system;
@@ -85,10 +86,21 @@
           }
         ];
       };
+      omegaInstallerConfiguration = nixpkgs.lib.nixosSystem {
+        system = nixosSystem;
+
+        modules = [
+          ./hosts/nixos/omega/installer.nix
+        ];
+      };
     in
     {
       darwinConfigurations.eta = etaConfiguration;
       darwinConfigurations.gamma = gammaConfiguration;
+      nixosConfigurations.omega-installer = omegaInstallerConfiguration;
+
+      packages.${nixosSystem}.omega-installer-iso =
+        omegaInstallerConfiguration.config.system.build.isoImage;
 
       formatter.${system} = pkgs.writeShellApplication {
         name = "nixfmt";
@@ -115,6 +127,35 @@
             etaConfig.home-manager.users.ignacywielogorski.home.homeDirectory == "/Users/ignacywielogorski";
           pkgs.runCommand "eta-host-skeleton-check" { } ''
             set -eu
+            touch "$out"
+          '';
+
+        omega-installer-iso =
+          let
+            omegaConfig = omegaInstallerConfiguration.config;
+            omegaAuthorizedKeys = omegaConfig.users.users.nixos.openssh.authorizedKeys.keys;
+          in
+          assert omegaConfig.networking.hostName == "omega";
+          assert nixosSystem == "x86_64-linux";
+          assert omegaConfig.boot.zfs.forceImportRoot == false;
+          assert omegaConfig.services.openssh.enable;
+          assert omegaConfig.services.openssh.openFirewall;
+          assert omegaConfig.services.openssh.settings.PasswordAuthentication == false;
+          assert omegaConfig.services.openssh.settings.PermitRootLogin == "no";
+          assert omegaConfig.services.avahi.enable;
+          assert omegaConfig.services.avahi.openFirewall;
+          assert builtins.elem 22 omegaConfig.networking.firewall.allowedTCPPorts;
+          assert builtins.elem
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCuZfw+lgWssLrdPbEO9rJOa4L5CiLkoELiiSjTyw6J7cicPNgnEZy9WW/UO1Vr5lOzACnMQwQHHktCKiS3fBG7dPjP6KdqPJOrhgM56Lk4eovN3SsTY+Zr+8mcQQZXrVkv023PaKMFeGtedvzVfOOpimf3jRHhjOntz9MyHqZWkvd0E9E6VnvIpNbw9+KG2/oUjjRHA9hyH+JzcY31EwWnjHV1qEMOSk/3f/NyMg6JuQxCixzd8FkS+bI8BWX/JaafjNTJib2YseS8kWSmy6bafg5YqQ4wJpAKK8ZG6zxoXYrTcL3VgPqYvQJcbRbH+Zfxg7UiWYExomImq0lAALwcWRfMq8gKCyTtb1zhc+qR6kcdKs+dOVp5v0+MWpJdJwvRqnk7TIrHS2ME7r8qFYrVF5ooXKXT9nB2rTIdS4XvOvouQBhE3p/FypCR5wFXyHy7voBU5oAVC4VjX3wDnF/FW+xsFFVmmvdtvx2XVFTUCjyhisUT/HqOZ0KrPnmLEIE= ignacywielogorski@Ignacys-MacBook-Air.local"
+            omegaAuthorizedKeys;
+          pkgs.runCommand "omega-installer-iso-check" { } ''
+            set -eu
+
+            test -x ${./scripts/build-omega-installer-iso}
+            grep -q 'build-omega-installer-iso:' ${./Makefile}
+            grep -q 'nixosConfigurations.omega-installer.config.system.build.isoImage' ${./scripts/build-omega-installer-iso}
+            grep -q 'omega.local' ${./README.md}
+
             touch "$out"
           '';
 

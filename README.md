@@ -137,6 +137,31 @@ through an explicit local proxy or integration boundary. Durable model storage
 lives at `~/Services/data/omlx/models`; OMLX runtime logs and launchd stdout and
 stderr live under `~/Services/data/omlx/logs`.
 
+### omega
+
+- Role: NAS, initially bootstrapped through a NixOS installer ISO
+- Platform: `x86_64-linux`
+- Live ISO host name: `omega`
+- Live ISO SSH user: `nixos`
+- Discovery target: `omega.local` when the LAN supports mDNS
+
+The `omega` installer ISO enables OpenSSH, disables password SSH login, injects
+Ignacy's public SSH key for the default live `nixos` user, and publishes the
+`omega` host name with Avahi/mDNS. Build it with:
+
+```sh
+make build-omega-installer-iso
+```
+
+The ISO is written under `result/iso/nixos-omega-installer.iso`. Building this
+Linux ISO requires an `x86_64-linux` Nix builder; on macOS that usually means a
+configured remote Linux builder or running the command on a Linux Nix machine.
+After flashing and booting it, connect with:
+
+```sh
+ssh nixos@omega.local
+```
+
 ## Repository Workflow
 
 ### Apply Flow

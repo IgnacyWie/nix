@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
+
+. "${SCRIPT_DIR}/nix-env.sh"
+
+cd "${REPO_ROOT}"
+
+current_system="$(${NIX_BIN} config show system 2>/dev/null || true)"
+builders="$(${NIX_BIN} config show builders 2>/dev/null || true)"
+
+if [ "${current_system}" != "x86_64-linux" ] && [ -z "${builders}" ]; then
+  cat >&2 <<'EOF'
+error: building the omega installer ISO requires an x86_64-linux Nix builder.
+
+This machine is not x86_64-linux and no remote builders are configured.
+Run this command on a Linux Nix machine, or configure an x86_64-linux remote
+builder for this Mac, then re-run:
+
+  make build-omega-installer-iso
+
+EOF
+  exit 1
+fi
+
+exec "${NIX_BIN}" ${NIX_FLAKE_FLAGS} build \
+  '.#nixosConfigurations.omega-installer.config.system.build.isoImage'
