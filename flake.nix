@@ -73,6 +73,7 @@
                   ./modules/home/home-server-backup.nix
                   ./modules/home/omlx.nix
                   ./modules/home/personal-assistant.nix
+                  ./modules/home/pi.nix
                   ./modules/home/shell.nix
                 ];
                 personal = {
@@ -128,6 +129,9 @@
             sessionPath = homeConfig.home.sessionPath;
             sessionVariables = homeConfig.home.sessionVariables;
             homePackages = homeConfig.home.packages;
+            piPackage = builtins.head (
+              builtins.filter (package: package.name or "" == "pi-coding-agent-0.79.9") homePackages
+            );
             codexPackage = builtins.head (
               builtins.filter (package: package.name or "" == "codex") homePackages
             );
@@ -167,7 +171,9 @@
             grep -Fq "PROMPT='η %~/ " ${zshInit}
             grep -Fq 'host_shell_prompt_precmd()' ${zshInit}
             grep -Fq 'add-zsh-hook precmd host_shell_prompt_precmd' ${zshInit}
-            grep -Fq 'export PATH="/Users/ignacywielogorski/.local/share/pi-node/node-v22.23.0-darwin-arm64/bin:$PATH"' ${zshInit}
+            ! grep -Fq '.local/share/pi-node' ${zshInit}
+            test -x ${piPackage}/bin/pi
+            test "$(${piPackage}/bin/pi --version)" = "0.79.9"
             test -x ${codexPackage}/bin/codex
             grep -Fq 'pnpm_codex_bin="''${PNPM_HOME:-$HOME/.local/share/pnpm}/codex"' ${codexPackage}/bin/codex
             grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
@@ -906,6 +912,9 @@
             sessionPath = homeConfig.home.sessionPath;
             sessionVariables = homeConfig.home.sessionVariables;
             homePackages = homeConfig.home.packages;
+            piPackage = builtins.head (
+              builtins.filter (package: package.name or "" == "pi-coding-agent-0.79.9") homePackages
+            );
             codexPackage = builtins.head (
               builtins.filter (package: package.name or "" == "codex") homePackages
             );
@@ -960,6 +969,8 @@
               grep -q "bindkey '\^O' gamma_dev_command_runner_widget" ${zshInit}
               ! grep -q "bindkey -s '\^I' 'issue-picker" ${zshInit}
 
+              test -x ${piPackage}/bin/pi
+              test "$(${piPackage}/bin/pi --version)" = "0.79.9"
               test -x ${codexPackage}/bin/codex
               grep -Fq 'pnpm_codex_bin="''${PNPM_HOME:-$HOME/.local/share/pnpm}/codex"' ${codexPackage}/bin/codex
               grep -Fq 'homebrew_codex_bin="/opt/homebrew/bin/codex"' ${codexPackage}/bin/codex

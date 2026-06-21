@@ -9,6 +9,7 @@
     ./ghostty.nix
     ./hammerspoon.nix
     ./neovim.nix
+    ./pi.nix
     ./scripts.nix
     ./shell.nix
     ./ssh.nix

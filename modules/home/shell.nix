@@ -174,10 +174,6 @@ in
           typeset -U path
           export PATH
         ''
-        + lib.optionalString (hostName == "eta") ''
-
-          export PATH="/Users/ignacywielogorski/.local/share/pi-node/node-v22.23.0-darwin-arm64/bin:$PATH"
-        ''
         + ''
 
           autoload -Uz add-zsh-hook vcs_info

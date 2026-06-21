@@ -300,6 +300,10 @@ activation, preserving local MCP, plugin, theme, and other Claude-managed
 settings. The managed Claude hooks call `notify` on `Stop`, `PermissionRequest`,
 and selected `Notification` events.
 
+Home Manager installs the current Pi coding agent CLI (`pi-coding-agent` 0.79.9)
+through a shared module imported by both `gamma` and `eta`, so the same `pi`
+executable is available on the workstation and home server.
+
 ### Primary Editor
 
 Home Manager manages Neovim as the primary editor and links the reviewed
