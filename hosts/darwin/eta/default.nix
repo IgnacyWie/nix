@@ -34,12 +34,14 @@
     gh
     git
     jq
+    khal
     openclaw
     restic
     ripgrep
     tailscale
     tmux
     tree
+    vdirsyncer
     wget
   ];
 }

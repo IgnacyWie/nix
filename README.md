@@ -66,11 +66,11 @@ source of truth, so this flake does not add a competing Docker CLI.
 
 The current `eta` slice is a buildable host skeleton. It sets the Host Name,
 Primary User, shared Home Manager Host Shell Baseline with the `η` Host Prompt
-Symbol, and baseline Home Server tools such as Git, jq, Restic, Tailscale, and
-Docker Compose. The same Host Shell Baseline preserves the `γ` Host Prompt
-Symbol for the `gamma` Workstation, while workstation-only aliases, Homebrew
-paths, and interactive UI workflows are enabled explicitly for `gamma` rather
-than inherited by `eta`. The `eta` slice intentionally does not define launchd
+Symbol, and baseline Home Server tools such as Git, jq, Restic, Tailscale,
+Docker Compose, vdirsyncer, and khal. The same Host Shell Baseline preserves
+the `γ` Host Prompt Symbol for the `gamma` Workstation, while workstation-only
+aliases, Homebrew paths, and interactive UI workflows are enabled explicitly for
+`gamma` rather than inherited by `eta`. The `eta` slice intentionally does not define launchd
 jobs for service stacks or start live containers.
 
 Home Server Service Definitions live in this repository under
@@ -107,10 +107,11 @@ On `eta`, `eta-service list` and `eta-service inspect <stack>` only read
 Startup remains explicit through commands such as `eta-service <stack> up`; the
 flake does not configure launchd autostart for all stacks.
 
-OMLX is installed on `eta` through host-specific Homebrew configuration as the
-host-managed Local Model Runtime for Local AI Service Stacks. This Homebrew
-scope is separate from the `gamma` Workstation Homebrew scope. The initial model
-preference is configurable with `personal.omlx.initialModel` and defaults to
+OMLX and things3-cli are installed on `eta` through host-specific Homebrew
+configuration. OMLX is the host-managed Local Model Runtime for Local AI Service
+Stacks. This Homebrew scope is separate from the `gamma` Workstation Homebrew
+scope. The initial model preference is configurable with
+`personal.omlx.initialModel` and defaults to
 `mlx-community/Qwen2.5-1.5B-Instruct-4bit`, a small instruct model preference
 for constrained Apple Silicon memory. It is not a recovery dependency; restored
 service state must not require that exact model to exist.

@@ -187,10 +187,12 @@
           assert builtins.any (name: builtins.match ".*docker-compose.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*khal.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*openclaw.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tmux.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*vdirsyncer.*" name != null) packageNames;
           assert !(builtins.hasAttr "gamma-restic-backup" homeConfig.launchd.agents);
           assert homeConfig.personal.hostName == "eta";
           assert homeConfig.personal.hostPromptSymbol == "η";
@@ -270,9 +272,13 @@
             set -eu
 
             grep -Fq 'tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true' ${etaHomebrewExtraConfig}
+            grep -Fq 'tap "ossianhempel/tap", "https://github.com/ossianhempel/homebrew-tap", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'brew "omlx", trusted: true' ${etaHomebrewExtraConfig}
+            grep -Fq 'brew "ossianhempel/tap/things3-cli", trusted: true' ${etaHomebrewExtraConfig}
             ! grep -Fq 'jundot/omlx' ${gammaHomebrewExtraConfig}
+            ! grep -Fq 'ossianhempel/tap' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'brew "omlx"' ${gammaHomebrewExtraConfig}
+            ! grep -Fq 'things3-cli' ${gammaHomebrewExtraConfig}
 
             touch "$out"
           '';
