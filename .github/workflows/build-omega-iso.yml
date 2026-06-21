@@ -1,0 +1,40 @@
+name: Build omega installer ISO
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-omega-installer-iso:
+    name: Build omega installer ISO
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build omega installer ISO
+        run: make build-omega-installer-iso
+
+      - name: Collect ISO artifact
+        run: |
+          set -eu
+          mkdir -p artifact
+          cp -L result/iso/*.iso artifact/
+          ls -lh artifact/
+
+      - name: Upload omega installer ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: omega-installer-iso
+          path: artifact/*.iso
+          if-no-files-found: error
+          retention-days: 7

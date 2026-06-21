@@ -155,7 +155,10 @@ make build-omega-installer-iso
 
 The ISO is written under `result/iso/nixos-omega-installer.iso`. Building this
 Linux ISO requires an `x86_64-linux` Nix builder; on macOS that usually means a
-configured remote Linux builder or running the command on a Linux Nix machine.
+configured remote Linux builder, running the command on a Linux Nix machine, or
+manually running the `Build omega installer ISO` GitHub Actions workflow and
+downloading its `omega-installer-iso` artifact.
+
 After flashing and booting it, connect with:
 
 ```sh
