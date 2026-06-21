@@ -67,6 +67,7 @@
               users.ignacywielogorski = {
                 imports = [
                   ./modules/home/base.nix
+                  ./modules/home/codex.nix
                   ./modules/home/git.nix
                   ./modules/home/home-server.nix
                   ./modules/home/home-server-backup.nix
@@ -126,6 +127,10 @@
             zshAliases = homeConfig.programs.zsh.shellAliases;
             sessionPath = homeConfig.home.sessionPath;
             sessionVariables = homeConfig.home.sessionVariables;
+            homePackages = homeConfig.home.packages;
+            codexPackage = builtins.head (
+              builtins.filter (package: package.name or "" == "codex") homePackages
+            );
             homeLaunchAgentNames = builtins.attrNames homeConfig.launchd.agents;
             systemLaunchDaemonNames = builtins.attrNames etaConfig.launchd.daemons;
             systemLaunchAgentNames = builtins.attrNames etaConfig.launchd.agents;
@@ -162,6 +167,9 @@
             grep -Fq 'host_shell_prompt_precmd()' ${zshInit}
             grep -Fq 'add-zsh-hook precmd host_shell_prompt_precmd' ${zshInit}
             grep -Fq 'export PATH="/Users/ignacywielogorski/.local/share/pi-node/node-v22.23.0-darwin-arm64/bin:$PATH"' ${zshInit}
+            test -x ${codexPackage}/bin/codex
+            grep -Fq 'pnpm_codex_bin="''${PNPM_HOME:-$HOME/.local/share/pnpm}/codex"' ${codexPackage}/bin/codex
+            grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
             ! grep -Fq "PROMPT='γ %~/ " ${zshInit}
             ! grep -q 'gamma-restic-backup' ${zshInit}
             ! grep -Fq '/opt/homebrew/bin' ${zshInit}
