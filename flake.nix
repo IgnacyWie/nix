@@ -144,6 +144,7 @@
           assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*tmux.*" name != null) packageNames;
           assert !(builtins.hasAttr "gamma-restic-backup" homeConfig.launchd.agents);
           assert homeConfig.personal.hostName == "eta";
           assert homeConfig.personal.hostPromptSymbol == "η";

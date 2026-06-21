@@ -32,6 +32,7 @@
     restic
     ripgrep
     tailscale
+    tmux
     tree
     wget
   ];
