@@ -115,6 +115,26 @@ task_by_uuid() {
   jq -c --arg uuid "$1" '.[] | select(.uuid == $uuid)' "$tasks_json" | head -n 1
 }
 
+normalize_task_filter='
+  def normalized_status:
+    if (.status | type) == "number" then .status
+    elif .status == "incomplete" or .status == "open" then 0
+    elif .status == "canceled" or .status == "cancelled" then 2
+    elif .status == "completed" then 3
+    else .status
+    end;
+
+  {
+    uuid: (.uuid // .id),
+    title: (.title // ""),
+    notes: (.notes // ""),
+    status: normalized_status,
+    areaTitle: (.areaTitle // .area.title // .area // ""),
+    raw: .
+  }
+  | select(.uuid != null and .uuid != "")
+'
+
 state_value() {
   jq -r --arg number "$1" --arg key "$2" '.items[$number][$key] // empty' "$state_file"
 }
@@ -151,18 +171,12 @@ write_issue_body_file() {
 }
 
 refresh_tasks() {
-  : >"$tasks_ndjson"
-
-  for view in today anytime upcoming someday inbox logbook trash; do
-    if "$things_bin" -j "$view" --area "$area" >"$tmp_dir/things-$view.json"; then
-      jq -c '.[]?' "$tmp_dir/things-$view.json" >>"$tasks_ndjson"
-    else
-      log "failed to read Things view '$view' for area '$area'"
-      exit 1
-    fi
-  done
-
-  jq -s 'unique_by(.uuid) | map(select(.uuid != null and .uuid != ""))' "$tasks_ndjson" >"$tasks_json"
+  if "$things_bin" tasks --json --area "$area" --all --limit=0 >"$tmp_dir/things-tasks.json"; then
+    jq "map($normalize_task_filter) | unique_by(.uuid)" "$tmp_dir/things-tasks.json" >"$tasks_json"
+  else
+    log "failed to read Things tasks for area '$area'"
+    exit 1
+  fi
 }
 
 find_task_created_for_issue() {
@@ -170,13 +184,20 @@ find_task_created_for_issue() {
   local query="todo-business-sync:github-issue=$number"
   local search_json="$tmp_dir/search-$number.json"
 
-  "$things_bin" -j search "$query" >"$search_json"
+  "$things_bin" search --json --area "$area" --status=incomplete "$query" >"$search_json"
   jq -r --arg area "$area" --arg number "$number" '
+    def normalized_status:
+      if (.status | type) == "number" then .status
+      elif .status == "incomplete" or .status == "open" then 0
+      elif .status == "canceled" or .status == "cancelled" then 2
+      elif .status == "completed" then 3
+      else .status
+      end;
     .[]
-    | select(.status == 0)
-    | select(.areaTitle == $area)
+    | select(normalized_status == 0)
+    | select((.areaTitle // .area.title // .area // "") == $area)
     | select((.notes // "") | contains("todo-business-sync:github-issue=" + $number))
-    | .uuid
+    | (.uuid // .id)
   ' "$search_json" | head -n 1
 }
 
@@ -192,7 +213,7 @@ sync_issue_to_new_task() {
   notes=$(task_notes_from_issue "$url" "$clean_body" "$number")
 
   log "creating Things task for $repo#$number"
-  "$things_bin" add "$title" --list "$area" --notes "$notes"
+  "$things_bin" add --list "$area" --notes "$notes" -- "$title"
   sleep 2
 
   things_uuid=$(find_task_created_for_issue "$number")
@@ -231,7 +252,7 @@ sync_task_to_new_issue() {
   fi
 
   issue_marker=$(task_notes_from_issue "$url" "$clean_notes" "$number")
-  "$things_bin" edit "$uuid" --notes "$issue_marker"
+  "$things_bin" update --id="$uuid" --notes "$issue_marker"
 
   github_hash=$(content_hash "$title" "$clean_notes")
   state_record "$number" "$uuid" "$github_hash" "$github_hash"
@@ -276,7 +297,7 @@ sync_mapped_open_pair() {
   if [[ $github_changed == true ]]; then
     log "updating Things task $uuid from $repo#$number"
     notes=$(task_notes_from_issue "$(jq -r '.url' <<<"$issue")" "$issue_clean_body" "$number")
-    "$things_bin" edit "$uuid" --title "$issue_title" --notes "$notes"
+    "$things_bin" update --id="$uuid" --notes "$notes" -- "$issue_title"
     state_record "$number" "$uuid" "$github_hash" "$github_hash"
     return 0
   fi
@@ -323,8 +344,8 @@ if [[ ! -f $state_file ]] || ! jq empty "$state_file" >/dev/null 2>&1; then
   printf '{"schema":1,"items":{}}\n' >"$state_file"
 fi
 
-"$things_bin" -j areas >"$tmp_dir/areas.json"
-if ! jq -e --arg area "$area" 'any(.[]; .title == $area and .visible == true)' "$tmp_dir/areas.json" >/dev/null; then
+"$things_bin" areas --json >"$tmp_dir/areas.json"
+if ! jq -e --arg area "$area" 'any(.[]; (.title // .name) == $area and (.visible // true) == true)' "$tmp_dir/areas.json" >/dev/null; then
   log "Things area '$area' was not found or is hidden; refusing to sync outside the requested area"
   exit 1
 fi
@@ -365,7 +386,7 @@ while IFS= read -r issue; do
   if [[ $state != OPEN ]]; then
     if [[ $task_status == 0 ]]; then
       log "completing Things task $things_uuid because $repo#$number is closed"
-      "$things_bin" complete "$things_uuid"
+      "$things_bin" update --id="$things_uuid" --completed
     fi
     continue
   fi
@@ -398,7 +419,7 @@ while IFS= read -r task; do
 
   if [[ $(jq -r '.state' <<<"$issue") != OPEN ]]; then
     log "completing Things task $(jq -r '.uuid' <<<"$task") because $repo#$number is closed"
-    "$things_bin" complete "$(jq -r '.uuid' <<<"$task")"
+    "$things_bin" update --id="$(jq -r '.uuid' <<<"$task")" --completed
   fi
 done < <(jq -c '.[]' "$tasks_json")
 

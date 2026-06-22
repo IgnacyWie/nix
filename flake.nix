@@ -377,10 +377,11 @@
             grep -Fq 'gh issue create' ${program}
             grep -Fq 'gh issue edit' ${program}
             grep -Fq 'gh issue close' ${program}
-            grep -Fq '"$things_bin" -j areas' ${program}
-            grep -Fq '"$things_bin" add "$title" --list "$area"' ${program}
-            grep -Fq '"$things_bin" edit "$uuid"' ${program}
-            grep -Fq '"$things_bin" complete "$things_uuid"' ${program}
+            grep -Fq '"$things_bin" areas --json' ${program}
+            grep -Fq '"$things_bin" tasks --json --area "$area" --all --limit=0' ${program}
+            grep -Fq '"$things_bin" add --list "$area" --notes "$notes" -- "$title"' ${program}
+            grep -Fq '"$things_bin" update --id="$uuid"' ${program}
+            grep -Fq '"$things_bin" update --id="$things_uuid" --completed' ${program}
             grep -Fq 'StartInterval = 600;' ${./modules/home/todo-business-sync.nix}
             grep -Fq 'Library/Logs/todo-business-sync' ${./modules/home/todo-business-sync.nix}
             grep -Fq '.local/state/todo-business-sync' ${./modules/home/todo-business-sync.nix}

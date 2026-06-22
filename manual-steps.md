@@ -221,7 +221,7 @@ only reads and writes the `Business` Area in Things.
    session:
 
    ```sh
-   things -j areas | jq '.[] | select(.title == "Business")'
+   things areas --json | jq '.[] | select(.title == "Business")'
    ```
 
 3. Enable Things URLs in Things Settings so `things edit` can update tasks.
