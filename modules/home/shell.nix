@@ -9,6 +9,7 @@ let
   homeDirectory = config.home.homeDirectory;
   hostName = config.personal.hostName;
   hostPromptSymbol = config.personal.hostPromptSymbol;
+  homebrewBinPathEnabled = config.personal.shell.enableHomebrewBinPath;
   workstationIntegrationsEnabled = config.personal.shell.enableWorkstationIntegrations;
 
   tmuxGhostty = pkgs.tmux.overrideAttrs (_old: {
@@ -94,6 +95,12 @@ in
       description = "Short host identity shown in the managed shell prompt.";
     };
 
+    shell.enableHomebrewBinPath = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Add /opt/homebrew/bin to the managed zsh path.";
+    };
+
     shell.enableWorkstationIntegrations = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -170,6 +177,15 @@ in
             /etc/profiles/per-user/$USER/bin
             /run/current-system/sw/bin
             $path
+          )
+          typeset -U path
+          export PATH
+        ''
+        + lib.optionalString homebrewBinPathEnabled ''
+
+          path=(
+            $path
+            /opt/homebrew/bin
           )
           typeset -U path
           export PATH

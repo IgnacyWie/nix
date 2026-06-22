@@ -69,9 +69,11 @@ Primary User, shared Home Manager Host Shell Baseline with the `η` Host Prompt
 Symbol, and baseline Home Server tools such as Git, jq, Restic, Tailscale,
 Docker Compose, vdirsyncer, and khal. The same Host Shell Baseline preserves
 the `γ` Host Prompt Symbol for the `gamma` Workstation, while workstation-only
-aliases, Homebrew paths, and interactive UI workflows are enabled explicitly for
-`gamma` rather than inherited by `eta`. The `eta` slice intentionally does not define launchd
-jobs for service stacks or start live containers.
+aliases, `/opt/homebrew/sbin`, and interactive UI workflows are enabled
+explicitly for `gamma` rather than inherited by `eta`. The `eta` zsh path still
+includes `/opt/homebrew/bin` for host-managed Homebrew CLIs. The `eta` slice
+intentionally does not define launchd jobs for service stacks or start live
+containers.
 
 Home Server Service Definitions live in this repository under
 `services/eta/<stack>/`. Each stack is a separate Compose project named after
@@ -107,8 +109,8 @@ On `eta`, `eta-service list` and `eta-service inspect <stack>` only read
 Startup remains explicit through commands such as `eta-service <stack> up`; the
 flake does not configure launchd autostart for all stacks.
 
-OMLX, things3-cli, and imsg are installed on `eta` through host-specific
-Homebrew configuration. OMLX is the host-managed Local Model Runtime for Local
+OMLX and imsg are installed on `eta` through host-specific Homebrew
+configuration. OMLX is the host-managed Local Model Runtime for Local
 AI Service Stacks. This Homebrew scope is separate from the `gamma` Workstation
 Homebrew scope. The initial model preference is configurable with
 `personal.omlx.initialModel` and defaults to

@@ -25,10 +25,8 @@
 
       extraConfig = ''
         tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true
-        tap "ossianhempel/tap", "https://github.com/ossianhempel/homebrew-tap", trusted: true
         tap "steipete/tap", "https://github.com/steipete/homebrew-tap", trusted: true
         brew "omlx", trusted: true
-        brew "ossianhempel/tap/things3-cli", trusted: true
         brew "steipete/tap/imsg", trusted: true
       '';
     };

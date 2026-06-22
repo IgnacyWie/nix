@@ -79,6 +79,7 @@
                 personal = {
                   hostName = "eta";
                   hostPromptSymbol = "η";
+                  shell.enableHomebrewBinPath = true;
                   shell.enableWorkstationIntegrations = false;
                 };
               };
@@ -196,6 +197,7 @@
           assert !(builtins.hasAttr "gamma-restic-backup" homeConfig.launchd.agents);
           assert homeConfig.personal.hostName == "eta";
           assert homeConfig.personal.hostPromptSymbol == "η";
+          assert homeConfig.personal.shell.enableHomebrewBinPath;
           assert !homeConfig.personal.shell.enableWorkstationIntegrations;
           assert builtins.hasAttr "nix-apply-eta" zshAliases;
           assert builtins.hasAttr "nix-build-eta" zshAliases;
@@ -215,6 +217,8 @@
             grep -Fq "PROMPT='η %~/ " ${zshInit}
             grep -Fq 'host_shell_prompt_precmd()' ${zshInit}
             grep -Fq 'add-zsh-hook precmd host_shell_prompt_precmd' ${zshInit}
+            grep -Fq '/opt/homebrew/bin' ${zshInit}
+            ! grep -Fq '/opt/homebrew/sbin' ${zshInit}
             ! grep -Fq '.local/share/pi-node' ${zshInit}
             test -x ${piPackage}/bin/pi
             test "$(${piPackage}/bin/pi --version)" = "0.79.9"
@@ -223,7 +227,6 @@
             grep -Fq 'exec /usr/bin/caffeinate -dims -t 3600 "$codex_bin" --dangerously-bypass-approvals-and-sandbox --dangerously-bypass-hook-trust "$@"' ${codexPackage}/bin/codex
             ! grep -Fq "PROMPT='γ %~/ " ${zshInit}
             ! grep -q 'gamma-restic-backup' ${zshInit}
-            ! grep -Fq '/opt/homebrew/bin' ${zshInit}
             ! grep -Fq 'codex() {' ${zshInit}
             ! grep -Fq 'claude() {' ${zshInit}
             ! grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
@@ -272,16 +275,14 @@
             set -eu
 
             grep -Fq 'tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true' ${etaHomebrewExtraConfig}
-            grep -Fq 'tap "ossianhempel/tap", "https://github.com/ossianhempel/homebrew-tap", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'tap "steipete/tap", "https://github.com/steipete/homebrew-tap", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'brew "omlx", trusted: true' ${etaHomebrewExtraConfig}
-            grep -Fq 'brew "ossianhempel/tap/things3-cli", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'brew "steipete/tap/imsg", trusted: true' ${etaHomebrewExtraConfig}
+            ! grep -Fq 'ossianhempel/tap' ${etaHomebrewExtraConfig}
+            ! grep -Fq 'things3-cli' ${etaHomebrewExtraConfig}
             ! grep -Fq 'jundot/omlx' ${gammaHomebrewExtraConfig}
-            ! grep -Fq 'ossianhempel/tap' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'steipete/tap' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'brew "omlx"' ${gammaHomebrewExtraConfig}
-            ! grep -Fq 'things3-cli' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'imsg' ${gammaHomebrewExtraConfig}
 
             touch "$out"
