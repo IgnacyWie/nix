@@ -44,6 +44,7 @@
       "raycast"
       "sf-symbols"
       "spotify"
+      "telegram"
       "tailscale-app"
       "zen"
       "firefox@developer-edition"

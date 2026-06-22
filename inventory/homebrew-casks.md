@@ -23,6 +23,7 @@ for the `gamma` Workstation:
 - `raycast`: launcher app only. Settings, extensions, and account state remain
   app-owned or manually restored.
 - `sf-symbols`: Apple symbol browser for design and development work.
+- `telegram`: messaging app. Account state remains outside Nix.
 - `tailscale`: macOS menu bar UI from the standalone/Homebrew distribution.
   Login, network state, and VPN permissions remain outside Nix.
 - `whatsapp`: messaging app. Account state remains outside Nix.
