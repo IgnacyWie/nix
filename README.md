@@ -118,6 +118,14 @@ Homebrew scope. The initial model preference is configurable with
 for constrained Apple Silicon memory. It is not a recovery dependency; restored
 service state must not require that exact model to exist.
 
+`eta` also runs `todo-business-sync` as a user launchd agent every 10 minutes.
+The command syncs the private GitHub repository `IgnacyWie/todo-business` with
+only the `Business` Area in Things. Pairing metadata is stored in HTML comments
+inside GitHub issue bodies and Things task notes; the local state file under
+`~/.local/state/todo-business-sync` is only used to detect one-sided edits and
+avoid overwriting conflicts. Runtime logs live under
+`~/Library/Logs/todo-business-sync`.
+
 Home Manager manages OMLX as a user launchd agent on `eta`. The agent starts at
 login, restarts on failure, and runs:
 

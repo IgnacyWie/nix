@@ -75,6 +75,7 @@
                   ./modules/home/omlx.nix
                   ./modules/home/pi.nix
                   ./modules/home/shell.nix
+                  ./modules/home/todo-business-sync.nix
                 ];
                 personal = {
                   hostName = "eta";
@@ -338,6 +339,51 @@
             grep -Fq 'not exposed directly to the LAN or tailnet' ${./README.md}
             grep -Fq '~/Services/data/omlx/models' ${./README.md}
             grep -Fq '~/Services/data/omlx/logs' ${./README.md}
+
+            touch "$out"
+          '';
+
+        eta-todo-business-sync =
+          let
+            etaConfig = etaConfiguration.config;
+            homeConfig = etaConfig.home-manager.users.ignacywielogorski;
+            agent = homeConfig.launchd.agents.todo-business-sync;
+            program = homeConfig.home.file.".local/bin/todo-business-sync".source;
+            expectedProgramArguments = [
+              "/Users/ignacywielogorski/.local/bin/todo-business-sync"
+            ];
+          in
+          assert agent.enable;
+          assert agent.config.ProgramArguments == expectedProgramArguments;
+          assert agent.config.RunAtLoad == true;
+          assert agent.config.StartInterval == 600;
+          assert agent.config.ProcessType == "Background";
+          assert
+            agent.config.StandardOutPath
+            == "/Users/ignacywielogorski/Library/Logs/todo-business-sync/launchd-stdout.log";
+          assert
+            agent.config.StandardErrorPath
+            == "/Users/ignacywielogorski/Library/Logs/todo-business-sync/launchd-stderr.log";
+          assert builtins.hasAttr "PATH" agent.config.EnvironmentVariables;
+          pkgs.runCommand "eta-todo-business-sync-check" { } ''
+            set -eu
+
+            test -x ${program}
+            grep -Fq 'TODO_BUSINESS_GITHUB_REPO:-IgnacyWie/todo-business' ${program}
+            grep -Fq 'TODO_BUSINESS_THINGS_AREA:-Business' ${program}
+            grep -Fq '<!-- todo-business-sync:things-uuid=%s -->' ${program}
+            grep -Fq '<!-- todo-business-sync:github-issue=%s -->' ${program}
+            grep -Fq 'gh issue list' ${program}
+            grep -Fq 'gh issue create' ${program}
+            grep -Fq 'gh issue edit' ${program}
+            grep -Fq 'gh issue close' ${program}
+            grep -Fq '"$things_bin" -j areas' ${program}
+            grep -Fq '"$things_bin" add "$title" --list "$area"' ${program}
+            grep -Fq '"$things_bin" edit "$uuid"' ${program}
+            grep -Fq '"$things_bin" complete "$things_uuid"' ${program}
+            grep -Fq 'StartInterval = 600;' ${./modules/home/todo-business-sync.nix}
+            grep -Fq 'Library/Logs/todo-business-sync' ${./modules/home/todo-business-sync.nix}
+            grep -Fq '.local/state/todo-business-sync' ${./modules/home/todo-business-sync.nix}
 
             touch "$out"
           '';

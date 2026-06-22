@@ -1,0 +1,405 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${TODO_BUSINESS_GITHUB_REPO:-IgnacyWie/todo-business}"
+area="${TODO_BUSINESS_THINGS_AREA:-Business}"
+state_dir="${TODO_BUSINESS_SYNC_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/todo-business-sync}"
+state_file="$state_dir/state.json"
+lock_dir="$state_dir/lock"
+
+usage() {
+  cat <<'USAGE'
+todo-business-sync: sync IgnacyWie/todo-business issues with the Things Business area.
+
+Usage:
+  todo-business-sync
+  todo-business-sync --once
+
+Environment:
+  TODO_BUSINESS_GITHUB_REPO    GitHub repository, default IgnacyWie/todo-business.
+  TODO_BUSINESS_THINGS_AREA    Things area, default Business.
+  TODO_BUSINESS_SYNC_STATE_DIR State directory, default ~/.local/state/todo-business-sync.
+  THINGS_BIN                   Things CLI command, default things.
+USAGE
+}
+
+case "${1:-}" in
+  "" | --once)
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    usage >&2
+    exit 64
+    ;;
+esac
+
+export PATH="/opt/homebrew/bin:/run/current-system/sw/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+things_bin="${THINGS_BIN:-things}"
+
+log() {
+  printf '%s %s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$*" >&2
+}
+
+require_command() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    log "missing required command: $1"
+    exit 69
+  fi
+}
+
+trim_blank_edges() {
+  awk '
+    { lines[++n] = $0 }
+    END {
+      start = 1
+      while (start <= n && lines[start] ~ /^[[:space:]]*$/) start++
+      end = n
+      while (end >= start && lines[end] ~ /^[[:space:]]*$/) end--
+      for (i = start; i <= end; i++) print lines[i]
+    }
+  '
+}
+
+strip_sync_metadata() {
+  sed -E \
+    -e '/^[[:space:]]*<!-- todo-business-sync:(things-uuid|github-issue)=/d' \
+    -e '/^[[:space:]]*GitHub: https:\/\/github.com\/[^ ]+\/issues\/[0-9]+[[:space:]]*$/d' |
+    trim_blank_edges
+}
+
+extract_things_uuid_from_body() {
+  sed -nE 's/.*<!-- todo-business-sync:things-uuid=([^ >]+).*-->.*/\1/p' | head -n 1
+}
+
+extract_github_issue_from_notes() {
+  sed -nE 's/.*<!-- todo-business-sync:github-issue=([0-9]+).*-->.*/\1/p' | head -n 1
+}
+
+content_hash() {
+  {
+    printf 'title=%s\n' "$1"
+    printf 'body<<todo-business-sync\n%s\ntodo-business-sync\n' "$2"
+  } | shasum -a 256 | awk '{print $1}'
+}
+
+issue_body_with_marker() {
+  local body=$1
+  local things_uuid=$2
+
+  if [[ -n $body ]]; then
+    printf '%s\n\n' "$body"
+  fi
+  printf '<!-- todo-business-sync:things-uuid=%s -->\n' "$things_uuid"
+}
+
+task_notes_from_issue() {
+  local url=$1
+  local body=$2
+  local number=$3
+
+  printf 'GitHub: %s\n\n' "$url"
+  if [[ -n $body ]]; then
+    printf '%s\n\n' "$body"
+  fi
+  printf '<!-- todo-business-sync:github-issue=%s -->\n' "$number"
+}
+
+issue_by_number() {
+  jq -c --argjson number "$1" '.[] | select(.number == $number)' "$issues_json" | head -n 1
+}
+
+task_by_uuid() {
+  jq -c --arg uuid "$1" '.[] | select(.uuid == $uuid)' "$tasks_json" | head -n 1
+}
+
+state_value() {
+  jq -r --arg number "$1" --arg key "$2" '.items[$number][$key] // empty' "$state_file"
+}
+
+state_record() {
+  local number=$1
+  local things_uuid=$2
+  local github_hash=$3
+  local things_hash=$4
+  local tmp
+
+  tmp=$(mktemp "$state_dir/state.XXXXXX")
+  jq \
+    --arg number "$number" \
+    --arg things_uuid "$things_uuid" \
+    --arg github_hash "$github_hash" \
+    --arg things_hash "$things_hash" \
+    --arg synced_at "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" \
+    '.items[$number] = {
+      issue_number: ($number | tonumber),
+      things_uuid: $things_uuid,
+      github_hash: $github_hash,
+      things_hash: $things_hash,
+      synced_at: $synced_at
+    }' \
+    "$state_file" >"$tmp"
+  mv "$tmp" "$state_file"
+}
+
+write_issue_body_file() {
+  local path=$1
+  local body=$2
+  printf '%s\n' "$body" >"$path"
+}
+
+refresh_tasks() {
+  : >"$tasks_ndjson"
+
+  for view in today anytime upcoming someday inbox logbook trash; do
+    if "$things_bin" -j "$view" --area "$area" >"$tmp_dir/things-$view.json"; then
+      jq -c '.[]?' "$tmp_dir/things-$view.json" >>"$tasks_ndjson"
+    else
+      log "failed to read Things view '$view' for area '$area'"
+      exit 1
+    fi
+  done
+
+  jq -s 'unique_by(.uuid) | map(select(.uuid != null and .uuid != ""))' "$tasks_ndjson" >"$tasks_json"
+}
+
+find_task_created_for_issue() {
+  local number=$1
+  local query="todo-business-sync:github-issue=$number"
+  local search_json="$tmp_dir/search-$number.json"
+
+  "$things_bin" -j search "$query" >"$search_json"
+  jq -r --arg area "$area" --arg number "$number" '
+    .[]
+    | select(.status == 0)
+    | select(.areaTitle == $area)
+    | select((.notes // "") | contains("todo-business-sync:github-issue=" + $number))
+    | .uuid
+  ' "$search_json" | head -n 1
+}
+
+sync_issue_to_new_task() {
+  local issue=$1
+  local number title url body clean_body notes things_uuid body_with_marker body_file github_hash
+
+  number=$(jq -r '.number' <<<"$issue")
+  title=$(jq -r '.title' <<<"$issue")
+  url=$(jq -r '.url' <<<"$issue")
+  body=$(jq -r '.body // ""' <<<"$issue")
+  clean_body=$(printf '%s' "$body" | strip_sync_metadata)
+  notes=$(task_notes_from_issue "$url" "$clean_body" "$number")
+
+  log "creating Things task for $repo#$number"
+  "$things_bin" add "$title" --list "$area" --notes "$notes"
+  sleep 2
+
+  things_uuid=$(find_task_created_for_issue "$number")
+  if [[ -z $things_uuid ]]; then
+    log "created task for $repo#$number but could not rediscover its Things UUID"
+    return 1
+  fi
+
+  body_with_marker=$(issue_body_with_marker "$clean_body" "$things_uuid")
+  body_file="$tmp_dir/issue-$number-body.md"
+  write_issue_body_file "$body_file" "$body_with_marker"
+  gh issue edit "$number" --repo "$repo" --body-file "$body_file" >/dev/null
+
+  github_hash=$(content_hash "$title" "$clean_body")
+  state_record "$number" "$things_uuid" "$github_hash" "$github_hash"
+}
+
+sync_task_to_new_issue() {
+  local task=$1
+  local uuid title notes clean_notes body body_file url number issue_marker github_hash
+
+  uuid=$(jq -r '.uuid' <<<"$task")
+  title=$(jq -r '.title' <<<"$task")
+  notes=$(jq -r '.notes // ""' <<<"$task")
+  clean_notes=$(printf '%s' "$notes" | strip_sync_metadata)
+  body=$(issue_body_with_marker "$clean_notes" "$uuid")
+  body_file="$tmp_dir/new-issue-$uuid.md"
+  write_issue_body_file "$body_file" "$body"
+
+  log "creating GitHub issue for Things task $uuid"
+  url=$(gh issue create --repo "$repo" --title "$title" --body-file "$body_file")
+  number="${url##*/}"
+  if [[ ! $number =~ ^[0-9]+$ ]]; then
+    log "could not parse issue number from gh output: $url"
+    return 1
+  fi
+
+  issue_marker=$(task_notes_from_issue "$url" "$clean_notes" "$number")
+  "$things_bin" edit "$uuid" --notes "$issue_marker"
+
+  github_hash=$(content_hash "$title" "$clean_notes")
+  state_record "$number" "$uuid" "$github_hash" "$github_hash"
+}
+
+sync_mapped_open_pair() {
+  local issue=$1
+  local task=$2
+  local number uuid issue_title issue_body issue_clean_body task_title task_notes task_clean_notes
+  local github_hash things_hash previous_github_hash previous_things_hash
+  local github_changed things_changed notes body_file body_with_marker
+
+  number=$(jq -r '.number' <<<"$issue")
+  uuid=$(jq -r '.uuid' <<<"$task")
+  issue_title=$(jq -r '.title' <<<"$issue")
+  issue_body=$(jq -r '.body // ""' <<<"$issue")
+  issue_clean_body=$(printf '%s' "$issue_body" | strip_sync_metadata)
+  task_title=$(jq -r '.title' <<<"$task")
+  task_notes=$(jq -r '.notes // ""' <<<"$task")
+  task_clean_notes=$(printf '%s' "$task_notes" | strip_sync_metadata)
+
+  github_hash=$(content_hash "$issue_title" "$issue_clean_body")
+  things_hash=$(content_hash "$task_title" "$task_clean_notes")
+  previous_github_hash=$(state_value "$number" github_hash)
+  previous_things_hash=$(state_value "$number" things_hash)
+
+  if [[ -z $previous_github_hash || -z $previous_things_hash ]]; then
+    state_record "$number" "$uuid" "$github_hash" "$things_hash"
+    return 0
+  fi
+
+  github_changed=false
+  things_changed=false
+  [[ $github_hash != "$previous_github_hash" ]] && github_changed=true
+  [[ $things_hash != "$previous_things_hash" ]] && things_changed=true
+
+  if [[ $github_changed == true && $things_changed == true ]]; then
+    log "conflict on $repo#$number / Things $uuid; both sides changed, skipping"
+    return 0
+  fi
+
+  if [[ $github_changed == true ]]; then
+    log "updating Things task $uuid from $repo#$number"
+    notes=$(task_notes_from_issue "$(jq -r '.url' <<<"$issue")" "$issue_clean_body" "$number")
+    "$things_bin" edit "$uuid" --title "$issue_title" --notes "$notes"
+    state_record "$number" "$uuid" "$github_hash" "$github_hash"
+    return 0
+  fi
+
+  if [[ $things_changed == true ]]; then
+    log "updating $repo#$number from Things task $uuid"
+    body_with_marker=$(issue_body_with_marker "$task_clean_notes" "$uuid")
+    body_file="$tmp_dir/update-issue-$number-body.md"
+    write_issue_body_file "$body_file" "$body_with_marker"
+    gh issue edit "$number" --repo "$repo" --title "$task_title" --body-file "$body_file" >/dev/null
+    state_record "$number" "$uuid" "$things_hash" "$things_hash"
+    return 0
+  fi
+
+  state_record "$number" "$uuid" "$github_hash" "$things_hash"
+}
+
+require_command gh
+require_command jq
+require_command shasum
+if ! command -v "$things_bin" >/dev/null 2>&1; then
+  log "missing required Things CLI command: $things_bin"
+  exit 69
+fi
+
+mkdir -p "$state_dir"
+if ! mkdir "$lock_dir" 2>/dev/null; then
+  log "another sync is already running"
+  exit 0
+fi
+
+tmp_dir=$(mktemp -d)
+issues_json="$tmp_dir/issues.json"
+tasks_json="$tmp_dir/tasks.json"
+tasks_ndjson="$tmp_dir/tasks.ndjson"
+
+cleanup() {
+  rm -rf "$tmp_dir"
+  rmdir "$lock_dir" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+if [[ ! -f $state_file ]] || ! jq empty "$state_file" >/dev/null 2>&1; then
+  printf '{"schema":1,"items":{}}\n' >"$state_file"
+fi
+
+"$things_bin" -j areas >"$tmp_dir/areas.json"
+if ! jq -e --arg area "$area" 'any(.[]; .title == $area and .visible == true)' "$tmp_dir/areas.json" >/dev/null; then
+  log "Things area '$area' was not found or is hidden; refusing to sync outside the requested area"
+  exit 1
+fi
+
+gh issue list \
+  --repo "$repo" \
+  --state all \
+  --limit 1000 \
+  --json number,title,body,state,url,updatedAt >"$issues_json"
+
+refresh_tasks
+
+while IFS= read -r issue; do
+  number=$(jq -r '.number' <<<"$issue")
+  state=$(jq -r '.state' <<<"$issue")
+  body=$(jq -r '.body // ""' <<<"$issue")
+  things_uuid=$(printf '%s' "$body" | extract_things_uuid_from_body)
+
+  if [[ -z $things_uuid ]]; then
+    if [[ $state == OPEN ]]; then
+      sync_issue_to_new_task "$issue"
+      refresh_tasks
+    fi
+    continue
+  fi
+
+  task=$(task_by_uuid "$things_uuid")
+  if [[ -z $task ]]; then
+    if [[ $state == OPEN ]]; then
+      log "$repo#$number is open but Things task $things_uuid is not in area '$area'; creating a replacement"
+      sync_issue_to_new_task "$issue"
+      refresh_tasks
+    fi
+    continue
+  fi
+
+  task_status=$(jq -r '.status' <<<"$task")
+  if [[ $state != OPEN ]]; then
+    if [[ $task_status == 0 ]]; then
+      log "completing Things task $things_uuid because $repo#$number is closed"
+      "$things_bin" complete "$things_uuid"
+    fi
+    continue
+  fi
+
+  if [[ $task_status != 0 ]]; then
+    log "closing $repo#$number because Things task $things_uuid is complete or canceled"
+    gh issue close "$number" --repo "$repo" --comment "Closed by todo-business-sync after the paired Things task was completed or canceled." >/dev/null
+    continue
+  fi
+
+  sync_mapped_open_pair "$issue" "$task"
+done < <(jq -c '.[]' "$issues_json")
+
+while IFS= read -r task; do
+  task_status=$(jq -r '.status' <<<"$task")
+  [[ $task_status == 0 ]] || continue
+
+  task_notes=$(jq -r '.notes // ""' <<<"$task")
+  number=$(printf '%s' "$task_notes" | extract_github_issue_from_notes)
+  if [[ -z $number ]]; then
+    sync_task_to_new_issue "$task"
+    continue
+  fi
+
+  issue=$(issue_by_number "$number")
+  if [[ -z $issue ]]; then
+    log "Things task $(jq -r '.uuid' <<<"$task") references missing $repo#$number; leaving it unchanged"
+    continue
+  fi
+
+  if [[ $(jq -r '.state' <<<"$issue") != OPEN ]]; then
+    log "completing Things task $(jq -r '.uuid' <<<"$task") because $repo#$number is closed"
+    "$things_bin" complete "$(jq -r '.uuid' <<<"$task")"
+  fi
+done < <(jq -c '.[]' "$tasks_json")
+
+log "sync complete for $repo <-> Things area '$area'"

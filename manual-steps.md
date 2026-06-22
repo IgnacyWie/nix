@@ -211,6 +211,41 @@ depend on live model inference.
    tail -100 ~/Services/data/omlx/logs/server.log
    ```
 
+## `eta` Things Business Sync
+
+The private GitHub repository is `IgnacyWie/todo-business`. The managed sync
+only reads and writes the `Business` Area in Things.
+
+1. In Things, confirm the `Business` Area exists and is visible.
+2. Confirm the `things` CLI can read the local database from the eta login
+   session:
+
+   ```sh
+   things -j areas | jq '.[] | select(.title == "Business")'
+   ```
+
+3. Enable Things URLs in Things Settings so `things edit` can update tasks.
+4. Confirm `gh` is authenticated as `IgnacyWie` and can access the private repo:
+
+   ```sh
+   gh auth status
+   gh issue list --repo IgnacyWie/todo-business --limit 1
+   ```
+
+5. Apply the `eta` Home Manager configuration and confirm the launchd agent is
+   loaded:
+
+   ```sh
+   launchctl print gui/$(id -u)/org.nix-community.home.todo-business-sync
+   ```
+
+6. Run a manual sync and inspect logs:
+
+   ```sh
+   todo-business-sync --once
+   tail -100 ~/Library/Logs/todo-business-sync/launchd-stderr.log
+   ```
+
 ## `eta` Home Server Keystone Recovery
 
 Vaultwarden is the v1 Keystone Service and must be restored before relying on
