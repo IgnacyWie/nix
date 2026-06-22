@@ -6,6 +6,7 @@ area="${TODO_BUSINESS_THINGS_AREA:-Business}"
 state_dir="${TODO_BUSINESS_SYNC_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/todo-business-sync}"
 state_file="$state_dir/state.json"
 lock_dir="$state_dir/lock"
+things_timeout="${TODO_BUSINESS_THINGS_TIMEOUT_SECONDS:-120}"
 
 usage() {
   cat <<'USAGE'
@@ -19,6 +20,8 @@ Environment:
   TODO_BUSINESS_GITHUB_REPO    GitHub repository, default IgnacyWie/todo-business.
   TODO_BUSINESS_THINGS_AREA    Things area, default Business.
   TODO_BUSINESS_SYNC_STATE_DIR State directory, default ~/.local/state/todo-business-sync.
+  TODO_BUSINESS_THINGS_TIMEOUT_SECONDS
+                                  Per-call Things CLI timeout, default 120.
   THINGS_BIN                   Things CLI command, default things.
 USAGE
 }
@@ -48,6 +51,31 @@ require_command() {
     log "missing required command: $1"
     exit 69
   fi
+}
+
+run_with_timeout() {
+  local timeout_seconds=$1
+  shift
+
+  "$@" &
+  local pid=$!
+  local elapsed=0
+
+  while kill -0 "$pid" 2>/dev/null; do
+    if ((elapsed >= timeout_seconds)); then
+      log "command timed out after ${timeout_seconds}s: $*"
+      kill "$pid" 2>/dev/null || true
+      sleep 1
+      kill -9 "$pid" 2>/dev/null || true
+      wait "$pid" 2>/dev/null || true
+      return 124
+    fi
+
+    sleep 1
+    elapsed=$((elapsed + 1))
+  done
+
+  wait "$pid"
 }
 
 trim_blank_edges() {
@@ -171,7 +199,7 @@ write_issue_body_file() {
 }
 
 refresh_tasks() {
-  if "$things_bin" tasks --json --area "$area" --all --limit=0 >"$tmp_dir/things-tasks.json"; then
+  if run_with_timeout "$things_timeout" "$things_bin" tasks --json --area "$area" --all --limit=0 >"$tmp_dir/things-tasks.json"; then
     jq "map($normalize_task_filter) | unique_by(.uuid)" "$tmp_dir/things-tasks.json" >"$tasks_json"
   else
     log "failed to read Things tasks for area '$area'"
@@ -184,7 +212,7 @@ find_task_created_for_issue() {
   local query="todo-business-sync:github-issue=$number"
   local search_json="$tmp_dir/search-$number.json"
 
-  "$things_bin" search --json --area "$area" --status=incomplete "$query" >"$search_json"
+  run_with_timeout "$things_timeout" "$things_bin" search --json --area "$area" --status=incomplete "$query" >"$search_json"
   jq -r --arg area "$area" --arg number "$number" '
     def normalized_status:
       if (.status | type) == "number" then .status
@@ -213,7 +241,7 @@ sync_issue_to_new_task() {
   notes=$(task_notes_from_issue "$url" "$clean_body" "$number")
 
   log "creating Things task for $repo#$number"
-  "$things_bin" add --list "$area" --notes "$notes" -- "$title"
+  run_with_timeout "$things_timeout" "$things_bin" add --list "$area" --notes "$notes" -- "$title"
   sleep 2
 
   things_uuid=$(find_task_created_for_issue "$number")
@@ -252,7 +280,7 @@ sync_task_to_new_issue() {
   fi
 
   issue_marker=$(task_notes_from_issue "$url" "$clean_notes" "$number")
-  "$things_bin" update --id="$uuid" --notes "$issue_marker"
+  run_with_timeout "$things_timeout" "$things_bin" update --id="$uuid" --notes "$issue_marker"
 
   github_hash=$(content_hash "$title" "$clean_notes")
   state_record "$number" "$uuid" "$github_hash" "$github_hash"
@@ -297,7 +325,7 @@ sync_mapped_open_pair() {
   if [[ $github_changed == true ]]; then
     log "updating Things task $uuid from $repo#$number"
     notes=$(task_notes_from_issue "$(jq -r '.url' <<<"$issue")" "$issue_clean_body" "$number")
-    "$things_bin" update --id="$uuid" --notes "$notes" -- "$issue_title"
+    run_with_timeout "$things_timeout" "$things_bin" update --id="$uuid" --notes "$notes" -- "$issue_title"
     state_record "$number" "$uuid" "$github_hash" "$github_hash"
     return 0
   fi
@@ -344,7 +372,7 @@ if [[ ! -f $state_file ]] || ! jq empty "$state_file" >/dev/null 2>&1; then
   printf '{"schema":1,"items":{}}\n' >"$state_file"
 fi
 
-"$things_bin" areas --json >"$tmp_dir/areas.json"
+run_with_timeout "$things_timeout" "$things_bin" areas --json >"$tmp_dir/areas.json"
 if ! jq -e --arg area "$area" 'any(.[]; (.title // .name) == $area and (.visible // true) == true)' "$tmp_dir/areas.json" >/dev/null; then
   log "Things area '$area' was not found or is hidden; refusing to sync outside the requested area"
   exit 1
@@ -386,7 +414,7 @@ while IFS= read -r issue; do
   if [[ $state != OPEN ]]; then
     if [[ $task_status == 0 ]]; then
       log "completing Things task $things_uuid because $repo#$number is closed"
-      "$things_bin" update --id="$things_uuid" --completed
+      run_with_timeout "$things_timeout" "$things_bin" update --id="$things_uuid" --completed
     fi
     continue
   fi
@@ -419,7 +447,7 @@ while IFS= read -r task; do
 
   if [[ $(jq -r '.state' <<<"$issue") != OPEN ]]; then
     log "completing Things task $(jq -r '.uuid' <<<"$task") because $repo#$number is closed"
-    "$things_bin" update --id="$(jq -r '.uuid' <<<"$task")" --completed
+    run_with_timeout "$things_timeout" "$things_bin" update --id="$(jq -r '.uuid' <<<"$task")" --completed
   fi
 done < <(jq -c '.[]' "$tasks_json")
 
