@@ -273,12 +273,16 @@
 
             grep -Fq 'tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'tap "ossianhempel/tap", "https://github.com/ossianhempel/homebrew-tap", trusted: true' ${etaHomebrewExtraConfig}
+            grep -Fq 'tap "steipete/tap", "https://github.com/steipete/homebrew-tap", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'brew "omlx", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'brew "ossianhempel/tap/things3-cli", trusted: true' ${etaHomebrewExtraConfig}
+            grep -Fq 'brew "steipete/tap/imsg", trusted: true' ${etaHomebrewExtraConfig}
             ! grep -Fq 'jundot/omlx' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'ossianhempel/tap' ${gammaHomebrewExtraConfig}
+            ! grep -Fq 'steipete/tap' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'brew "omlx"' ${gammaHomebrewExtraConfig}
             ! grep -Fq 'things3-cli' ${gammaHomebrewExtraConfig}
+            ! grep -Fq 'imsg' ${gammaHomebrewExtraConfig}
 
             touch "$out"
           '';
