@@ -299,5 +299,10 @@ in
         run mkdir -p ${lib.escapeShellArg "${homeDirectory}/.nvm"}
       '';
     })
+    (lib.mkIf homebrewBinPathEnabled {
+      home.sessionPath = [
+        "/opt/homebrew/bin"
+      ];
+    })
   ];
 }

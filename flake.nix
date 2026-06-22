@@ -206,7 +206,7 @@
           assert !(builtins.hasAttr "developer" zshAliases);
           assert !(builtins.hasAttr "deploy" zshAliases);
           assert !(builtins.hasAttr "tailscale" zshAliases);
-          assert !(builtins.elem "/opt/homebrew/bin" sessionPath);
+          assert builtins.elem "/opt/homebrew/bin" sessionPath;
           assert !(builtins.elem "/opt/homebrew/sbin" sessionPath);
           assert !(builtins.hasAttr "NVM_DIR" sessionVariables);
           assert !(builtins.hasAttr ".local/bin/tmux" homeConfig.home.file);
