@@ -1207,6 +1207,7 @@
           assert builtins.elem "mas" homebrewBrewNames;
           assert !(builtins.elem "tmux" homebrewBrewNames);
           assert builtins.elem "goku" homebrewBrewNames;
+          assert builtins.elem "libpq" homebrewBrewNames;
           assert builtins.elem "keka" homebrewCaskNames;
           assert builtins.elem "qutebrowser" homebrewCaskNames;
           assert builtins.elem "tailscale-app" homebrewCaskNames;
@@ -1281,6 +1282,7 @@
               grep -q '/bin/duti' ${defaultAppsActivation}
               grep -q 'keka-archive-defaults.duti' ${defaultAppsActivation}
               grep -q 'onlyoffice-document-defaults.duti' ${defaultAppsActivation}
+              grep -q 'brew link --force libpq' ${defaultAppsActivation}
               grep -q 'brew "koekeishiya/formulae/yabai", trusted: true' ${homebrewBrewfile}
               grep -q 'brew "koekeishiya/formulae/skhd", trusted: true' ${homebrewBrewfile}
 

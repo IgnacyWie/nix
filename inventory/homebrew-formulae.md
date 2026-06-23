@@ -11,6 +11,8 @@ Declared formulae:
 
 - `goku`: GokuRakuJoudo generator for maintaining the editable
   `karabiner.edn` source and producing Karabiner JSON.
+- `libpq`: PostgreSQL client tools (`psql`, `pg_dump`, `pg_restore`) kept in
+  Homebrew and force-linked because the formula is keg-only.
 - `nvm`: kept in Homebrew because the shell workflow depends on Homebrew's
   sourced `nvm.sh`.
 - `homebrew-zathura/zathura/zathura`: PDF viewer kept in Homebrew because the
@@ -35,7 +37,8 @@ Declared tap:
 
 Reviewed CLI tools such as `age`, `bitwarden-cli`, `gnupg`, `helm`, `httpie`,
 `k9s`, `kubectl`, `kustomize`, `openssh`, `pinentry_mac`, and `sops` are
-installed through Nix system packages instead of Homebrew formulae. `tmux` is
+installed through Nix system packages instead of Homebrew formulae. PostgreSQL
+client tools are the exception and come from Homebrew `libpq`. `tmux` is
 pinned to `3.3a` through Home Manager because current `3.6` builds fail to
 attach clients in Ghostty on `gamma`.
 

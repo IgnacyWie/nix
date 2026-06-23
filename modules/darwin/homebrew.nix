@@ -18,6 +18,7 @@
 
     brews = [
       "goku"
+      "libpq"
       "nzbget"
       "opentofu"
       # Goku depends on joker, but Homebrew bundle cleanup can try to remove
@@ -76,6 +77,10 @@
     if [ -e "$zathura_poppler_plugin" ]; then
       mkdir -p "$zathura_prefix/lib/zathura"
       ln -sfn "$zathura_poppler_plugin" "$zathura_prefix/lib/zathura/libpdf-poppler.dylib"
+    fi
+
+    if [ -x /opt/homebrew/bin/brew ] && /opt/homebrew/bin/brew list --formula libpq >/dev/null 2>&1; then
+      /opt/homebrew/bin/brew link --force libpq
     fi
   '';
 }
