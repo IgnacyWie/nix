@@ -19,6 +19,7 @@
     brews = [
       "goku"
       "nzbget"
+      "opentofu"
       # Goku depends on joker, but Homebrew bundle cleanup can try to remove
       # an old tapped joker keg before it has reconciled Goku's dependency.
       # Keep joker explicit so apply-gamma cleanup stays dependency-safe.
