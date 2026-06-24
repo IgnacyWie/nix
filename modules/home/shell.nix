@@ -214,6 +214,10 @@ in
           add-zsh-hook precmd host_shell_prompt_precmd
           PROMPT='${hostPromptSymbol} %~/ ''${host_shell_git_prompt}'
         ''
+        + lib.optionalString (hostName == "gamma") ''
+
+          export SSH_AUTH_SOCK="${homeDirectory}/.bitwarden-ssh-agent.sock"
+        ''
         + lib.optionalString workstationIntegrationsEnabled ''
 
           path=(

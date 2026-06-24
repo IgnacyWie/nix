@@ -57,6 +57,7 @@
     lazysql
     neovim
     opencode
+    opentofu
     openssh
     pandoc
     pinentry_mac
