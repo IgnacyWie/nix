@@ -1022,7 +1022,7 @@
               grep -Fq '$PNPM_HOME' ${zshInit}
               grep -Fq 'typeset -U path' ${zshInit}
               grep -Fq "PROMPT='γ %~/ " ${zshInit}
-              grep -Fq 'export SSH_AUTH_SOCK="/Users/ignacywielogorski/.bitwarden-ssh-agent.sock"' ${zshInit}
+              grep -Fq 'export SSH_AUTH_SOCK="/Users/ignacywielogorski/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"' ${zshInit}
               ! grep -Fq "PROMPT='η %~/ " ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}

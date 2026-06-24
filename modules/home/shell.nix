@@ -216,7 +216,7 @@ in
         ''
         + lib.optionalString (hostName == "gamma") ''
 
-          export SSH_AUTH_SOCK="${homeDirectory}/.bitwarden-ssh-agent.sock"
+          export SSH_AUTH_SOCK="${homeDirectory}/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock"
         ''
         + lib.optionalString workstationIntegrationsEnabled ''
 
