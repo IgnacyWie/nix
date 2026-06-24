@@ -524,6 +524,97 @@
     '';
   };
 
+  home.file.".local/scripts/open-github-repository" = {
+    executable = true;
+    force = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      die() {
+        printf '%s\n' "open-github-repository: $*" >&2
+        exit 1
+      }
+
+      github_url_from_remote() {
+        local remote_url=$1
+        local repo
+
+        case "$remote_url" in
+          git@github.com:*.git)
+            repo=''${remote_url#git@github.com:}
+            repo=''${repo%.git}
+            ;;
+          git@github.com:*)
+            repo=''${remote_url#git@github.com:}
+            ;;
+          ssh://git@github.com/*.git)
+            repo=''${remote_url#ssh://git@github.com/}
+            repo=''${repo%.git}
+            ;;
+          ssh://git@github.com/*)
+            repo=''${remote_url#ssh://git@github.com/}
+            ;;
+          https://github.com/*.git)
+            repo=''${remote_url#https://github.com/}
+            repo=''${repo%.git}
+            ;;
+          https://github.com/*)
+            repo=''${remote_url#https://github.com/}
+            repo=''${repo%.git}
+            ;;
+          *)
+            return 1
+            ;;
+        esac
+
+        repo=''${repo%/}
+
+        if [[ "$repo" != */* || "$repo" == */*/* || "$repo" == */ ]]; then
+          return 1
+        fi
+
+        printf 'https://github.com/%s\n' "$repo"
+      }
+
+      current_github_url() {
+        local remote_name remote_url github_url
+
+        if remote_url=$(git remote get-url origin 2>/dev/null) && github_url=$(github_url_from_remote "$remote_url"); then
+          printf '%s\n' "$github_url"
+          return 0
+        fi
+
+        while read -r remote_name; do
+          remote_url=$(git remote get-url "$remote_name" 2>/dev/null || true)
+          if github_url=$(github_url_from_remote "$remote_url"); then
+            printf '%s\n' "$github_url"
+            return 0
+          fi
+        done < <(git remote)
+
+        return 1
+      }
+
+      if [[ ''${OPEN_GITHUB_REPOSITORY_TEST_REMOTE:-0} == 1 ]]; then
+        github_url_from_remote "$1"
+        exit 0
+      fi
+
+      if ! repo_root=$(git rev-parse --show-toplevel 2>/dev/null); then
+        die "not inside a git repository"
+      fi
+
+      cd "$repo_root"
+
+      if ! github_url=$(current_github_url); then
+        die "no GitHub remote found for $repo_root"
+      fi
+
+      exec "''${OPEN_GITHUB_REPOSITORY_OPEN_COMMAND:-open}" "$github_url"
+    '';
+  };
+
   home.file.".local/scripts/issue-picker" = {
     executable = true;
     force = true;

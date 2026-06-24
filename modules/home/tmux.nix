@@ -37,6 +37,7 @@
       bind-key -n C-f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"
       bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"
       bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"
+      bind-key -n C-n run-shell -b 'cd #{q:pane_current_path} && ~/.local/scripts/open-github-repository'
       bind-key -n C-o display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE='#{pane_id}' ~/.local/scripts/dev-command-runner"
       bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE='#{pane_id}' ~/.local/scripts/dev-command-runner"
       bind-key Y display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"

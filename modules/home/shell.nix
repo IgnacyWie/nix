@@ -260,6 +260,7 @@ in
           bindkey -s '^Y' 'issue-picker\n'
           bindkey -s '^F' 'tmux-sessionizer\n'
           bindkey -s '^G' 'typst-smart-open\n'
+          bindkey -s '^N' 'open-github-repository\n'
 
           gamma_dev_command_runner_widget() {
             zle -I

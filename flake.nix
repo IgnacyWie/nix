@@ -927,6 +927,7 @@
             grep -q 'bind-key -n C-f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -r f display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/tmux-sessionizer"' ${tmuxConfig}
             grep -q 'bind-key -n C-g display-popup -E -d "$HOME/typst" -w 90% -h 80% "~/.local/scripts/typst-smart-open"' ${tmuxConfig}
+            grep -q "bind-key -n C-n run-shell -b 'cd #{q:pane_current_path} && ~/.local/scripts/open-github-repository'" ${tmuxConfig}
             grep -q 'bind-key -n C-o display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE=' ${tmuxConfig}
             grep -q 'bind-key D display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE=' ${tmuxConfig}
             grep -q 'bind-key Y display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "~/.local/scripts/issue-picker"' ${tmuxConfig}
@@ -1026,6 +1027,7 @@
               ! grep -Fq "PROMPT='η %~/ " ${zshInit}
               grep -q "bindkey -s '\^T' 'git-branch-switcher" ${zshInit}
               grep -q "bindkey -s '\^Y' 'issue-picker" ${zshInit}
+              grep -q "bindkey -s '\^N' 'open-github-repository" ${zshInit}
               grep -q 'gamma_dev_command_runner_widget()' ${zshInit}
               grep -q 'tmux display-popup -E -d "#{pane_current_path}" -w 90% -h 80% "DEV_COMMAND_RUNNER_TARGET_PANE=' ${zshInit}
               grep -q "bindkey '\^O' gamma_dev_command_runner_widget" ${zshInit}
@@ -1191,6 +1193,7 @@
             devCommandRunner = homeConfig.home.file.".local/scripts/dev-command-runner".source;
             gitBranchSwitcher = homeConfig.home.file.".local/scripts/git-branch-switcher".source;
             issuePicker = homeConfig.home.file.".local/scripts/issue-picker".source;
+            openGithubRepository = homeConfig.home.file.".local/scripts/open-github-repository".source;
             typstSmartOpen = homeConfig.home.file.".local/scripts/typst-smart-open".source;
             backupRestorePicker = homeConfig.home.file.".local/scripts/backup-restore-picker".source;
             typstTemplate = homeConfig.home.file."typst/academic-template.typ".source;
@@ -1249,12 +1252,14 @@
               test -x ${devCommandRunner}
               test -x ${gitBranchSwitcher}
               test -x ${issuePicker}
+              test -x ${openGithubRepository}
               test -x ${typstSmartOpen}
               test -x ${backupRestorePicker}
               test -r ${typstTemplate}
               grep -q 'tmux session> ' ${tmuxSessionizer}
               grep -q 'issue> ' ${issuePicker}
               grep -q 'issue action> ' ${issuePicker}
+              grep -q 'open-github-repository' ${openGithubRepository}
               grep -q 'github_repo_from_remote' ${issuePicker}
               grep -q 'pbcopy' ${issuePicker}
               grep -q 'git switch -c "$branch_name"' ${issuePicker}
@@ -1290,6 +1295,9 @@
               test "$(ISSUE_PICKER_TEST_REMOTE=1 ${issuePicker} git@github.com:IgnacyWie/nix.git)" = "IgnacyWie/nix"
               test "$(ISSUE_PICKER_TEST_REMOTE=1 ${issuePicker} https://github.com/IgnacyWie/nix.git)" = "IgnacyWie/nix"
               test "$(ISSUE_PICKER_TEST_REMOTE=1 ${issuePicker} https://github.com/IgnacyWie/nix)" = "IgnacyWie/nix"
+              test "$(OPEN_GITHUB_REPOSITORY_TEST_REMOTE=1 ${openGithubRepository} git@github.com:IgnacyWie/nix.git)" = "https://github.com/IgnacyWie/nix"
+              test "$(OPEN_GITHUB_REPOSITORY_TEST_REMOTE=1 ${openGithubRepository} ssh://git@github.com/IgnacyWie/nix.git)" = "https://github.com/IgnacyWie/nix"
+              test "$(OPEN_GITHUB_REPOSITORY_TEST_REMOTE=1 ${openGithubRepository} https://github.com/IgnacyWie/nix.git)" = "https://github.com/IgnacyWie/nix"
 
               home="$TMPDIR/home"
               bin="$TMPDIR/bin"
@@ -1400,6 +1408,14 @@
               printf 'main\n' > README.md
               git add README.md
               git commit -m initial
+
+              PATH="$bin:${pkgs.bash}/bin:${pkgs.coreutils}/bin:${pkgs.git}/bin" \
+                HOME="$home" \
+                TMPDIR="$TMPDIR" \
+                OPEN_GITHUB_REPOSITORY_OPEN_COMMAND="$bin/open" \
+                ${openGithubRepository}
+
+              test "$(cat "$TMPDIR/open.log")" = "https://github.com/IgnacyWie/nix"
 
               cat > "$bin/fzf" <<'EOF'
               #!${pkgs.runtimeShell}

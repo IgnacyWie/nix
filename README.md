@@ -399,6 +399,12 @@ tmux, and tmux prefix `Y` launches it in a popup from the current pane
 directory. `Ctrl-I` is intentionally left unbound for this workflow because
 terminals encode Tab as `Ctrl-I`.
 
+Home Manager manages `~/.local/scripts/open-github-repository`. Inside a
+GitHub-backed Git repository, it resolves the current repository from `origin`
+or another GitHub remote and opens `https://github.com/<owner>/<repo>` in the
+browser. The zsh and tmux binding is `Ctrl-N`; tmux runs it from the current
+pane directory without opening a popup.
+
 Home Manager manages `~/.local/scripts/typst-smart-open` and the reviewed
 `~/typst/academic-template.typ` template. The script opens an existing Typst
 document from `~/typst` or creates a new one from the template, then starts a
@@ -463,6 +469,7 @@ Karabiner. LazyVim's built-in defaults are inherited but not duplicated here.
 | `Ctrl-F`        | zsh, tmux | Launch `tmux-sessionizer`; tmux opens it in a popup.               |
 | `Ctrl-G`        | zsh, tmux | Launch `typst-smart-open`; tmux opens it from `~/typst`.           |
 | `Ctrl-O`        | zsh, tmux | Launch `dev-command-runner`; tmux opens it in a popup.             |
+| `Ctrl-N`        | zsh, tmux | Open the current GitHub repository in the browser.                 |
 | `Ctrl-T`        | zsh       | Launch `git-branch-switcher`.                                      |
 | `Ctrl-Y`        | zsh       | Launch `issue-picker`; avoids the `Ctrl-I`/Tab terminal collision. |
 | tmux prefix `D` | tmux      | Launch `dev-command-runner` in a popup.                            |
