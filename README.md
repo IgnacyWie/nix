@@ -217,6 +217,8 @@ same Nix invocation needed during the initial flake bootstrap:
 ./scripts/apply-gamma
 ```
 
+test
+
 They fall back to `/nix/var/nix/profiles/default/bin/nix`, enable
 `nix-command` and `flakes`, and set `NIX_SSL_CERT_FILE=/etc/ssl/cert.pem` when
 that macOS certificate bundle is available.
@@ -456,137 +458,137 @@ Karabiner. LazyVim's built-in defaults are inherited but not duplicated here.
 
 ### Shell Workflow Keybindings
 
-| Key | Scope | Action |
-| --- | --- | --- |
-| `Ctrl-F` | zsh, tmux | Launch `tmux-sessionizer`; tmux opens it in a popup. |
-| `Ctrl-G` | zsh, tmux | Launch `typst-smart-open`; tmux opens it from `~/typst`. |
-| `Ctrl-O` | zsh, tmux | Launch `dev-command-runner`; tmux opens it in a popup. |
-| `Ctrl-T` | zsh | Launch `git-branch-switcher`. |
-| `Ctrl-Y` | zsh | Launch `issue-picker`; avoids the `Ctrl-I`/Tab terminal collision. |
-| tmux prefix `D` | tmux | Launch `dev-command-runner` in a popup. |
-| tmux prefix `f` | tmux | Launch `tmux-sessionizer` in a popup. |
-| tmux prefix `Y` | tmux | Launch `issue-picker` in a popup. |
-| tmux prefix `T` | tmux | Launch `git-branch-switcher` in a popup. |
+| Key             | Scope     | Action                                                             |
+| --------------- | --------- | ------------------------------------------------------------------ |
+| `Ctrl-F`        | zsh, tmux | Launch `tmux-sessionizer`; tmux opens it in a popup.               |
+| `Ctrl-G`        | zsh, tmux | Launch `typst-smart-open`; tmux opens it from `~/typst`.           |
+| `Ctrl-O`        | zsh, tmux | Launch `dev-command-runner`; tmux opens it in a popup.             |
+| `Ctrl-T`        | zsh       | Launch `git-branch-switcher`.                                      |
+| `Ctrl-Y`        | zsh       | Launch `issue-picker`; avoids the `Ctrl-I`/Tab terminal collision. |
+| tmux prefix `D` | tmux      | Launch `dev-command-runner` in a popup.                            |
+| tmux prefix `f` | tmux      | Launch `tmux-sessionizer` in a popup.                              |
+| tmux prefix `Y` | tmux      | Launch `issue-picker` in a popup.                                  |
+| tmux prefix `T` | tmux      | Launch `git-branch-switcher` in a popup.                           |
 
 ### tmux Keybindings
 
-| Key | Action |
-| --- | --- |
-| `Ctrl-H/J/K/L` | Move left/down/up/right across Neovim splits and tmux panes through `vim-tmux-navigator`; `Ctrl-L` no longer clears the shell in tmux. |
-| `Ctrl-\` | Move to the previously active tmux pane through `vim-tmux-navigator`. |
-| tmux prefix `h/j/k/l` | Select the left/down/up/right tmux pane. |
-| `Alt-Left/Right/Up/Down` | Select the neighboring tmux pane. |
-| tmux prefix `\|` | Split the current pane horizontally. |
-| tmux prefix `-` | Split the current pane vertically. |
-| tmux prefix `r` | Reload `~/.config/tmux/tmux.conf`. |
-| copy mode `v` | Begin selection. |
-| copy mode `y` | Copy selection to the macOS clipboard with `pbcopy`. |
-| `Shift-Up/Down` | Enter or stay in copy mode and scroll by line. |
-| `Shift-PageUp/PageDown` | Enter or stay in copy mode and scroll by page. |
+| Key                      | Action                                                                                                                                 |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Ctrl-H/J/K/L`           | Move left/down/up/right across Neovim splits and tmux panes through `vim-tmux-navigator`; `Ctrl-L` no longer clears the shell in tmux. |
+| `Ctrl-\`                 | Move to the previously active tmux pane through `vim-tmux-navigator`.                                                                  |
+| tmux prefix `h/j/k/l`    | Select the left/down/up/right tmux pane.                                                                                               |
+| `Alt-Left/Right/Up/Down` | Select the neighboring tmux pane.                                                                                                      |
+| tmux prefix `\|`         | Split the current pane horizontally.                                                                                                   |
+| tmux prefix `-`          | Split the current pane vertically.                                                                                                     |
+| tmux prefix `r`          | Reload `~/.config/tmux/tmux.conf`.                                                                                                     |
+| copy mode `v`            | Begin selection.                                                                                                                       |
+| copy mode `y`            | Copy selection to the macOS clipboard with `pbcopy`.                                                                                   |
+| `Shift-Up/Down`          | Enter or stay in copy mode and scroll by line.                                                                                         |
+| `Shift-PageUp/PageDown`  | Enter or stay in copy mode and scroll by page.                                                                                         |
 
 ### Neovim Keybindings
 
-| Key | Action |
-| --- | --- |
-| `Ctrl-H/J/K/L` | Move left/down/up/right across Neovim splits and tmux panes. |
-| `Ctrl-\` | Move to the previously active tmux pane. |
-| `+` / `-` | Increment or decrement the number under the cursor. |
-| `dw` | Delete backward from the cursor to the start of the word. |
-| `Ctrl-A` | Select the whole file. |
-| `Ctrl-M` | Jump forward in the jumplist. |
-| `<leader>t` | Start Typst preview. |
-| `Tab` | Jump forward in a LuaSnip snippet placeholder while selecting snippets. |
-| `Shift-Tab` | Jump backward in a LuaSnip snippet placeholder in insert/select mode. |
-| `Alt-]`, `Alt-[` | Cycle to the next or previous Copilot suggestion. |
-| `<leader>fe`, `<leader>e` | Toggle Neo-tree at the project root. |
-| `<leader>fE`, `<leader>E` | Toggle Neo-tree at the current working directory. |
-| `<leader>ge` | Toggle Neo-tree Git status view. |
-| `<leader>be` | Toggle Neo-tree buffer view. |
-| Neo-tree `l`, `h` | Open the selected node or close the selected node. |
-| Neo-tree `Y` | Copy the selected path to the clipboard. |
-| Neo-tree `O` | Open the selected path with the system application. |
-| Neo-tree `P` | Toggle preview. |
-| Neo-tree `Space` | Disabled. |
-| `<leader>xx`, `<leader>xX` | Toggle workspace or buffer diagnostics in Trouble. |
-| `<leader>cs`, `<leader>cl` | Toggle Trouble symbols or LSP view. |
-| `<leader>xL`, `<leader>xQ` | Toggle Trouble location list or quickfix list. |
-| `<localleader>me`, `<localleader>r` | Evaluate Molten operator or visual selection. |
-| `<localleader>rr`, `<localleader>rc` | Re-evaluate a Molten cell or run a Quarto cell. |
-| `<localleader>ra`, `<localleader>rA`, `<localleader>RA` | Run cells above, all cells, or all languages. |
-| `<localleader>rl` | Run the current Quarto line. |
-| `<localleader>os`, `<localleader>oh` | Open or hide Molten output. |
-| `<localleader>md`, `<localleader>mx` | Delete a Molten cell or open output in the browser. |
-| `` `a``/`` `c``/`` `e``/`` `l``/`` `n``/`` `o``/`` `s``/`` `z``/`` `x`` | Insert Polish lowercase diacritics in insert mode. |
-| Uppercase variants such as `` `A`` and `` `Z`` | Insert Polish uppercase diacritics in insert mode. |
+| Key                                                                     | Action                                                                  |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `Ctrl-H/J/K/L`                                                          | Move left/down/up/right across Neovim splits and tmux panes.            |
+| `Ctrl-\`                                                                | Move to the previously active tmux pane.                                |
+| `+` / `-`                                                               | Increment or decrement the number under the cursor.                     |
+| `dw`                                                                    | Delete backward from the cursor to the start of the word.               |
+| `Ctrl-A`                                                                | Select the whole file.                                                  |
+| `Ctrl-M`                                                                | Jump forward in the jumplist.                                           |
+| `<leader>t`                                                             | Start Typst preview.                                                    |
+| `Tab`                                                                   | Jump forward in a LuaSnip snippet placeholder while selecting snippets. |
+| `Shift-Tab`                                                             | Jump backward in a LuaSnip snippet placeholder in insert/select mode.   |
+| `Alt-]`, `Alt-[`                                                        | Cycle to the next or previous Copilot suggestion.                       |
+| `<leader>fe`, `<leader>e`                                               | Toggle Neo-tree at the project root.                                    |
+| `<leader>fE`, `<leader>E`                                               | Toggle Neo-tree at the current working directory.                       |
+| `<leader>ge`                                                            | Toggle Neo-tree Git status view.                                        |
+| `<leader>be`                                                            | Toggle Neo-tree buffer view.                                            |
+| Neo-tree `l`, `h`                                                       | Open the selected node or close the selected node.                      |
+| Neo-tree `Y`                                                            | Copy the selected path to the clipboard.                                |
+| Neo-tree `O`                                                            | Open the selected path with the system application.                     |
+| Neo-tree `P`                                                            | Toggle preview.                                                         |
+| Neo-tree `Space`                                                        | Disabled.                                                               |
+| `<leader>xx`, `<leader>xX`                                              | Toggle workspace or buffer diagnostics in Trouble.                      |
+| `<leader>cs`, `<leader>cl`                                              | Toggle Trouble symbols or LSP view.                                     |
+| `<leader>xL`, `<leader>xQ`                                              | Toggle Trouble location list or quickfix list.                          |
+| `<localleader>me`, `<localleader>r`                                     | Evaluate Molten operator or visual selection.                           |
+| `<localleader>rr`, `<localleader>rc`                                    | Re-evaluate a Molten cell or run a Quarto cell.                         |
+| `<localleader>ra`, `<localleader>rA`, `<localleader>RA`                 | Run cells above, all cells, or all languages.                           |
+| `<localleader>rl`                                                       | Run the current Quarto line.                                            |
+| `<localleader>os`, `<localleader>oh`                                    | Open or hide Molten output.                                             |
+| `<localleader>md`, `<localleader>mx`                                    | Delete a Molten cell or open output in the browser.                     |
+| `` `a``/`` `c``/`` `e``/`` `l``/`` `n``/`` `o``/`` `s``/`` `z``/`` `x`` | Insert Polish lowercase diacritics in insert mode.                      |
+| Uppercase variants such as `` `A`` and `` `Z``                          | Insert Polish uppercase diacritics in insert mode.                      |
 
 ### Ghostty Keybindings
 
 These bindings preserve QWERTY-style Command shortcuts on the Dvorak-QWERTY
 Command layout.
 
-| Key | Action |
-| --- | --- |
-| `Cmd-J` | Copy to clipboard. |
-| `Cmd-K` | Paste from clipboard. |
-| `Cmd-,` | Close surface. |
-| `Cmd-Y` | New tab. |
-| `Cmd-B` | New window. |
-| `Cmd-'` | Quit Ghostty. |
+| Key     | Action                 |
+| ------- | ---------------------- |
+| `Cmd-J` | Copy to clipboard.     |
+| `Cmd-K` | Paste from clipboard.  |
+| `Cmd-,` | Close surface.         |
+| `Cmd-Y` | New tab.               |
+| `Cmd-B` | New window.            |
+| `Cmd-'` | Quit Ghostty.          |
 | `Cmd-W` | Reload Ghostty config. |
 
 ### Karabiner Remaps
 
-| Key | Action |
-| --- | --- |
-| `Caps Lock` | Send `Escape` through nix-darwin. |
-| `Cmd-'` in Zathura | Send `Ctrl-Q`. |
-| hold `A` for 500 ms | Type `ä`; tap still types `a`. |
-| hold `Shift-A` for 500 ms | Type `Ä`; tap still types `A`. |
-| `Right-Cmd-Q/W/E/R/T/Y/U/I/O/P` | Type `1/2/3/4/5/6/7/8/9/0`. |
-| `Right-Opt-Q/W/E/R/T/Y/U/I` | Send `Right-Opt-1/2/3/4/5/6/7/8`. |
-| `Right-Opt-Shift-Q/W/E/R/T/Y/U/I/O/P` | Send `Right-Opt-Shift-1/2/3/4/5/6/7/8/9/0`. |
-| `non-US backslash` | Send `Fn`. |
-| `Eject` | Open `~/Downloads`. |
-| `F4`, `F5`, `F8` | Preserve these keys as function keys in Karabiner. |
-| simultaneous `Q+W`, `Q+E` | Decrease or increase display brightness. |
-| simultaneous `` `+I/J/H/R/N/A`` | Open `~/Developer`, home, Downloads, Pictures, Desktop, or Applications. |
-| simultaneous `Z+;` | Open Safari and enter app-launcher mode. |
-| app-launcher `;` | Open Safari. |
+| Key                                   | Action                                                                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `Caps Lock`                           | Send `Escape` through nix-darwin.                                                                                            |
+| `Cmd-'` in Zathura                    | Send `Ctrl-Q`.                                                                                                               |
+| hold `A` for 500 ms                   | Type `ä`; tap still types `a`.                                                                                               |
+| hold `Shift-A` for 500 ms             | Type `Ä`; tap still types `A`.                                                                                               |
+| `Right-Cmd-Q/W/E/R/T/Y/U/I/O/P`       | Type `1/2/3/4/5/6/7/8/9/0`.                                                                                                  |
+| `Right-Opt-Q/W/E/R/T/Y/U/I`           | Send `Right-Opt-1/2/3/4/5/6/7/8`.                                                                                            |
+| `Right-Opt-Shift-Q/W/E/R/T/Y/U/I/O/P` | Send `Right-Opt-Shift-1/2/3/4/5/6/7/8/9/0`.                                                                                  |
+| `non-US backslash`                    | Send `Fn`.                                                                                                                   |
+| `Eject`                               | Open `~/Downloads`.                                                                                                          |
+| `F4`, `F5`, `F8`                      | Preserve these keys as function keys in Karabiner.                                                                           |
+| simultaneous `Q+W`, `Q+E`             | Decrease or increase display brightness.                                                                                     |
+| simultaneous `` `+I/J/H/R/N/A``       | Open `~/Developer`, home, Downloads, Pictures, Desktop, or Applications.                                                     |
+| simultaneous `Z+;`                    | Open Safari and enter app-launcher mode.                                                                                     |
+| app-launcher `;`                      | Open Safari.                                                                                                                 |
 | simultaneous `Z+L` / app-launcher `L` | Opens Netflix in one rule and Notes in a later duplicate rule; this conflict is preserved from the current Karabiner config. |
-| simultaneous `Z+T` / app-launcher `T` | Open YouTube. |
-| simultaneous `Z+G` / app-launcher `G` | Open `https://s19.idu.edu.pl`. |
-| simultaneous `Z+I` / app-launcher `I` | Open Zed. |
-| simultaneous `Z+K` / app-launcher `K` | Open iTerm. |
-| simultaneous `Z+R` / app-launcher `R` | Open System Preferences. |
-| simultaneous `Z+M` / app-launcher `M` | Open Messages. |
-| simultaneous `Z+P` / app-launcher `P` | Open Things3. |
+| simultaneous `Z+T` / app-launcher `T` | Open YouTube.                                                                                                                |
+| simultaneous `Z+G` / app-launcher `G` | Open `https://s19.idu.edu.pl`.                                                                                               |
+| simultaneous `Z+I` / app-launcher `I` | Open Zed.                                                                                                                    |
+| simultaneous `Z+K` / app-launcher `K` | Open iTerm.                                                                                                                  |
+| simultaneous `Z+R` / app-launcher `R` | Open System Preferences.                                                                                                     |
+| simultaneous `Z+M` / app-launcher `M` | Open Messages.                                                                                                               |
+| simultaneous `Z+P` / app-launcher `P` | Open Things3.                                                                                                                |
 
 ### Window Management Keybindings
 
-| Key | Action |
-| --- | --- |
-| `Cmd-Return` | Open a new Ghostty instance. |
-| `Alt-Return` | Open Ghostty and start `ssh dev`. |
-| `Alt-W` | Open Zen Browser. |
-| `Alt-F`, `Alt-U` | Toggle yabai fullscreen zoom for the focused window. |
-| `Alt-S` | Toggle sticky window. |
-| `Alt-H/T` | Focus previous or next window. |
-| `Alt-Shift-D/H/T/N` | Swap the focused window west/south/north/east. |
-| `Shift-Cmd-D/H/T/N` | Stack the focused window west/south/north/east. |
-| `Alt-Cmd-D/H/T/N` | Warp the focused window west/south/north/east. |
-| `Alt-Tab`, `Alt-Shift-Tab` | Focus next or previous stacked window. |
-| `Alt-Shift-0` | Balance windows in the current space. |
-| `Alt-R` | Rotate the current space by 90 degrees. |
-| `Alt-J` | Toggle yabai padding and gaps. |
-| `Alt-1` through `Alt-9` | Focus space 1 through 9. |
-| `Alt-0`, `Alt-L` | Focus the recent space. |
-| `Alt-Shift-1` through `Alt-Shift-9` | Move the focused window to space 1 through 9. |
-| `Alt-Shift-Space` | Toggle floating mode and place the focused window on a grid. |
-| `F18` | Run the local Tailscale trigger script. |
-| `F17` | Open `/Volumes`. |
-| `F16` | Open iTerm2 at `~/Developer/backend`. |
-| `F8` | Focus space 6. |
-| `F4` | Open Firefox Developer Edition. |
+| Key                                 | Action                                                       |
+| ----------------------------------- | ------------------------------------------------------------ |
+| `Cmd-Return`                        | Open a new Ghostty instance.                                 |
+| `Alt-Return`                        | Open Ghostty and start `ssh dev`.                            |
+| `Alt-W`                             | Open Zen Browser.                                            |
+| `Alt-F`, `Alt-U`                    | Toggle yabai fullscreen zoom for the focused window.         |
+| `Alt-S`                             | Toggle sticky window.                                        |
+| `Alt-H/T`                           | Focus previous or next window.                               |
+| `Alt-Shift-D/H/T/N`                 | Swap the focused window west/south/north/east.               |
+| `Shift-Cmd-D/H/T/N`                 | Stack the focused window west/south/north/east.              |
+| `Alt-Cmd-D/H/T/N`                   | Warp the focused window west/south/north/east.               |
+| `Alt-Tab`, `Alt-Shift-Tab`          | Focus next or previous stacked window.                       |
+| `Alt-Shift-0`                       | Balance windows in the current space.                        |
+| `Alt-R`                             | Rotate the current space by 90 degrees.                      |
+| `Alt-J`                             | Toggle yabai padding and gaps.                               |
+| `Alt-1` through `Alt-9`             | Focus space 1 through 9.                                     |
+| `Alt-0`, `Alt-L`                    | Focus the recent space.                                      |
+| `Alt-Shift-1` through `Alt-Shift-9` | Move the focused window to space 1 through 9.                |
+| `Alt-Shift-Space`                   | Toggle floating mode and place the focused window on a grid. |
+| `F18`                               | Run the local Tailscale trigger script.                      |
+| `F17`                               | Open `/Volumes`.                                             |
+| `F16`                               | Open iTerm2 at `~/Developer/backend`.                        |
+| `F8`                                | Focus space 6.                                               |
+| `F4`                                | Open Firefox Developer Edition.                              |
 
 ## Recovery Contract
 
