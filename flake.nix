@@ -633,6 +633,36 @@
           touch "$out"
         '';
 
+        eta-immich-large-upload-proxy = pkgs.runCommand "eta-immich-large-upload-proxy-check" { } ''
+          set -eu
+
+          test -f ${./services/eta/immich/compose.yaml}
+          test -f ${./services/eta/immich/README.md}
+          test -f ${./services/eta/traefik/compose.yaml}
+          test -f ${./services/eta/traefik/.env.example}
+          test -f ${./services/eta/traefik/README.md}
+
+          grep -Fq 'traefik.http.middlewares.immich-upload-limit.buffering.maxRequestBodyBytes: "2000000000"' ${./services/eta/immich/compose.yaml}
+          grep -Fq 'traefik.http.middlewares.immich-upload-limit.buffering.memRequestBodyBytes: "10485760"' ${./services/eta/immich/compose.yaml}
+          grep -Fq 'traefik.http.routers.immich.middlewares: immich-upload-limit@docker' ${./services/eta/immich/compose.yaml}
+          grep -Fq 'traefik.http.services.immich.loadbalancer.passhostheader: "true"' ${./services/eta/immich/compose.yaml}
+
+          grep -Fq -- '--entrypoints.web.transport.respondingTimeouts.readTimeout=''${TRAEFIK_UPLOAD_READ_TIMEOUT:-30m}' ${./services/eta/traefik/compose.yaml}
+          grep -Fq -- '--entrypoints.web.transport.respondingTimeouts.writeTimeout=''${TRAEFIK_UPLOAD_WRITE_TIMEOUT:-30m}' ${./services/eta/traefik/compose.yaml}
+          grep -Fq -- '--entrypoints.web.transport.respondingTimeouts.idleTimeout=''${TRAEFIK_UPLOAD_IDLE_TIMEOUT:-30m}' ${./services/eta/traefik/compose.yaml}
+          grep -Fq -- '--entrypoints.websecure.transport.respondingTimeouts.readTimeout=''${TRAEFIK_UPLOAD_READ_TIMEOUT:-30m}' ${./services/eta/traefik/compose.yaml}
+          grep -Fq -- '--entrypoints.websecure.transport.respondingTimeouts.writeTimeout=''${TRAEFIK_UPLOAD_WRITE_TIMEOUT:-30m}' ${./services/eta/traefik/compose.yaml}
+          grep -Fq -- '--entrypoints.websecure.transport.respondingTimeouts.idleTimeout=''${TRAEFIK_UPLOAD_IDLE_TIMEOUT:-30m}' ${./services/eta/traefik/compose.yaml}
+
+          grep -Fq 'TRAEFIK_UPLOAD_READ_TIMEOUT=30m' ${./services/eta/traefik/.env.example}
+          grep -Fq 'TRAEFIK_UPLOAD_WRITE_TIMEOUT=30m' ${./services/eta/traefik/.env.example}
+          grep -Fq 'TRAEFIK_UPLOAD_IDLE_TIMEOUT=30m' ${./services/eta/traefik/.env.example}
+          grep -Fq 'one mobile upload larger than 250 MB' ${./services/eta/immich/README.md}
+          grep -Fq 'large uploads through the' ${./services/eta/traefik/README.md}
+
+          touch "$out"
+        '';
+
         eta-local-ai-service-stack = pkgs.runCommand "eta-local-ai-service-stack-check" { } ''
           set -eu
 

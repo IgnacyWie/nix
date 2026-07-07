@@ -22,8 +22,10 @@ services:
       traefik.http.routers.immich.rule: Host(`${IMMICH_TRAEFIK_HOST}`)
       traefik.http.routers.immich.tls: "true"
       traefik.http.services.immich.loadbalancer.server.port: "2283"
+      traefik.http.services.immich.loadbalancer.passhostheader: "true"
       traefik.http.middlewares.immich-upload-limit.buffering.maxRequestBodyBytes: "2000000000"
-      traefik.http.routers.immich.middlewares: immich-upload-limit
+      traefik.http.middlewares.immich-upload-limit.buffering.memRequestBodyBytes: "10485760"
+      traefik.http.routers.immich.middlewares: immich-upload-limit@docker
 
   immich-machine-learning:
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}

@@ -23,6 +23,11 @@ service joins the Traefik Ingress Layer network, `proxy-network`, at:
 https://photos.mac.wie.dev
 ```
 
+The Immich router applies the `immich-upload-limit@docker` Traefik middleware.
+The middleware allows request bodies up to 2 GB, while the Traefik stack sets
+30-minute read/write/idle timeouts so large mobile video uploads do not hit the
+default proxy timeout before Immich receives the full request.
+
 Restore Vaultwarden first because Immich database credentials live there.
 
 ## Durable Service State
@@ -98,7 +103,7 @@ The Home Server Backup Repository includes:
 6. Recreate `.env` from `.env.example` and Vaultwarden values.
 7. Start Immich with `eta-service immich up`.
 8. Verify Traefik access, timeline loading, one representative photo, one video,
-   and mobile upload/login if used.
+   one mobile upload larger than 250 MB, and mobile login if used.
 
 Success means Immich can be recovered from the Home Server Backup Repository and
 its Logical Database Dump, not merely from a raw Restic snapshot.
