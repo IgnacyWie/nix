@@ -64,7 +64,8 @@ Required values:
   address.
 - `IMMICH_UPLOAD_LOCATION` — existing Immich upload/library root; currently
   `/Users/ignacywielogorski/Services/photos`.
-- `IMMICH_VERSION` — image version, defaulting to `release`.
+- `IMMICH_VERSION` — Immich image version track; currently `v3` for the
+  latest stable major release.
 - `TZ` — time zone.
 - `DB_USERNAME`, `DB_DATABASE_NAME`, `DB_PASSWORD` — Postgres credentials from
   Vaultwarden.
