@@ -20,8 +20,14 @@
       onActivation = {
         autoUpdate = false;
         upgrade = false;
+        # eta Homebrew is additive: apply must not remove unlisted formulae or
+        # casks from this host.
         cleanup = "none";
       };
+
+      brews = [
+        "himalaya"
+      ];
 
       extraConfig = ''
         tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true

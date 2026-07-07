@@ -13,9 +13,6 @@
     hostPlatform = "aarch64-darwin";
     config = {
       allowUnfree = true;
-      permittedInsecurePackages = [
-        "openclaw-2026.6.1"
-      ];
     };
   };
 
@@ -35,7 +32,6 @@
     git
     jq
     khal
-    openclaw
     restic
     ripgrep
     tailscale

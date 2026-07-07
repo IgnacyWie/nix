@@ -124,7 +124,6 @@
           assert etaConfig.networking.computerName == "eta";
           assert etaConfig.system.primaryUser == "ignacywielogorski";
           assert etaConfig.nixpkgs.hostPlatform.system == "aarch64-darwin";
-          assert builtins.elem "openclaw-2026.6.1" etaConfig.nixpkgs.config.permittedInsecurePackages;
           assert etaConfig.home-manager.users.ignacywielogorski.home.username == "ignacywielogorski";
           assert
             etaConfig.home-manager.users.ignacywielogorski.home.homeDirectory == "/Users/ignacywielogorski";
@@ -190,7 +189,7 @@
           assert builtins.any (name: builtins.match ".*git.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*jq.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*khal.*" name != null) packageNames;
-          assert builtins.any (name: builtins.match ".*openclaw.*" name != null) packageNames;
+          assert !(builtins.any (name: builtins.match ".*openclaw.*" name != null) packageNames);
           assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
           assert builtins.any (name: builtins.match ".*tmux.*" name != null) packageNames;
@@ -263,18 +262,22 @@
           let
             etaConfig = etaConfiguration.config;
             gammaConfig = gammaConfiguration.config;
+            etaHomebrewBrewfile = pkgs.writeText "eta-homebrew-brewfile" etaConfig.homebrew.brewfile;
             etaHomebrewExtraConfig = pkgs.writeText "eta-homebrew-extra-config" etaConfig.homebrew.extraConfig;
+            etaHomebrewBrewNames = builtins.map (brew: brew.name) etaConfig.homebrew.brews;
             gammaHomebrewExtraConfig = pkgs.writeText "gamma-homebrew-extra-config" gammaConfig.homebrew.extraConfig;
           in
           assert etaConfig.homebrew.enable;
           assert etaConfig.homebrew.onActivation.autoUpdate == false;
           assert etaConfig.homebrew.onActivation.upgrade == false;
           assert etaConfig.homebrew.onActivation.cleanup == "none";
+          assert builtins.elem "himalaya" etaHomebrewBrewNames;
           assert etaConfig.personal.omlx.initialModel == "mlx-community/Qwen2.5-1.5B-Instruct-4bit";
           assert etaConfig.environment.variables.OMLX_INITIAL_MODEL == etaConfig.personal.omlx.initialModel;
           pkgs.runCommand "eta-omlx-homebrew-check" { } ''
             set -eu
 
+            grep -Fq 'brew "himalaya"' ${etaHomebrewBrewfile}
             grep -Fq 'tap "jundot/omlx", "https://github.com/jundot/omlx", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'tap "steipete/tap", "https://github.com/steipete/homebrew-tap", trusted: true' ${etaHomebrewExtraConfig}
             grep -Fq 'brew "omlx", trusted: true' ${etaHomebrewExtraConfig}
