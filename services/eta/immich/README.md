@@ -108,3 +108,28 @@ The Home Server Backup Repository includes:
 
 Success means Immich can be recovered from the Home Server Backup Repository and
 its Logical Database Dump, not merely from a raw Restic snapshot.
+
+## eta-cloud / Hetzner Notes
+
+This stack is expected to run unchanged on `eta-cloud` after the repository and `~/Services` tree are restored from Backblaze B2 Restic.
+
+Cloud host assumptions:
+
+- Host: `nixosConfigurations.eta-cloud`
+- Runtime: Docker Compose via `eta-service`
+- Service definition: `/Users/ignacywielogorski/nix/services/eta/immich`
+- Durable state root: `/Users/ignacywielogorski/Services`
+- Restic repository: `b2:eta-home-server-restic:eta`
+- Initial storage posture: single NVMe filesystem, no disk mirror
+
+Useful commands on the Hetzner server:
+
+```sh
+eta-service immich config
+eta-service immich up -d
+eta-service immich ps
+eta-service immich logs --tail=100
+```
+
+For recovery, restore to a review directory first and only replace live paths once the restored files and stack-specific secrets are confirmed.
+Immich has the largest restore footprint: photos, Postgres state/dump, model cache, and generated media. Prefer restoring to a review directory before touching live data.

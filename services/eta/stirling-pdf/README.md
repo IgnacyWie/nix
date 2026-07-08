@@ -41,3 +41,27 @@ For a first-boot or password-reset bootstrap, set
 `STIRLING_PDF_INITIAL_LOGIN_USERNAME` and `STIRLING_PDF_INITIAL_LOGIN_PASSWORD`,
 then recreate the H2 database under `~/Services/data/stirling-pdf/configs`.
 Disable the initial login values again after taking over the admin account.
+
+## eta-cloud / Hetzner Notes
+
+This stack is expected to run unchanged on `eta-cloud` after the repository and `~/Services` tree are restored from Backblaze B2 Restic.
+
+Cloud host assumptions:
+
+- Host: `nixosConfigurations.eta-cloud`
+- Runtime: Docker Compose via `eta-service`
+- Service definition: `/Users/ignacywielogorski/nix/services/eta/stirling-pdf`
+- Durable state root: `/Users/ignacywielogorski/Services`
+- Restic repository: `b2:eta-home-server-restic:eta`
+- Initial storage posture: single NVMe filesystem, no disk mirror
+
+Useful commands on the Hetzner server:
+
+```sh
+eta-service stirling-pdf config
+eta-service stirling-pdf up -d
+eta-service stirling-pdf ps
+eta-service stirling-pdf logs --tail=100
+```
+
+For recovery, restore to a review directory first and only replace live paths once the restored files and stack-specific secrets are confirmed.

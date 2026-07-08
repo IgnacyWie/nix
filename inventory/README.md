@@ -47,3 +47,9 @@ or manual restore configuration.
 - [eta-docker-orbstack.md](eta-docker-orbstack.md): sanitized Docker and
   OrbStack findings for the `eta` Home Server migration.
 - [future-v2.md](future-v2.md): explicitly deferred v2 work.
+
+## eta-cloud Inventory Context
+
+`eta-cloud` is the NixOS/Hetzner target host for the Home Server migration. It intentionally reuses `/Users/ignacywielogorski` on Linux so sanitized inventory paths, Restic snapshots, and Compose stack references stay comparable across the Mac Mini and cloud host.
+
+Inventory files remain sanitized: do not add B2 keys, Restic passwords, Vaultwarden exports, Tailscale auth keys, API tokens, or copied `.env` contents. Runtime secrets belong in Vaultwarden and, on `eta-cloud`, in `/Users/ignacywielogorski/.config/eta-restic-backup/env` with `0600` permissions.

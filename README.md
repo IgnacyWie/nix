@@ -641,3 +641,62 @@ Command layout.
   authentication, keyboard layout, Rosetta, and macOS permissions.
 - [docs/node-pnpm-shell.md](docs/node-pnpm-shell.md): Node, `nvm`, and
   Corepack/pnpm shell behavior required for JavaScript development repos.
+
+## Hetzner eta-cloud Reference
+
+This repository now carries a separate NixOS host for the Hetzner auction-server migration:
+
+```text
+nixosConfigurations.eta-cloud
+hosts/nixos/eta-cloud/default.nix
+```
+
+`eta-cloud` is intentionally separate from the existing macOS/nix-darwin `eta` host. It is the cloud Home Server target for an `x86_64-linux` Hetzner NVMe server and keeps the Linux user home at `/Users/ignacywielogorski` so existing Restic snapshots and Compose paths can be restored with the smallest path rewrite.
+
+Operational defaults:
+
+- Docker + Compose are enabled for the existing `services/eta/*` stacks.
+- SSH is enabled with password login disabled.
+- Tailscale is enabled for private access after first login/auth.
+- Firewall opens `22`, `80`, and `443`.
+- No RAID, ZFS mirror, or btrfs mirror is declared. The first Hetzner version is single-disk/simple because Backblaze B2 Restic is the recovery source of truth.
+- Root filesystem defaults to `/dev/disk/by-label/nixos` as `ext4`; adjust the device/label only after seeing the actual Hetzner install layout.
+
+Local validation from this Mac:
+
+```sh
+make eval-eta-cloud
+make check
+```
+
+A full `make build-eta-cloud` must run on an `x86_64-linux` builder/server; this Mac is `aarch64-darwin` and cannot build the Linux closure locally without a remote builder.
+
+On the server, create the Restic env file before running backup/restore helpers:
+
+```sh
+mkdir -p /Users/ignacywielogorski/.config/eta-restic-backup
+chmod 700 /Users/ignacywielogorski/.config/eta-restic-backup
+cat > /Users/ignacywielogorski/.config/eta-restic-backup/env <<'EOF'
+B2_ACCOUNT_ID=...
+B2_ACCOUNT_KEY=...
+RESTIC_PASSWORD=...
+EOF
+chmod 600 /Users/ignacywielogorski/.config/eta-restic-backup/env
+```
+
+Primary restore source:
+
+```text
+RESTIC_REPOSITORY=b2:eta-home-server-restic:eta
+```
+
+Useful server commands after the system is installed and secrets exist:
+
+```sh
+eta-restic-restore-latest /tmp/eta-restore-review
+eta-service list
+eta-service traefik up -d
+eta-service vaultwarden up -d
+```
+
+Restore Vaultwarden first, then recover stack-specific `.env` values and start the remaining stacks.

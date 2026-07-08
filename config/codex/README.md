@@ -17,3 +17,7 @@ Home Manager installs `config.toml` as a mutable copy rather than a symlink so
 Codex can persist local state such as hook trust. The deterministic `codex`
 wrapper prefers `$PNPM_HOME/codex`, falls back to `/opt/homebrew/bin/codex`, and
 passes `--dangerously-bypass-hook-trust` for these repo-owned hooks.
+
+## eta-cloud Backup Context
+
+This configuration is versioned inside `~/nix`, so it is covered by the Home Server Restic repository when the repo is included in `eta`/`eta-cloud` backups. It is not a required runtime dependency for the Hetzner `eta-cloud` service migration unless a service README explicitly says so.

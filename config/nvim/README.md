@@ -17,3 +17,7 @@ pre-existing files in that tree with the repository-managed version.
 - Plugin authentication and API credentials are not stored here. Copilot,
   Avante, and similar plugins must continue to use their normal local auth or
   environment-based credential flows.
+
+## eta-cloud Backup Context
+
+This configuration is versioned inside `~/nix`, so it is covered by the Home Server Restic repository when the repo is included in `eta`/`eta-cloud` backups. It is not a required runtime dependency for the Hetzner `eta-cloud` service migration unless a service README explicitly says so.

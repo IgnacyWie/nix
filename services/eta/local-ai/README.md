@@ -162,3 +162,27 @@ prompt/document content.
 12. Restart the Service Stack and verify Open WebUI state persists under
     `~/Services/data/local-ai/open-webui` and Paperless-AI state persists under
     `~/Services/data/local-ai/paperless-ai`.
+
+## eta-cloud / Hetzner Notes
+
+This stack is expected to run unchanged on `eta-cloud` after the repository and `~/Services` tree are restored from Backblaze B2 Restic.
+
+Cloud host assumptions:
+
+- Host: `nixosConfigurations.eta-cloud`
+- Runtime: Docker Compose via `eta-service`
+- Service definition: `/Users/ignacywielogorski/nix/services/eta/local-ai`
+- Durable state root: `/Users/ignacywielogorski/Services`
+- Restic repository: `b2:eta-home-server-restic:eta`
+- Initial storage posture: single NVMe filesystem, no disk mirror
+
+Useful commands on the Hetzner server:
+
+```sh
+eta-service local-ai config
+eta-service local-ai up -d
+eta-service local-ai ps
+eta-service local-ai logs --tail=100
+```
+
+For recovery, restore to a review directory first and only replace live paths once the restored files and stack-specific secrets are confirmed.

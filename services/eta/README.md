@@ -112,3 +112,36 @@ containers are available.
   `~/Services/data/local-ai/paperless-ai`; OMLX remains host-managed and is
   reached through `http://host.docker.internal:8000/v1`.
 
+
+## eta-cloud Migration Reference
+
+These service definitions are shared by the local Mac Mini `eta` host and the cloud `eta-cloud` NixOS host.
+
+On `eta-cloud`, the repo preserves the same home path used by existing Restic snapshots:
+
+```text
+/Users/ignacywielogorski/nix/services/eta
+/Users/ignacywielogorski/Services
+```
+
+The expected migration flow is:
+
+1. Install/apply `nixosConfigurations.eta-cloud` on the Hetzner server.
+2. Create `/Users/ignacywielogorski/.config/eta-restic-backup/env` with B2 + Restic secrets.
+3. Restore the latest Backblaze B2 snapshot into a review directory first:
+
+   ```sh
+   eta-restic-restore-latest /tmp/eta-restore-review
+   ```
+
+4. Restore Vaultwarden first, because other stack credentials live there.
+5. Recover each stack `.env` from Vaultwarden/manual notes.
+6. Start ingress, then keystone, then app stacks:
+
+   ```sh
+   eta-service traefik up -d
+   eta-service vaultwarden up -d
+   eta-service <stack> up -d
+   ```
+
+No mirroring is assumed for the initial Hetzner deployment. Restic/B2 is the disaster-recovery source of truth, so every Tier 1 stack README should state its durable paths and restore order clearly.

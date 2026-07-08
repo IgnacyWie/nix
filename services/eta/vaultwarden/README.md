@@ -101,3 +101,28 @@ The Home Server Backup Repository includes:
 Success means the Keystone Service can be restored from the Home Server Backup
 Repository and Bootstrap Secret Set without relying on an existing `eta` host or
 Postgres.
+
+## eta-cloud / Hetzner Notes
+
+This stack is expected to run unchanged on `eta-cloud` after the repository and `~/Services` tree are restored from Backblaze B2 Restic.
+
+Cloud host assumptions:
+
+- Host: `nixosConfigurations.eta-cloud`
+- Runtime: Docker Compose via `eta-service`
+- Service definition: `/Users/ignacywielogorski/nix/services/eta/vaultwarden`
+- Durable state root: `/Users/ignacywielogorski/Services`
+- Restic repository: `b2:eta-home-server-restic:eta`
+- Initial storage posture: single NVMe filesystem, no disk mirror
+
+Useful commands on the Hetzner server:
+
+```sh
+eta-service vaultwarden config
+eta-service vaultwarden up -d
+eta-service vaultwarden ps
+eta-service vaultwarden logs --tail=100
+```
+
+For recovery, restore to a review directory first and only replace live paths once the restored files and stack-specific secrets are confirmed.
+Vaultwarden should be restored before other stacks because it holds most runtime credentials and `.env` values.
