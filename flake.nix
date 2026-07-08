@@ -88,6 +88,13 @@
           }
         ];
       };
+      etaCloudConfiguration = nixpkgs.lib.nixosSystem {
+        system = nixosSystem;
+
+        modules = [
+          ./hosts/nixos/eta-cloud
+        ];
+      };
       omegaInstallerConfiguration = nixpkgs.lib.nixosSystem {
         system = nixosSystem;
 
@@ -99,6 +106,7 @@
     {
       darwinConfigurations.eta = etaConfiguration;
       darwinConfigurations.gamma = gammaConfiguration;
+      nixosConfigurations.eta-cloud = etaCloudConfiguration;
       nixosConfigurations.omega-installer = omegaInstallerConfiguration;
 
       packages.${nixosSystem}.omega-installer-iso =
@@ -157,6 +165,56 @@
             grep -q 'build-omega-installer-iso:' ${./Makefile}
             grep -q 'nixosConfigurations.omega-installer.config.system.build.isoImage' ${./scripts/build-omega-installer-iso}
             grep -q 'omega.local' ${./README.md}
+
+            touch "$out"
+          '';
+
+        eta-cloud-server =
+          let
+            etaCloudConfig = etaCloudConfiguration.config;
+            packageNames = builtins.map (package: package.name or "") etaCloudConfig.environment.systemPackages;
+            backupService = etaCloudConfig.systemd.services.eta-restic-backup;
+            backupTimer = etaCloudConfig.systemd.timers.eta-restic-backup;
+          in
+          assert etaCloudConfig.networking.hostName == "eta-cloud";
+          assert etaCloudConfig.nixpkgs.hostPlatform.system == "x86_64-linux";
+          assert etaCloudConfig.services.openssh.enable;
+          assert etaCloudConfig.services.openssh.openFirewall;
+          assert etaCloudConfig.services.openssh.settings.PasswordAuthentication == false;
+          assert etaCloudConfig.services.openssh.settings.PermitRootLogin == "no";
+          assert etaCloudConfig.services.tailscale.enable;
+          assert etaCloudConfig.virtualisation.docker.enable;
+          assert builtins.elem 22 etaCloudConfig.networking.firewall.allowedTCPPorts;
+          assert builtins.elem 80 etaCloudConfig.networking.firewall.allowedTCPPorts;
+          assert builtins.elem 443 etaCloudConfig.networking.firewall.allowedTCPPorts;
+          assert etaCloudConfig.users.users.ignacywielogorski.home == "/Users/ignacywielogorski";
+          assert builtins.elem "docker" etaCloudConfig.users.users.ignacywielogorski.extraGroups;
+          assert builtins.any (name: builtins.match ".*docker-compose.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*restic.*" name != null) packageNames;
+          assert builtins.any (name: builtins.match ".*tailscale.*" name != null) packageNames;
+          assert builtins.hasAttr "eta-restic-backup" etaCloudConfig.systemd.services;
+          assert builtins.hasAttr "eta-restic-backup" etaCloudConfig.systemd.timers;
+          assert
+            backupService.serviceConfig.EnvironmentFile
+            == "/Users/ignacywielogorski/.config/eta-restic-backup/env";
+          assert backupTimer.timerConfig.OnCalendar == "03:00";
+          pkgs.runCommand "eta-cloud-server-check" { } ''
+            set -eu
+
+            grep -Fq 'networking.hostName = "eta-cloud"' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'virtualisation.docker' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'services.tailscale.enable = true' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'No RAID/ZFS mirror is declared for eta-cloud' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'resticRepository = "b2:eta-home-server-restic:eta"' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'EnvironmentFile = resticEnvironmentFile' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'eta-restic-restore-latest' ${./hosts/nixos/eta-cloud/default.nix}
+            grep -Fq 'homeDirectory = "/Users/' ${./hosts/nixos/eta-cloud/default.nix}
+            test -x ${./scripts/eval-eta-cloud}
+            test -x ${./scripts/build-eta-cloud}
+            grep -q 'eval-eta-cloud:' ${./Makefile}
+            grep -q 'build-eta-cloud:' ${./Makefile}
+            grep -q 'nixosConfigurations.eta-cloud.config.system.build.toplevel' ${./scripts/build-eta-cloud}
+            ! grep -Eq '(B2_ACCOUNT_ID|B2_ACCOUNT_KEY|RESTIC_PASSWORD)=[A-Za-z0-9+/]{8,}' ${./hosts/nixos/eta-cloud/default.nix}
 
             touch "$out"
           '';

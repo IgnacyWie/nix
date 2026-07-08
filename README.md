@@ -119,6 +119,38 @@ Runtime for Local AI Service Stacks. This Homebrew scope is separate from the
 for constrained Apple Silicon memory. It is not a recovery dependency; restored
 service state must not require that exact model to exist.
 
+### eta-cloud
+
+- Role: NixOS cloud Home Server target for a Hetzner auction server
+- Platform: `x86_64-linux`
+- User: `ignacywielogorski`
+- Home directory: `/Users/ignacywielogorski` for compatibility with existing
+  Restic snapshots and Compose paths
+- Container runtime: Docker with Compose
+- Backup: Restic to the existing `b2:eta-home-server-restic:eta` repository
+- Disk posture: single-disk/simple by default; no RAID, ZFS mirror, or btrfs
+  mirror is declared in the flake because Backblaze B2 Restic is the recovery
+  source of truth for service data
+
+`eta-cloud` is intentionally a separate NixOS host, not a replacement for the
+macOS `eta` configuration. It provides SSH, Tailscale, Docker, the same
+`eta-service` Compose wrapper, and a Linux systemd timer for
+`eta-restic-backup`. Restic credentials are not committed; create
+`/Users/ignacywielogorski/.config/eta-restic-backup/env` on the server with:
+
+```sh
+B2_ACCOUNT_ID=...
+B2_ACCOUNT_KEY=...
+RESTIC_PASSWORD=...
+```
+
+Evaluate and build the cloud host without applying it:
+
+```sh
+make eval-eta-cloud
+make build-eta-cloud
+```
+
 `eta` also runs `todo-business-sync` as a user launchd agent every 10 minutes.
 The command syncs the private GitHub repository `IgnacyWie/todo-business` with
 only the `Business` Area in Things. Pairing metadata is stored in HTML comments

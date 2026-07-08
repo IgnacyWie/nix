@@ -2,7 +2,7 @@ SHELL := /bin/sh
 
 .DEFAULT_GOAL := help
 
-.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta build-omega-installer-iso apply-gamma apply-eta apply-eta-remote bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook collect-eta-docker-orbstack-inventory
+.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta eval-eta-cloud build-eta-cloud build-omega-installer-iso apply-gamma apply-eta apply-eta-remote bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook collect-eta-docker-orbstack-inventory
 
 help: ## Show available repo commands.
 	@awk 'BEGIN {FS = ":.*## "; printf "Available targets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -24,6 +24,12 @@ eval-eta: ## Evaluate the eta Darwin system output.
 
 build-eta: ## Build the eta Darwin system closure without applying it.
 	./scripts/build-eta
+
+eval-eta-cloud: ## Evaluate the eta-cloud NixOS system output.
+	./scripts/eval-eta-cloud
+
+build-eta-cloud: ## Build the eta-cloud NixOS system closure without applying it.
+	./scripts/build-eta-cloud
 
 build-omega-installer-iso: ## Build the omega NixOS installer ISO.
 	./scripts/build-omega-installer-iso
