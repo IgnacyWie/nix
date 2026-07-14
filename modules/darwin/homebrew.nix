@@ -31,6 +31,7 @@
 
     casks = [
       "wispr-flow"
+      "linear" # Task management tool for software development teams. I use it to manage my personal tasks and projects.
       "monitorcontrol" # Tool for controlling external monitor brightness, contrast, and volume. Useful for my 49 Inch LG Ultrawide.
       "displaylink" # Tool for using DisplayLink USB graphics adapters. Required for my 49 Inch LG Ultrawide.
       "jordanbaird-ice" # Tool for hiding unused things from the menu bar
