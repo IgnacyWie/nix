@@ -618,7 +618,7 @@
           test -f ${./services/eta/vaultwarden/.env.example}
           test -f ${./services/eta/vaultwarden/README.md}
 
-          grep -Fq 'image: vaultwarden/server:1.36.0' ${./services/eta/vaultwarden/compose.yaml}
+          grep -Fq 'image: vaultwarden/server:1.37.1' ${./services/eta/vaultwarden/compose.yaml}
           grep -Fq 'container_name: vaultwarden' ${./services/eta/vaultwarden/compose.yaml}
           grep -Fq -- '- ''${HOME}/Services/data/vaultwarden:/data' ${./services/eta/vaultwarden/compose.yaml}
           grep -Fq 'name: proxy-network' ${./services/eta/vaultwarden/compose.yaml}
