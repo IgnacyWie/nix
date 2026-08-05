@@ -38,6 +38,7 @@
       "ghostty"
       "google-chrome"
       "hammerspoon"
+      "handy"
       "karabiner-elements"
       "keka" # Faster and more powerful alternative to the built-in Archive Utility for extracting compressed files.
       "loom"
