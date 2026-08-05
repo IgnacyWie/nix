@@ -2,7 +2,7 @@ SHELL := /bin/sh
 
 .DEFAULT_GOAL := help
 
-.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta eval-eta-cloud build-eta-cloud build-omega-installer-iso apply-gamma apply-eta apply-eta-remote bootstrap-apply-gamma homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook collect-eta-docker-orbstack-inventory
+.PHONY: help check fmt eval-gamma build-gamma eval-eta build-eta eval-eta-cloud build-eta-cloud build-omega-installer-iso apply-gamma apply-eta apply-eta-remote bootstrap-apply-gamma bootstrap-apply-eta homebrew-cleanup-preview check-karabiner-edn install-pre-commit-hook collect-eta-docker-orbstack-inventory
 
 help: ## Show available repo commands.
 	@awk 'BEGIN {FS = ":.*## "; printf "Available targets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-24s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -45,6 +45,9 @@ apply-eta-remote: ## SSH to eta and apply the eta Darwin configuration from ~/ni
 
 bootstrap-apply-gamma: ## Apply gamma during first bootstrap through pinned nix-darwin.
 	./scripts/bootstrap-apply-gamma
+
+bootstrap-apply-eta: ## Apply eta during first bootstrap through pinned nix-darwin.
+	./scripts/bootstrap-apply-eta
 
 homebrew-cleanup-preview: ## Preview zap cleanup from the evaluated gamma Brewfile.
 	./scripts/homebrew-cleanup-preview

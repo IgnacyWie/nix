@@ -232,8 +232,10 @@ make build-gamma
 make eval-eta
 make build-eta
 make apply-eta
+make bootstrap-apply-eta
 make fmt
 make apply-gamma
+make bootstrap-apply-gamma
 ```
 
 The `make` targets are thin wrappers around `scripts/`. The scripts use the
@@ -246,11 +248,11 @@ same Nix invocation needed during the initial flake bootstrap:
 ./scripts/eval-eta
 ./scripts/build-eta
 ./scripts/apply-eta
+./scripts/bootstrap-apply-eta
 ./scripts/fmt
 ./scripts/apply-gamma
+./scripts/bootstrap-apply-gamma
 ```
-
-test
 
 They fall back to `/nix/var/nix/profiles/default/bin/nix`, enable
 `nix-command` and `flakes`, and set `NIX_SSL_CERT_FILE=/etc/ssl/cert.pem` when
@@ -280,6 +282,16 @@ output is reviewed on `eta`, apply the host with:
 ```sh
 make apply-eta
 ```
+
+If Nix is installed but nix-darwin has not been activated on `eta` yet, use the
+bootstrap wrapper:
+
+```sh
+make bootstrap-apply-eta
+```
+
+If Nix itself is missing, install Nix first using the current official macOS
+installer, then rerun `make bootstrap-apply-eta`.
 
 ### Pre-Commit Checks
 

@@ -300,14 +300,19 @@
           test -x ${./scripts/eval-eta}
           test -x ${./scripts/build-eta}
           test -x ${./scripts/apply-eta}
+          test -x ${./scripts/bootstrap-apply-eta}
           grep -q 'eval-eta:' ${./Makefile}
           grep -q 'build-eta:' ${./Makefile}
           grep -q 'apply-eta:' ${./Makefile}
+          grep -q 'bootstrap-apply-eta:' ${./Makefile}
           grep -q '.#darwinConfigurations.eta.system' ${./scripts/eval-eta}
           grep -q '.#darwinConfigurations.eta.system' ${./scripts/build-eta}
           grep -q '.#eta' ${./scripts/apply-eta}
+          grep -q '.#eta' ${./scripts/bootstrap-apply-eta}
           ! grep -q 'darwin-rebuild switch' ${./scripts/build-eta}
           grep -q 'darwin-rebuild switch --flake .#eta' ${./scripts/apply-eta}
+          grep -q 'github:LnL7/nix-darwin/6a771120d607dcccb279a27d227650e324815c35#darwin-rebuild' ${./scripts/bootstrap-apply-eta}
+          grep -q 'make bootstrap-apply-eta' ${./README.md}
           grep -q 'make eval-eta' ${./README.md}
           grep -q 'make build-eta' ${./README.md}
           grep -q 'make apply-eta' ${./README.md}

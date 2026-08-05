@@ -6,4 +6,14 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
 
 cd "${REPO_ROOT}"
-exec /usr/bin/sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .#eta
+
+if [ -x /run/current-system/sw/bin/darwin-rebuild ]; then
+  exec /usr/bin/sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .#eta
+fi
+
+if command -v darwin-rebuild >/dev/null 2>&1; then
+  DARWIN_REBUILD="$(command -v darwin-rebuild)"
+  exec /usr/bin/sudo "${DARWIN_REBUILD}" switch --flake .#eta
+fi
+
+exec "${SCRIPT_DIR}/bootstrap-apply-eta"
