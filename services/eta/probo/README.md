@@ -65,6 +65,10 @@ Required values:
 - `PROBOD_OAUTH2_SERVER_SIGNING_KEY` — RSA private key used for OAuth token
   signing. Store it in `.env` as a quoted value with escaped newlines.
 - `PROBOD_PG_ROOT_PASSWORD` and `PROBOD_PG_PASSWORD` — PostgreSQL credentials.
+- `PROBOD_OPENAI_API_KEY` or `PROBOD_ANTHROPIC_API_KEY` — LLM provider
+  credentials. Current Probo images default the Probo agent provider to
+  `openai`; without a matching provider key, startup can fail with
+  `unknown LLM provider "openai" for probo agent`.
 - `PROBOD_SMTP_*` and `PROBOD_MAILER_SENDER_EMAIL` — SMTP relay settings for
   outbound mail.
 
