@@ -111,6 +111,10 @@ containers are available.
   `~/Services/data/local-ai/open-webui` and
   `~/Services/data/local-ai/paperless-ai`; OMLX remains host-managed and is
   reached through `http://host.docker.internal:8000/v1`.
+- `probo` — self-hosted GRC and compliance Service Stack routed at
+  `probo.mac.wie.dev`; Durable Service State:
+  `~/Services/data/probo`; online Postgres artifact:
+  `~/Services/dumps/probo/probod.dump`.
 
 
 ## eta-cloud Migration Reference

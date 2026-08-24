@@ -165,8 +165,9 @@ The v1 Home Server backup scope includes:
   database dumps, including Vaultwarden SQLite Keystone Data Store material,
   Linkding Durable Service State, and Tier 1 state for Immich, Paperless, Home
   Assistant with Matter Server, Baikal, and Personal Cloud under
-  `~/Services/data`, plus online dump artifacts under `~/Services/dumps` where
-  documented by each stack.
+  `~/Services/data`, plus Probo PostgreSQL and SeaweedFS state under
+  `~/Services/data/probo`, plus online dump artifacts under `~/Services/dumps`
+  where documented by each stack.
 - `~/nix/services/eta` — Service Definitions, the shared Tier 1 migration
   template, and per-stack restore notes, including `services/eta/vaultwarden`,
   `services/eta/linkding`, env examples, and restore drills for all migrated

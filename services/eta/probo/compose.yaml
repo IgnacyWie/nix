@@ -1,0 +1,122 @@
+services:
+  probo:
+    image: artifact.probo.inc/probo/probo:${PROBO_VERSION:-latest}
+    container_name: probo
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      PROBOD_ENCRYPTION_KEY: ${PROBOD_ENCRYPTION_KEY}
+      PROBOD_AUTH_COOKIE_SECRET: ${PROBOD_AUTH_COOKIE_SECRET}
+      PROBOD_AUTH_PASSWORD_PEPPER: ${PROBOD_AUTH_PASSWORD_PEPPER}
+      PROBOD_TRUST_AUTH_TOKEN_SECRET: ${PROBOD_TRUST_AUTH_TOKEN_SECRET}
+      PROBOD_OAUTH2_SERVER_SIGNING_KEY: ${PROBOD_OAUTH2_SERVER_SIGNING_KEY}
+      PROBOD_BASE_URL: ${PROBOD_BASE_URL}
+      PROBOD_API_ADDR: 0.0.0.0:8080
+      PROBOD_API_CORS_ALLOWED_ORIGINS: ${PROBOD_BASE_URL}
+      PROBOD_PG_ADDR: postgres:5432
+      PROBOD_PG_USERNAME: ${PROBOD_PG_USERNAME}
+      PROBOD_PG_PASSWORD: ${PROBOD_PG_PASSWORD}
+      PROBOD_PG_DATABASE: ${PROBOD_PG_DATABASE}
+      PROBOD_PG_POOL_SIZE: ${PROBOD_PG_POOL_SIZE:-20}
+      PROBOD_AWS_REGION: ${PROBOD_AWS_REGION:-us-east-1}
+      PROBOD_AWS_BUCKET: ${PROBOD_AWS_BUCKET:-probod}
+      PROBOD_AWS_ACCESS_KEY_ID: probod
+      PROBOD_AWS_SECRET_ACCESS_KEY: thisisnotasecret
+      PROBOD_AWS_ENDPOINT: http://seaweedfs:8333
+      PROBOD_AWS_USE_PATH_STYLE: "true"
+      PROBOD_METRICS_ADDR: probo:8081
+      PROBOD_TRACING_ADDR: ""
+      PROBOD_SMTP_ADDR: ${PROBOD_SMTP_ADDR}
+      PROBOD_SMTP_USER: ${PROBOD_SMTP_USER}
+      PROBOD_SMTP_PASSWORD: ${PROBOD_SMTP_PASSWORD}
+      PROBOD_SMTP_TLS_REQUIRED: ${PROBOD_SMTP_TLS_REQUIRED:-true}
+      PROBOD_MAILER_SENDER_NAME: ${PROBOD_MAILER_SENDER_NAME:-Probo}
+      PROBOD_MAILER_SENDER_EMAIL: ${PROBOD_MAILER_SENDER_EMAIL}
+      PROBOD_CHROME_DP_ADDR: chrome:9222
+    volumes:
+      - ${HOME}/Services/data/probo/probo:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_started
+      chrome:
+        condition: service_started
+    networks:
+      - ingress
+      - internal
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.probo.entrypoints: websecure
+      traefik.http.routers.probo.rule: Host(`${PROBO_TRAEFIK_HOST}`)
+      traefik.http.routers.probo.tls: "true"
+      traefik.http.routers.probo.tls.certresolver: myresolver
+      traefik.http.services.probo.loadbalancer.server.port: "8080"
+      traefik.http.services.probo.loadbalancer.passhostheader: "true"
+
+  postgres:
+    image: postgres@sha256:7ad98329d513dd497293b951c195ca354274a77f12ddbbbbf85e68a811823d72
+    container_name: probo_postgres
+    restart: unless-stopped
+    shm_size: 1g
+    command: >
+      postgres -c "shared_buffers=${PROBOD_PG_SHARED_BUFFERS:-1GB}"
+               -c "max_connections=${PROBOD_PG_MAX_CONNECTIONS:-100}"
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PROBOD_PG_ROOT_PASSWORD}
+    volumes:
+      - ./compose/postgres:/docker-entrypoint-initdb.d:ro
+      - ${HOME}/Services/data/probo/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${PROBOD_PG_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
+  seaweedfs:
+    image: chrislusf/seaweedfs@sha256:cea8339d21dad1b200adce581dd7434d254b8f5975f142c3b4c930ba78647eef
+    container_name: probo_seaweedfs
+    restart: unless-stopped
+    command: >
+      server
+      -s3
+      -s3.config=/etc/seaweedfs/s3.json
+      -s3.port=8333
+      -volume.max=100
+      -master.volumeSizeLimitMB=1024
+      -dir=/data
+    volumes:
+      - ./compose/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
+      - ${HOME}/Services/data/probo/seaweedfs:/data
+    networks:
+      - internal
+
+  chrome:
+    image: chromedp/headless-shell@sha256:b24482ae166e2c67135f5a8ba9575c257efdd8e2fd6b2e931f9d88ede3d72f3b
+    container_name: probo_chrome
+    restart: unless-stopped
+    command:
+      - --headless
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --hide-scrollbars
+      - --mute-audio
+      - --no-default-browser-check
+      - --no-first-run
+      - --disable-background-networking
+      - --disable-background-timer-throttling
+      - --disable-extensions
+    networks:
+      - internal
+
+networks:
+  ingress:
+    name: proxy-network
+    external: true
+  internal:

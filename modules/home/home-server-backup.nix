@@ -169,6 +169,8 @@ let
           "$HOME/Services/dumps/baikal/db.sqlite"
         create_postgres_dump Immich immich_postgres \
           "$HOME/Services/dumps/immich/immich.dump"
+        create_postgres_dump Probo probo_postgres \
+          "$HOME/Services/dumps/probo/probod.dump"
       }
 
       create_logical_dumps
