@@ -53,6 +53,10 @@ All guests currently boot automatically. Persistent application state is on Prox
 | 121 | `core-apps` | VM | `192.168.1.16` | 4 vCPU, 8 GB RAM, 32 GB disk | Small persistent Docker applications |
 | TBD | `media-apps` | planned VM | TBD | TBD | Future media/download stack; keep separate from core apps |
 
+## Omega legacy server
+
+`Omega` is a separate legacy HP ProLiant/NAS, not a Proxmox guest. It currently has four 3 TB HDDs and is not integrated into the active stack. Its old Unraid installation is unusable/expired, it currently has 4 GB RAM, and the refurbishment plan is approximately 16 GB compatible ECC UDIMM plus a 1–2 TB SATA SSD in the optical bay. Its intended role is NAS/bulk storage and backup support after refurbishment.
+
 ## Network and DNS
 
 - LAN: `192.168.1.0/24`
