@@ -11,6 +11,18 @@ local settingsPath = os.getenv("HOME")
 local websiteDataRoot = os.getenv("HOME")
   .. "/Library/WebKit/io.music-assistant.companion/WebsiteData/Default"
 local replayMarker = 0x4D41564B -- "MAVK"
+local forwardedAlertStyle = {
+  atScreenEdge = 2,
+  fadeInDuration = 0.05,
+  fadeOutDuration = 0.12,
+  fillColor = { white = 0.08, alpha = 0.9 },
+  padding = 12,
+  radius = 12,
+  strokeColor = { white = 1, alpha = 0.18 },
+  strokeWidth = 1,
+  textColor = { white = 1, alpha = 1 },
+  textSize = 16,
+}
 
 local state = {
   running = false,
@@ -506,6 +518,20 @@ local function replaySystemKey(key)
   end
 end
 
+local function showForwardedAlert(player, action)
+  if state.forwardedAlertID then
+    hs.alert.closeSpecific(state.forwardedAlertID, 0.03)
+  end
+  local playerName = player.display_name or player.name or "selected player"
+  state.lastForwardedAction = action
+  state.forwardedAlertID = hs.alert.show(
+    "Music Assistant → " .. playerName .. "\n" .. action,
+    forwardedAlertStyle,
+    hs.screen.mainScreen(),
+    0.75
+  )
+end
+
 local function dispatchMusicAssistantKey(key)
   local player = state.player
   if not player then
@@ -514,11 +540,14 @@ local function dispatchMusicAssistantKey(key)
 
   local grouped = isGrouped(player)
   local command
+  local action
   local args = { player_id = player.player_id }
   if key == "SOUND_UP" then
     command = grouped and "group_volume_up" or "volume_up"
+    action = "Volume up"
   elseif key == "SOUND_DOWN" then
     command = grouped and "group_volume_down" or "volume_down"
+    action = "Volume down"
   elseif key == "MUTE" then
     command = grouped and "group_volume_mute" or "volume_mute"
     if grouped then
@@ -526,6 +555,7 @@ local function dispatchMusicAssistantKey(key)
     else
       args.muted = player.volume_muted ~= true
     end
+    action = args.muted and "Muted" or "Unmuted"
   else
     return false
   end
@@ -546,6 +576,9 @@ local function dispatchMusicAssistantKey(key)
       end
     end
   end, 2)
+  if sent then
+    showForwardedAlert(player, action)
+  end
   return sent
 end
 
@@ -604,6 +637,7 @@ function M.status()
     activePlayerGrouped = grouped,
     activePlayerVolume = volume,
     activePlayerMuted = muted,
+    lastForwardedAction = state.lastForwardedAction,
     interceptingVolume = canRouteKey("SOUND_UP"),
     interceptingMute = canRouteKey("MUTE"),
   }
@@ -635,6 +669,10 @@ function M.stop()
   state.reconnectTimer = nil
   state.mediaRestartTimer = nil
   state.emptyMediaTimer = nil
+  if state.forwardedAlertID then
+    hs.alert.closeSpecific(state.forwardedAlertID, 0.03)
+    state.forwardedAlertID = nil
+  end
   if state.mediaTask then
     state.mediaTask:terminate()
     state.mediaTask = nil
