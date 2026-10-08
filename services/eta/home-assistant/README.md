@@ -42,47 +42,6 @@ integrations, automations, and the default SQLite state database. Matter Server
 state lives in `~/Services/data/matter-server`. `eta-restic-backup` creates an
 online SQLite backup artifact for `home-assistant_v2.db` when it exists.
 
-## Automations
-
-The source-controlled automation configuration is
-[`automations.yaml`](./automations.yaml). The active Home Assistant instance
-loads the deployed copy at `/config/automations.yaml`.
-
-Current automations:
-
-- **Bathroom Fan - Delay** — turns off the bathroom fan 20 minutes after it is
-  switched on.
-- **Wake up with music - Zeppelin** — at `input_datetime.wake_up_time`, plays
-  *Guten Morgen Sonnenschein* on the Zeppelin when
-  `input_boolean.wake_up_enabled` is on.
-- **Stop wake-up music** — stops the Zeppelin from the dashboard stop button.
-- **Bedroom - BILRESA bedside remote** — maps the IKEA `09B9` ZHA remote:
-  - A single ON press from 06:00 through 22:59 retains the daytime behavior:
-    the first press turns on Bed Lamp and LED Bed, and another press turns on
-    Bedroom Accent.
-  - A single ON press from 23:00 through 05:59 progressively turns on LED Bed,
-    then Bed Lamp, then Bedroom Accent.
-  - A single OFF press turns off all three bedroom lights.
-  - A double ON press turns on all three bedroom lights.
-  - A double OFF press performs the bedtime shutdown for enabled, visible
-    household devices: all dashboard lights, the bathroom fan, Zeppelin
-    playback, and the living-room TV. Hidden, disabled, diagnostic, and
-    infrastructure entities are intentionally excluded.
-  - When the configured wake-up alarm is playing, any mapped press stops the
-    alarm without running its normal light or bedtime action.
-
-## Home Assistant YAML Change Workflow
-
-After changing an automation or any other Home Assistant YAML:
-
-1. Update the source-controlled YAML and this README in the same change.
-2. Back up the live file before deployment.
-3. Copy the reviewed YAML to the corresponding path under `/config`.
-4. Run `ha core check`; restore the backup if validation fails.
-5. Reload the affected configuration or restart Home Assistant.
-6. Verify the changed entity or automation is loaded and enabled.
-7. Commit only the intended Home Assistant files and push the commit.
-
 ## Required Environment
 
 ```sh
