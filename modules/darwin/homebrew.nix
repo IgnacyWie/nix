@@ -26,6 +26,7 @@
       # Keep joker explicit so apply-gamma cleanup stays dependency-safe.
       "joker"
       "mas"
+      "media-control"
       "nvm"
     ];
 

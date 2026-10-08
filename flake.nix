@@ -1308,6 +1308,7 @@
           assert !(builtins.elem "tmux" homebrewBrewNames);
           assert builtins.elem "goku" homebrewBrewNames;
           assert builtins.elem "libpq" homebrewBrewNames;
+          assert builtins.elem "media-control" homebrewBrewNames;
           assert builtins.elem "keka" homebrewCaskNames;
           assert builtins.elem "qutebrowser" homebrewCaskNames;
           assert builtins.elem "tailscale-app" homebrewCaskNames;

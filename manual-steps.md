@@ -346,6 +346,8 @@ restore process and should not be treated as silently reproducible.
 
 Expected permission categories:
 
+- Hammerspoon: Accessibility, so managed keyboard automations such as the Music
+  Assistant volume-key bridge can observe and replace media-key events.
 - Karabiner: Input Monitoring and Accessibility, if used.
 - yabai: Accessibility, Automation prompts, and scripting-addition setup. Review
   whether SIP changes are still required for the macOS version in use before

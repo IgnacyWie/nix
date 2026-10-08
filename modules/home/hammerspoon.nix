@@ -19,6 +19,11 @@ in
     force = true;
   };
 
+  home.file.".hammerspoon/music-assistant-volume.lua" = {
+    source = ../../config/hammerspoon/music-assistant-volume.lua;
+    force = true;
+  };
+
   launchd.agents.hammerspoon = {
     enable = true;
     config = {
