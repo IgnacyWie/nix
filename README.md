@@ -639,7 +639,6 @@ Command layout.
 | `F18`                               | Run the local Tailscale trigger script.                      |
 | `F17`                               | Open `/Volumes`.                                             |
 | `F16`                               | Open iTerm2 at `~/Developer/backend`.                        |
-| `F8`                                | Focus space 6.                                               |
 | `F4`                                | Open Firefox Developer Edition.                              |
 
 ## Recovery Contract

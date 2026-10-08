@@ -19,7 +19,6 @@ f18 : ~/.scripts/tailscale_trigger.sh
 f17 : open /Volumes
 f16 : open -a iTerm2 cd ~/Developer/backend
 
-f8 : yabai -m space --focus 6
 f4 : open -a 'Firefox Developer Edition'
 
 # focus apps
