@@ -11,6 +11,19 @@ local settingsPath = os.getenv("HOME")
 local websiteDataRoot = os.getenv("HOME")
   .. "/Library/WebKit/io.music-assistant.companion/WebsiteData/Default"
 local replayMarker = 0x4D41564B -- "MAVK"
+local handledSystemKeys = {
+  SOUND_UP = true,
+  SOUND_DOWN = true,
+  MUTE = true,
+  PREVIOUS = true,
+  PLAY = true,
+  NEXT = true,
+}
+local transportSystemKeys = {
+  PREVIOUS = true,
+  PLAY = true,
+  NEXT = true,
+}
 local forwardedAlertStyle = {
   atScreenEdge = 2,
   fadeInDuration = 0.05,
@@ -501,6 +514,9 @@ local function canRouteKey(key)
   if player.available == false or player.powered == false then
     return false
   end
+  if transportSystemKeys[key] then
+    return true
+  end
   if key == "MUTE" then
     if isGrouped(player) then
       return player.group_volume_muted ~= nil
@@ -556,6 +572,15 @@ local function dispatchMusicAssistantKey(key)
       args.muted = player.volume_muted ~= true
     end
     action = args.muted and "Muted" or "Unmuted"
+  elseif key == "PREVIOUS" then
+    command = "previous"
+    action = "Previous track"
+  elseif key == "PLAY" then
+    command = "play_pause"
+    action = "Play / pause"
+  elseif key == "NEXT" then
+    command = "next"
+    action = "Next track"
   else
     return false
   end
@@ -563,7 +588,7 @@ local function dispatchMusicAssistantKey(key)
   local sent = sendCommand("players/cmd/" .. command, args, function(ok, _, err)
     if not ok then
       state.player = nil
-      log.wf("Music Assistant volume command failed: %s", err or "unknown error")
+      log.wf("Music Assistant media command failed: %s", err or "unknown error")
       replaySystemKey(key)
       refreshContext()
       return
@@ -588,7 +613,7 @@ local function handleSystemKey(event)
   end
 
   local key = event:systemKey()
-  if not key or not ({ SOUND_UP = true, SOUND_DOWN = true, MUTE = true })[key.key] then
+  if not key or not handledSystemKeys[key.key] then
     return false
   end
 
@@ -603,6 +628,10 @@ local function handleSystemKey(event)
   local flags = event:getFlags()
   if flags.cmd or flags.alt or flags.ctrl or not canRouteKey(key.key) then
     return false
+  end
+
+  if key["repeat"] and transportSystemKeys[key.key] and state.capturedKeys[key.key] then
+    return true
   end
 
   if dispatchMusicAssistantKey(key.key) then
@@ -640,6 +669,7 @@ function M.status()
     lastForwardedAction = state.lastForwardedAction,
     interceptingVolume = canRouteKey("SOUND_UP"),
     interceptingMute = canRouteKey("MUTE"),
+    interceptingTransport = canRouteKey("PLAY"),
   }
 end
 
