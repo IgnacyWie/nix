@@ -12,6 +12,7 @@
     ./pi.nix
     ./scripts.nix
     ./shell.nix
+    ./spolszcz.nix
     ./ssh.nix
     ./tmux.nix
     ./window-management.nix

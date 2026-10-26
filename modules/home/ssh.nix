@@ -57,7 +57,7 @@ in
       };
 
       eta = {
-        HostName = "eta.sparrow-pomano.ts.net";
+        HostName = "192.168.1.112";
         User = "ignacywielogorski";
       };
 

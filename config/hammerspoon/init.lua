@@ -8,3 +8,5 @@ for _, module in ipairs({ "wifi", "autoReload", "usb" }) do
 end
 
 require("gamma-backup")
+
+require("spolszcz").bind()

@@ -7,7 +7,11 @@
     onActivation = {
       autoUpdate = false;
       upgrade = false;
-      cleanup = "zap";
+      # "zap" invokes `brew bundle --cleanup`, a flag removed in Homebrew 7.x,
+      # which aborts the whole activation. "none" keeps rebuilds working; unlisted
+      # formulae/casks are no longer auto-removed. Revert once nix-darwin targets
+      # Homebrew's `brew bundle cleanup` subcommand.
+      cleanup = "none";
     };
 
     taps = [

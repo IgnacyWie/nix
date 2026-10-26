@@ -155,6 +155,13 @@ in
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 
+        # Hermes' desktop bootstrap checks both zsh startup files for a literal
+        # ~/.local/bin PATH entry before it decides whether it needs to append
+        # one. Home Manager owns these files, so make that setup explicit here.
+        profileExtra = ''
+          case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
+        '';
+
         history = {
           size = 50000;
           save = 50000;
@@ -170,6 +177,8 @@ in
           // lib.optionalAttrs workstationIntegrationsEnabled (shellNavigationAliases // projectAliases);
 
         initContent = ''
+          case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
+
           unset MAILCHECK
           setopt prompt_subst
 

@@ -19,6 +19,11 @@ in
     force = true;
   };
 
+  home.file.".hammerspoon/spolszcz.lua" = {
+    source = ../../config/hammerspoon/spolszcz.lua;
+    force = true;
+  };
+
   launchd.agents.hammerspoon = {
     enable = true;
     config = {

@@ -1180,7 +1180,7 @@
             etaService = pkgs.writeText "eta-service" homeConfig.home.file.".local/scripts/eta-service".text;
           in
           assert builtins.hasAttr "eta" sshSettings;
-          assert sshSettings.eta.data.HostName == "eta.sparrow-pomano.ts.net";
+          assert sshSettings.eta.data.HostName == "192.168.1.112";
           assert sshSettings.eta.data.User == "ignacywielogorski";
           assert !(builtins.hasAttr "mini" sshSettings);
           assert zshAliases.sm == "ssh eta";
