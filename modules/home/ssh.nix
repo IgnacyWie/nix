@@ -56,6 +56,11 @@ in
         User = "root";
       };
 
+      theta = {
+        HostName = "192.168.1.125";
+        User = "ignacywielogorski";
+      };
+
       eta = {
         HostName = "192.168.1.112";
         User = "ignacywielogorski";
